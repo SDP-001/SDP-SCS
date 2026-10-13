@@ -1,0 +1,57 @@
+{
+  "name": "NEC Portal — Nandha Engineering College",
+  "short_name": "NEC Cred",
+  "id": "nec-portal-app",
+  "description": "Nandha Engineering College Autonomous Verified Student Achievements & Co-Curricular Management Mobile App",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "categories": ["education", "productivity"],
+  "icons": [
+    {
+      "src": "/nec-logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/nec-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Student Dashboard",
+      "short_name": "Student",
+      "description": "View student achievements and passport",
+      "url": "/student/dashboard",
+      "icons": [{ "src": "/nec-logo.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Faculty Reviews",
+      "short_name": "Faculty",
+      "description": "Review and award student certificates",
+      "url": "/faculty/reviews",
+      "icons": [{ "src": "/nec-logo.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "HOD Portal",
+      "short_name": "HOD",
+      "description": "Department analytics and faculty management",
+      "url": "/hod/dashboard",
+      "icons": [{ "src": "/nec-logo.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Dean & Admin",
+      "short_name": "Admin",
+      "description": "Institutional administrative control center",
+      "url": "/admin/dashboard",
+      "icons": [{ "src": "/nec-logo.png", "sizes": "192x192" }]
+    }
+  ]
+}
