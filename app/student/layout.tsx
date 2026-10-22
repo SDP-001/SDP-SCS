@@ -22,7 +22,7 @@ export default async function StudentLayout({
   ).length;
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen bg-[#070913] text-slate-100 flex cyber-grid-bg">
       {/* Desktop Sidebar */}
       <Sidebar
         role={user.profile.role}

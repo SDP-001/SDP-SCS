@@ -127,30 +127,30 @@ export function SessionActivityFeed({
       case "LOGIN":
         return {
           label: "LOGIN",
-          className: "bg-emerald-50 text-emerald-800 border-emerald-300 shadow-2xs",
+          className: "bg-emerald-950/70 text-emerald-300 border-emerald-500/40 shadow-[0_0_8px_rgba(16,185,129,0.25)]",
           icon: LogIn,
-          iconClass: "text-emerald-600",
+          iconClass: "text-emerald-400",
         };
       case "LOGOUT":
         return {
           label: "LOGOUT",
-          className: "bg-rose-50 text-rose-800 border-rose-300 shadow-2xs",
+          className: "bg-rose-950/70 text-rose-300 border-rose-500/40 shadow-[0_0_8px_rgba(244,63,94,0.25)]",
           icon: LogOut,
-          iconClass: "text-rose-600",
+          iconClass: "text-rose-400",
         };
       case "PASSWORD_RESET":
         return {
           label: "PASSWORD RESET",
-          className: "bg-amber-50 text-amber-800 border-amber-300 shadow-2xs",
+          className: "bg-amber-950/70 text-amber-300 border-amber-500/40 shadow-[0_0_8px_rgba(245,158,11,0.25)]",
           icon: KeyRound,
-          iconClass: "text-amber-600",
+          iconClass: "text-amber-400",
         };
       default:
         return {
           label: action,
-          className: "bg-slate-100 text-slate-800 border-slate-300",
+          className: "bg-slate-900/80 text-slate-300 border-slate-700/80",
           icon: Activity,
-          iconClass: "text-slate-600",
+          iconClass: "text-cyan-400",
         };
     }
   };
@@ -160,55 +160,58 @@ export function SessionActivityFeed({
       case "STUDENT":
         return {
           label: "Student",
-          className: "bg-cyan-50 text-cyan-700 border-cyan-200",
+          className: "bg-cyan-950/60 text-cyan-300 border-cyan-500/30",
           icon: GraduationCap,
         };
       case "FACULTY":
         return {
           label: "Faculty",
-          className: "bg-emerald-50 text-emerald-700 border-emerald-200",
+          className: "bg-emerald-950/60 text-emerald-300 border-emerald-500/30",
           icon: Users,
         };
       case "HOD":
         return {
           label: "HOD",
-          className: "bg-purple-50 text-purple-700 border-purple-200",
+          className: "bg-purple-950/60 text-purple-300 border-purple-500/30",
           icon: Building2,
         };
       case "ADMIN":
         return {
           label: "Dean / Admin",
-          className: "bg-amber-50 text-amber-700 border-amber-200",
+          className: "bg-amber-950/60 text-amber-300 border-amber-500/30",
           icon: ShieldCheck,
         };
       default:
         return {
           label: role,
-          className: "bg-slate-100 text-slate-700 border-slate-200",
+          className: "bg-slate-900/80 text-slate-300 border-slate-700/80",
           icon: Users,
         };
     }
   };
 
   return (
-    <Card className="p-5 sm:p-6 rounded-3xl bg-white border border-slate-200/90 shadow-sm space-y-5">
+    <Card className="p-5 sm:p-6 rounded-3xl bg-[#0d1322]/90 border border-slate-800/80 shadow-2xl space-y-5 relative overflow-hidden backdrop-blur-xl">
+      {/* Laser Top Accent */}
+      <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-80" />
+
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800/80">
         <div className="flex items-start sm:items-center gap-3">
-          <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-slate-900 via-indigo-950 to-slate-900 text-white flex items-center justify-center shrink-0 shadow-md">
-            <Activity className="h-5 w-5 text-emerald-400" />
+          <div className="h-11 w-11 rounded-2xl bg-slate-900/90 border border-cyan-500/30 text-cyan-400 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+            <Activity className="h-5 w-5 text-cyan-400" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
+              <h3 className="text-base sm:text-lg font-black text-white tracking-tight">
                 {title || getDefaultTitle()}
               </h3>
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Live Feed</span>
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-500/30 shadow-[0_0_8px_rgba(16,185,129,0.25)]">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span>[LIVE_FEED]</span>
               </span>
             </div>
-            <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
+            <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">
               {subtitle || getDefaultSubtitle()}
             </p>
           </div>
@@ -221,13 +224,13 @@ export function SessionActivityFeed({
             size="sm"
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="h-8 px-3 text-xs font-bold rounded-xl border-slate-200 text-slate-700 hover:bg-slate-50 flex items-center gap-1.5"
+            className="h-8 px-3 text-xs font-mono font-semibold rounded-xl border-slate-800 bg-slate-900/80 text-slate-300 hover:text-white hover:bg-slate-800/90 hover:border-cyan-500/40 flex items-center gap-1.5 transition-all"
           >
-            <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin text-emerald-600" : ""}`} />
-            <span>{isRefreshing ? "Updating..." : "Refresh"}</span>
+            <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin text-cyan-400" : "text-slate-400"}`} />
+            <span>{isRefreshing ? "SYNCING..." : "SYNC"}</span>
           </Button>
-          <span className="text-[11px] font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-xl">
-            {filteredActivities.length} logs
+          <span className="text-[11px] font-mono font-semibold text-cyan-400 bg-slate-950/90 border border-slate-800/80 px-2.5 py-1 rounded-xl">
+            {filteredActivities.length} LOGS
           </span>
         </div>
       </div>
@@ -241,22 +244,22 @@ export function SessionActivityFeed({
             placeholder="Search by name, reg no, or emp id..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="h-9 pl-9 text-xs rounded-xl border-slate-200 bg-slate-50/50"
+            className="h-9 pl-9 text-xs rounded-xl border-slate-800 bg-slate-950/80 text-white placeholder:text-slate-500 focus-visible:ring-cyan-500/30 focus-visible:border-cyan-500/50"
           />
-          <Search className="h-3.5 w-3.5 text-slate-400 absolute left-3 top-2.5" />
+          <Search className="h-3.5 w-3.5 text-slate-500 absolute left-3 top-2.5" />
         </div>
 
         {/* Action and Role Filters */}
         <div className="flex flex-wrap items-center gap-1.5 text-xs">
           {/* Action Chips */}
-          <div className="flex rounded-xl bg-slate-100 p-0.5 border border-slate-200">
+          <div className="flex rounded-xl bg-slate-950/90 p-0.5 border border-slate-800">
             <button
               type="button"
               onClick={() => setActionFilter("ALL")}
-              className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all ${
+              className={`px-2.5 py-1 rounded-lg text-[11px] font-bold font-mono transition-all ${
                 actionFilter === "ALL"
-                  ? "bg-white text-slate-900 shadow-2xs"
-                  : "text-slate-500 hover:text-slate-900"
+                  ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-[0_0_8px_rgba(6,182,212,0.25)]"
+                  : "text-slate-400 hover:text-slate-200"
               }`}
             >
               All Actions
@@ -264,10 +267,10 @@ export function SessionActivityFeed({
             <button
               type="button"
               onClick={() => setActionFilter("LOGIN")}
-              className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1 ${
+              className={`px-2.5 py-1 rounded-lg text-[11px] font-bold font-mono transition-all flex items-center gap-1 ${
                 actionFilter === "LOGIN"
-                  ? "bg-emerald-600 text-white shadow-2xs"
-                  : "text-slate-500 hover:text-emerald-700"
+                  ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-[0_0_8px_rgba(16,185,129,0.25)]"
+                  : "text-slate-400 hover:text-emerald-400"
               }`}
             >
               <LogIn className="h-3 w-3" />
@@ -276,10 +279,10 @@ export function SessionActivityFeed({
             <button
               type="button"
               onClick={() => setActionFilter("LOGOUT")}
-              className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1 ${
+              className={`px-2.5 py-1 rounded-lg text-[11px] font-bold font-mono transition-all flex items-center gap-1 ${
                 actionFilter === "LOGOUT"
-                  ? "bg-rose-600 text-white shadow-2xs"
-                  : "text-slate-500 hover:text-rose-700"
+                  ? "bg-rose-500/20 text-rose-300 border border-rose-500/40 shadow-[0_0_8px_rgba(244,63,94,0.25)]"
+                  : "text-slate-400 hover:text-rose-400"
               }`}
             >
               <LogOut className="h-3 w-3" />
@@ -288,10 +291,10 @@ export function SessionActivityFeed({
             <button
               type="button"
               onClick={() => setActionFilter("PASSWORD_RESET")}
-              className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1 ${
+              className={`px-2.5 py-1 rounded-lg text-[11px] font-bold font-mono transition-all flex items-center gap-1 ${
                 actionFilter === "PASSWORD_RESET"
-                  ? "bg-amber-600 text-white shadow-2xs"
-                  : "text-slate-500 hover:text-amber-700"
+                  ? "bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-[0_0_8px_rgba(245,158,11,0.25)]"
+                  : "text-slate-400 hover:text-amber-400"
               }`}
             >
               <KeyRound className="h-3 w-3" />
@@ -301,14 +304,14 @@ export function SessionActivityFeed({
 
           {/* Role Filter Chips (For HOD & Dean) */}
           {callerRole === "ADMIN" && (
-            <div className="flex rounded-xl bg-slate-100 p-0.5 border border-slate-200">
+            <div className="flex rounded-xl bg-slate-950/90 p-0.5 border border-slate-800">
               <button
                 type="button"
                 onClick={() => setRoleFilter("ALL")}
-                className={`px-2 py-1 rounded-lg text-[11px] font-bold transition-all ${
+                className={`px-2 py-1 rounded-lg text-[11px] font-bold font-mono transition-all ${
                   roleFilter === "ALL"
-                    ? "bg-white text-slate-900 shadow-2xs"
-                    : "text-slate-500 hover:text-slate-900"
+                    ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-[0_0_8px_rgba(6,182,212,0.25)]"
+                    : "text-slate-400 hover:text-slate-200"
                 }`}
               >
                 All Roles
@@ -316,10 +319,10 @@ export function SessionActivityFeed({
               <button
                 type="button"
                 onClick={() => setRoleFilter("HOD")}
-                className={`px-2 py-1 rounded-lg text-[11px] font-bold transition-all ${
+                className={`px-2 py-1 rounded-lg text-[11px] font-bold font-mono transition-all ${
                   roleFilter === "HOD"
-                    ? "bg-purple-600 text-white shadow-2xs"
-                    : "text-slate-500 hover:text-purple-700"
+                    ? "bg-purple-500/20 text-purple-300 border border-purple-500/40 shadow-[0_0_8px_rgba(168,85,247,0.25)]"
+                    : "text-slate-400 hover:text-purple-400"
                 }`}
               >
                 HODs
@@ -327,10 +330,10 @@ export function SessionActivityFeed({
               <button
                 type="button"
                 onClick={() => setRoleFilter("FACULTY")}
-                className={`px-2 py-1 rounded-lg text-[11px] font-bold transition-all ${
+                className={`px-2 py-1 rounded-lg text-[11px] font-bold font-mono transition-all ${
                   roleFilter === "FACULTY"
-                    ? "bg-emerald-600 text-white shadow-2xs"
-                    : "text-slate-500 hover:text-emerald-700"
+                    ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-[0_0_8px_rgba(16,185,129,0.25)]"
+                    : "text-slate-400 hover:text-emerald-400"
                 }`}
               >
                 Faculty
@@ -338,10 +341,10 @@ export function SessionActivityFeed({
               <button
                 type="button"
                 onClick={() => setRoleFilter("STUDENT")}
-                className={`px-2 py-1 rounded-lg text-[11px] font-bold transition-all ${
+                className={`px-2 py-1 rounded-lg text-[11px] font-bold font-mono transition-all ${
                   roleFilter === "STUDENT"
-                    ? "bg-cyan-600 text-white shadow-2xs"
-                    : "text-slate-500 hover:text-cyan-700"
+                    ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-[0_0_8px_rgba(6,182,212,0.25)]"
+                    : "text-slate-400 hover:text-cyan-400"
                 }`}
               >
                 Students
@@ -350,25 +353,25 @@ export function SessionActivityFeed({
           )}
 
           {callerRole === "HOD" && (
-            <div className="flex rounded-xl bg-slate-100 p-0.5 border border-slate-200">
+            <div className="flex rounded-xl bg-slate-950/90 p-0.5 border border-slate-800">
               <button
                 type="button"
                 onClick={() => setRoleFilter("ALL")}
-                className={`px-2 py-1 rounded-lg text-[11px] font-bold transition-all ${
+                className={`px-2 py-1 rounded-lg text-[11px] font-bold font-mono transition-all ${
                   roleFilter === "ALL"
-                    ? "bg-white text-slate-900 shadow-2xs"
-                    : "text-slate-500 hover:text-slate-900"
+                    ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-[0_0_8px_rgba(6,182,212,0.25)]"
+                    : "text-slate-400 hover:text-slate-200"
                 }`}
               >
-                All Department
+                All Dept
               </button>
               <button
                 type="button"
                 onClick={() => setRoleFilter("FACULTY")}
-                className={`px-2 py-1 rounded-lg text-[11px] font-bold transition-all ${
+                className={`px-2 py-1 rounded-lg text-[11px] font-bold font-mono transition-all ${
                   roleFilter === "FACULTY"
-                    ? "bg-emerald-600 text-white shadow-2xs"
-                    : "text-slate-500 hover:text-emerald-700"
+                    ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-[0_0_8px_rgba(16,185,129,0.25)]"
+                    : "text-slate-400 hover:text-emerald-400"
                 }`}
               >
                 Faculty
@@ -376,10 +379,10 @@ export function SessionActivityFeed({
               <button
                 type="button"
                 onClick={() => setRoleFilter("STUDENT")}
-                className={`px-2 py-1 rounded-lg text-[11px] font-bold transition-all ${
+                className={`px-2 py-1 rounded-lg text-[11px] font-bold font-mono transition-all ${
                   roleFilter === "STUDENT"
-                    ? "bg-cyan-600 text-white shadow-2xs"
-                    : "text-slate-500 hover:text-cyan-700"
+                    ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-[0_0_8px_rgba(6,182,212,0.25)]"
+                    : "text-slate-400 hover:text-cyan-400"
                 }`}
               >
                 Students
@@ -390,12 +393,12 @@ export function SessionActivityFeed({
       </div>
 
       {/* List / Table of Activities */}
-      <div className="overflow-hidden rounded-2xl border border-slate-200/90 bg-slate-50/30">
+      <div className="overflow-hidden rounded-2xl border border-slate-800/80 bg-slate-950/50">
         {filteredActivities.length === 0 ? (
           <div className="p-10 text-center space-y-2">
-            <Clock className="h-8 w-8 text-slate-300 mx-auto" />
-            <p className="text-xs font-bold text-slate-700">No session activity found</p>
-            <p className="text-[11px] text-slate-400">
+            <Clock className="h-8 w-8 text-slate-600 mx-auto" />
+            <p className="text-xs font-bold text-slate-300">No session telemetry recorded</p>
+            <p className="text-[11px] text-slate-500">
               Try adjusting your search criteria or filter options above.
             </p>
           </div>
@@ -404,16 +407,16 @@ export function SessionActivityFeed({
             {/* Desktop / Tablet Table View */}
             <div className="hidden sm:block overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-100/80 text-slate-600 font-extrabold uppercase tracking-wider text-[10px] border-b border-slate-200">
+                <thead className="bg-slate-950/90 text-cyan-400/90 font-mono text-[10px] tracking-widest uppercase border-b border-slate-800">
                   <tr>
                     <th className="py-3 px-4">Action</th>
                     <th className="py-3 px-4">User Details</th>
                     <th className="py-3 px-4">Role / Department</th>
-                    <th className="py-3 px-4">Date</th>
-                    <th className="py-3 px-4 text-right">Exact Time</th>
+                    <th className="py-3 px-4">Timestamp</th>
+                    <th className="py-3 px-4 text-right">Exact Telemetry</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100/90 bg-white font-medium">
+                <tbody className="divide-y divide-slate-800/60 bg-[#0a0f1d]/60 font-medium">
                   {filteredActivities.map((log) => {
                     const roleConfig = getRoleBadge(log.role);
                     const RoleIcon = roleConfig.icon;
@@ -421,11 +424,11 @@ export function SessionActivityFeed({
                     const ActionIcon = actionConfig.icon;
 
                     return (
-                      <tr key={log.id} className="hover:bg-slate-50/70 transition-colors">
+                      <tr key={log.id} className="hover:bg-slate-900/60 transition-colors">
                         {/* Action Pill */}
                         <td className="py-3 px-4 whitespace-nowrap">
                           <span
-                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border ${actionConfig.className}`}
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider border ${actionConfig.className}`}
                           >
                             <ActionIcon className={`h-3 w-3 ${actionConfig.iconClass} shrink-0`} />
                             <span>{actionConfig.label}</span>
@@ -435,7 +438,7 @@ export function SessionActivityFeed({
                         {/* User Info */}
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-2.5">
-                            <div className="h-8 w-8 rounded-xl bg-slate-900 text-white font-black text-[11px] flex items-center justify-center shrink-0">
+                            <div className="h-8 w-8 rounded-xl bg-slate-900 border border-slate-700/80 text-cyan-400 font-mono font-bold text-[11px] flex items-center justify-center shrink-0">
                               {log.fullName
                                 .split(" ")
                                 .map((n) => n[0])
@@ -444,13 +447,13 @@ export function SessionActivityFeed({
                                 .toUpperCase()}
                             </div>
                             <div>
-                              <p className="font-bold text-slate-900 leading-snug">
+                              <p className="font-bold text-white leading-snug">
                                 {log.fullName}
                               </p>
                               <div className="flex items-center gap-1.5 text-[11px] text-slate-400 mt-0.5 font-mono">
-                                <span className="font-bold text-slate-600">{log.identifier}</span>
-                                <span>•</span>
-                                <span className="truncate max-w-[160px]">{log.email}</span>
+                                <span className="font-bold text-cyan-400">{log.identifier}</span>
+                                <span className="text-slate-600">•</span>
+                                <span className="truncate max-w-[160px] text-slate-400">{log.email}</span>
                               </div>
                             </div>
                           </div>
@@ -460,12 +463,12 @@ export function SessionActivityFeed({
                         <td className="py-3 px-4">
                           <div className="space-y-1">
                             <span
-                              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold border ${roleConfig.className}`}
+                              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold border ${roleConfig.className}`}
                             >
                               <RoleIcon className="h-3 w-3" />
                               <span>{roleConfig.label}</span>
                             </span>
-                            <p className="text-[11px] text-slate-500 truncate max-w-[180px]">
+                            <p className="text-[11px] text-slate-400 truncate max-w-[180px]">
                               {log.departmentName}
                             </p>
                           </div>
@@ -473,19 +476,19 @@ export function SessionActivityFeed({
 
                         {/* Date */}
                         <td className="py-3 px-4 whitespace-nowrap">
-                          <div className="flex items-center gap-1.5 text-slate-700 font-semibold">
-                            <Calendar className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                          <div className="flex items-center gap-1.5 text-slate-200 font-medium">
+                            <Calendar className="h-3.5 w-3.5 text-slate-500 shrink-0" />
                             <span>{log.formattedDate}</span>
                           </div>
-                          <span className="text-[10px] text-slate-400 block mt-0.5">
+                          <span className="text-[10px] text-cyan-400/80 font-mono block mt-0.5">
                             {log.relativeTime}
                           </span>
                         </td>
 
                         {/* Exact Time */}
                         <td className="py-3 px-4 whitespace-nowrap text-right">
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-900 font-mono font-bold text-xs">
-                            <Clock className="h-3 w-3 text-slate-500" />
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-900/90 border border-slate-800 text-cyan-300 font-mono font-bold text-xs">
+                            <Clock className="h-3 w-3 text-cyan-400" />
                             <span>{log.formattedTime}</span>
                           </span>
                         </td>
@@ -497,7 +500,7 @@ export function SessionActivityFeed({
             </div>
 
             {/* Mobile Native Card View (visible below sm breakpoint) */}
-            <div className="sm:hidden divide-y divide-slate-100 bg-white">
+            <div className="sm:hidden divide-y divide-slate-800/60 bg-[#0a0f1d]/60">
               {filteredActivities.map((log) => {
                 const roleConfig = getRoleBadge(log.role);
                 const RoleIcon = roleConfig.icon;
@@ -509,21 +512,21 @@ export function SessionActivityFeed({
                     {/* Top Row: Action Pill + Time Badge */}
                     <div className="flex items-center justify-between gap-2">
                       <span
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border ${actionConfig.className}`}
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider border ${actionConfig.className}`}
                       >
                         <ActionIcon className={`h-3 w-3 ${actionConfig.iconClass} shrink-0`} />
                         <span>{actionConfig.label}</span>
                       </span>
 
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 text-slate-800 font-mono font-bold text-[11px]">
-                        <Clock className="h-3 w-3 text-slate-500" />
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-900/90 border border-slate-800 text-cyan-300 font-mono font-bold text-[11px]">
+                        <Clock className="h-3 w-3 text-cyan-400" />
                         <span>{log.formattedTime}</span>
                       </span>
                     </div>
 
                     {/* Middle Row: User Details */}
                     <div className="flex items-center gap-2.5">
-                      <div className="h-8 w-8 rounded-xl bg-slate-900 text-white font-black text-[11px] flex items-center justify-center shrink-0">
+                      <div className="h-8 w-8 rounded-xl bg-slate-900 border border-slate-700/80 text-cyan-400 font-mono font-bold text-[11px] flex items-center justify-center shrink-0">
                         {log.fullName
                           .split(" ")
                           .map((n) => n[0])
@@ -532,35 +535,35 @@ export function SessionActivityFeed({
                           .toUpperCase()}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="font-bold text-slate-900 text-xs truncate">
+                        <p className="font-bold text-white text-xs truncate">
                           {log.fullName}
                         </p>
-                        <div className="flex items-center gap-1 text-[11px] text-slate-500 font-mono truncate">
-                          <span className="font-bold text-slate-700">{log.identifier}</span>
-                          <span>•</span>
+                        <div className="flex items-center gap-1 text-[11px] text-slate-400 font-mono truncate">
+                          <span className="font-bold text-cyan-400">{log.identifier}</span>
+                          <span className="text-slate-600">•</span>
                           <span className="truncate">{log.email}</span>
                         </div>
                       </div>
                     </div>
 
                     {/* Bottom Row: Role & Department + Date */}
-                    <div className="flex items-center justify-between pt-1.5 border-t border-slate-100 text-[11px]">
+                    <div className="flex items-center justify-between pt-1.5 border-t border-slate-800/60 text-[11px]">
                       <div className="flex items-center gap-1.5 min-w-0">
                         <span
-                          className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold border ${roleConfig.className}`}
+                          className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold border ${roleConfig.className}`}
                         >
                           <RoleIcon className="h-2.5 w-2.5" />
                           <span>{roleConfig.label}</span>
                         </span>
-                        <span className="text-slate-500 text-[10px] truncate max-w-[140px]">
+                        <span className="text-slate-400 text-[10px] truncate max-w-[140px]">
                           {log.departmentName}
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-1.5 text-slate-500 text-[10px] font-medium shrink-0">
-                        <Calendar className="h-3 w-3 text-slate-400" />
+                      <div className="flex items-center gap-1.5 text-slate-400 text-[10px] font-medium shrink-0">
+                        <Calendar className="h-3 w-3 text-slate-500" />
                         <span>{log.formattedDate}</span>
-                        <span className="text-emerald-700 font-bold">({log.relativeTime})</span>
+                        <span className="text-cyan-400 font-mono font-bold">({log.relativeTime})</span>
                       </div>
                     </div>
                   </div>

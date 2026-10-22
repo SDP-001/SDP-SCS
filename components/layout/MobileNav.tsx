@@ -77,7 +77,7 @@ export function MobileNav({ role, unreadNotifications = 0 }: MobileNavProps) {
   else if (role === "ADMIN") links = adminLinks;
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-slate-200 px-2 pt-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] shadow-lift">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#070a14]/95 backdrop-blur-2xl border-t border-cyan-500/20 px-2 pt-2 pb-[max(0.6rem,env(safe-area-inset-bottom))] shadow-[0_-10px_30px_rgba(0,0,0,0.8)]">
       <nav className="flex items-center justify-around">
         {links.map((link) => {
           const Icon = link.icon;
@@ -87,28 +87,28 @@ export function MobileNav({ role, unreadNotifications = 0 }: MobileNavProps) {
               key={link.href}
               href={link.href}
               className={cn(
-                "flex flex-col items-center justify-center py-1 px-2.5 rounded-lg text-xs font-medium transition-colors relative",
+                "flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-xs font-bold transition-all relative",
                 isActive
-                  ? "text-primary-600 font-bold"
-                  : "text-slate-500 hover:text-slate-800",
-                link.highlight && "text-primary-600"
+                  ? "text-cyan-400"
+                  : "text-slate-400 hover:text-white",
+                link.highlight && "text-cyan-300"
               )}
             >
               <div className="relative">
                 <Icon
                   className={cn(
-                    "h-5 w-5 mb-0.5",
-                    isActive ? "text-primary-600 scale-110" : "text-slate-500",
-                    link.highlight && "text-primary-600"
+                    "h-5 w-5 mb-0.5 transition-all",
+                    isActive ? "text-cyan-400 scale-110 drop-shadow-[0_0_8px_rgba(6,182,212,0.6)]" : "text-slate-500",
+                    link.highlight && "text-cyan-400"
                   )}
                 />
                 {link.badge && link.badge > 0 ? (
-                  <span className="absolute -top-1 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">
+                  <span className="absolute -top-1 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-cyan-500 text-[9px] font-mono font-bold text-black shadow-[0_0_8px_#00f0ff] animate-pulse">
                     {link.badge}
                   </span>
                 ) : null}
               </div>
-              <span className="text-[10px] tracking-tight">{link.label}</span>
+              <span className="text-[10px] tracking-wider uppercase font-mono">{link.label}</span>
             </Link>
           );
         })}

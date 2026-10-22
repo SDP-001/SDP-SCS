@@ -8,22 +8,24 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow-sm hover:bg-primary-700 hover:shadow",
+          "bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:shadow-[0_0_20px_rgba(6,182,212,0.5)] hover:brightness-110",
         navy:
-          "bg-navy-900 text-white shadow-sm hover:bg-navy-800 hover:shadow",
+          "bg-slate-900 text-white border border-slate-700/80 shadow-sm hover:bg-slate-800 hover:border-cyan-500/40",
         destructive:
-          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+          "bg-rose-600 text-white shadow-[0_0_15px_rgba(244,63,94,0.3)] hover:bg-rose-500 hover:shadow-[0_0_20px_rgba(244,63,94,0.5)]",
         outline:
-          "border border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50 hover:text-slate-900",
+          "border border-slate-700/80 bg-slate-900/80 text-slate-200 shadow-sm hover:bg-slate-800 hover:text-white hover:border-cyan-500/40",
         secondary:
-          "bg-slate-100 text-slate-900 shadow-sm hover:bg-slate-200",
+          "bg-slate-800 text-slate-100 shadow-sm hover:bg-slate-700 hover:text-white",
         ghost:
-          "hover:bg-slate-100 hover:text-slate-900 text-slate-600",
-        link: "text-primary underline-offset-4 hover:underline",
+          "hover:bg-slate-800/80 hover:text-white text-slate-300",
+        link: "text-cyan-400 underline-offset-4 hover:underline",
         success:
-          "bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 hover:shadow",
+          "bg-emerald-600 text-white shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:bg-emerald-500 hover:shadow-[0_0_20px_rgba(16,185,129,0.5)]",
         warning:
-          "bg-amber-600 text-white shadow-sm hover:bg-amber-700 hover:shadow",
+          "bg-amber-600 text-white shadow-[0_0_15px_rgba(245,158,11,0.3)] hover:bg-amber-500 hover:shadow-[0_0_20px_rgba(245,158,11,0.5)]",
+        cyber:
+          "bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 text-black font-extrabold shadow-[0_0_15px_rgba(6,182,212,0.4)] hover:shadow-[0_0_25px_rgba(6,182,212,0.7)] hover:brightness-110",
       },
       size: {
         default: "h-10 px-4 py-2",

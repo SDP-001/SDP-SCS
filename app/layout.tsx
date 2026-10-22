@@ -46,14 +46,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={`${inter.variable} dark`}>
       <head>
         <link rel="icon" type="image/png" href="/nec-logo.png" />
         <link rel="icon" href="/favicon.ico" />
         <link rel="shortcut icon" type="image/png" href="/nec-logo.png" />
         <link rel="apple-touch-icon" href="/nec-logo.png" />
       </head>
-      <body className="min-h-screen bg-slate-50 text-slate-900 font-sans antialiased selection:bg-primary-500 selection:text-white">
+      <body className="min-h-screen bg-[#070913] text-slate-100 font-sans antialiased selection:bg-cyan-500 selection:text-black cyber-grid-bg">
         {children}
         <script
           dangerouslySetInnerHTML={{

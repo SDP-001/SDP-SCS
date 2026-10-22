@@ -34,13 +34,14 @@ export function StatusBadge({ status, className, size = "default" }: StatusBadge
       return (
         <span
           className={cn(
-            "inline-flex items-center rounded-full bg-emerald-50 text-emerald-700 border border-emerald-300 font-medium",
+            "inline-flex items-center rounded-full bg-emerald-950/70 text-emerald-300 border border-emerald-500/40 font-mono text-[11px] shadow-[0_0_12px_rgba(16,185,129,0.25)] ring-1 ring-emerald-500/20 uppercase tracking-wider",
             sizeClasses[size],
             className
           )}
         >
-          <CheckCircle2 className={cn("text-emerald-600", iconSizes[size])} />
-          <span>✓ Approved</span>
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping shrink-0" />
+          <CheckCircle2 className={cn("text-emerald-400", iconSizes[size])} />
+          <span>Verified</span>
         </span>
       );
 
@@ -48,13 +49,13 @@ export function StatusBadge({ status, className, size = "default" }: StatusBadge
       return (
         <span
           className={cn(
-            "inline-flex items-center rounded-full bg-blue-50 text-blue-700 border border-blue-300 font-medium",
+            "inline-flex items-center rounded-full bg-cyan-950/70 text-cyan-300 border border-cyan-500/40 font-mono text-[11px] shadow-[0_0_12px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/20 uppercase tracking-wider",
             sizeClasses[size],
             className
           )}
         >
-          <Clock className={cn("text-blue-600", iconSizes[size])} />
-          <span>⏳ Pending</span>
+          <Clock className={cn("text-cyan-400", iconSizes[size])} />
+          <span>Queueing</span>
         </span>
       );
 
@@ -62,13 +63,13 @@ export function StatusBadge({ status, className, size = "default" }: StatusBadge
       return (
         <span
           className={cn(
-            "inline-flex items-center rounded-full bg-indigo-50 text-indigo-700 border border-indigo-300 font-medium",
+            "inline-flex items-center rounded-full bg-indigo-950/70 text-indigo-300 border border-indigo-500/40 font-mono text-[11px] shadow-[0_0_12px_rgba(99,102,241,0.25)] ring-1 ring-indigo-500/20 uppercase tracking-wider",
             sizeClasses[size],
             className
           )}
         >
-          <Search className={cn("text-indigo-600", iconSizes[size])} />
-          <span>🔍 Under Review</span>
+          <Search className={cn("text-indigo-400", iconSizes[size])} />
+          <span>Evaluating</span>
         </span>
       );
 
@@ -76,13 +77,13 @@ export function StatusBadge({ status, className, size = "default" }: StatusBadge
       return (
         <span
           className={cn(
-            "inline-flex items-center rounded-full bg-amber-50 text-amber-800 border border-amber-300 font-medium",
+            "inline-flex items-center rounded-full bg-amber-950/70 text-amber-300 border border-amber-500/40 font-mono text-[11px] shadow-[0_0_12px_rgba(245,158,11,0.25)] ring-1 ring-amber-500/20 uppercase tracking-wider",
             sizeClasses[size],
             className
           )}
         >
-          <AlertTriangle className={cn("text-amber-600", iconSizes[size])} />
-          <span>⚠ Correction Required</span>
+          <AlertTriangle className={cn("text-amber-400", iconSizes[size])} />
+          <span>Action Req</span>
         </span>
       );
 
@@ -90,13 +91,13 @@ export function StatusBadge({ status, className, size = "default" }: StatusBadge
       return (
         <span
           className={cn(
-            "inline-flex items-center rounded-full bg-rose-50 text-rose-700 border border-rose-300 font-medium",
+            "inline-flex items-center rounded-full bg-rose-950/70 text-rose-300 border border-rose-500/40 font-mono text-[11px] shadow-[0_0_12px_rgba(244,63,94,0.25)] ring-1 ring-rose-500/20 uppercase tracking-wider",
             sizeClasses[size],
             className
           )}
         >
-          <XCircle className={cn("text-rose-600", iconSizes[size])} />
-          <span>✕ Rejected</span>
+          <XCircle className={cn("text-rose-400", iconSizes[size])} />
+          <span>Rejected</span>
         </span>
       );
 
@@ -105,13 +106,13 @@ export function StatusBadge({ status, className, size = "default" }: StatusBadge
       return (
         <span
           className={cn(
-            "inline-flex items-center rounded-full bg-slate-100 text-slate-700 border border-slate-300 font-medium",
+            "inline-flex items-center rounded-full bg-slate-900/90 text-slate-300 border border-slate-700/80 font-mono text-[11px] uppercase tracking-wider",
             sizeClasses[size],
             className
           )}
         >
-          <FileEdit className={cn("text-slate-600", iconSizes[size])} />
-          <span>📝 Draft</span>
+          <FileEdit className={cn("text-slate-400", iconSizes[size])} />
+          <span>Draft</span>
         </span>
       );
   }

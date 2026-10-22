@@ -39,16 +39,16 @@ interface CustomDeptTooltipProps {
 function CustomDeptTooltip({ active, payload, label }: CustomDeptTooltipProps) {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white/95 backdrop-blur-md px-3.5 py-2.5 rounded-xl border border-slate-200/90 shadow-xl text-xs space-y-1.5 z-50">
-        <p className="font-black text-slate-800 text-xs border-b border-slate-100 pb-1">{label}</p>
+      <div className="bg-[#070a14]/95 backdrop-blur-md px-3.5 py-2.5 rounded-xl border border-cyan-500/30 shadow-[0_0_20px_rgba(0,0,0,0.8)] text-xs space-y-1.5 z-50">
+        <p className="font-bold text-cyan-300 font-mono text-xs border-b border-slate-800 pb-1">{label}</p>
         <div className="space-y-1">
           {payload.map((entry, index) => (
             <div key={`entry-${index}`} className="flex items-center justify-between gap-4 text-[11px]">
-              <span className="flex items-center gap-1.5 text-slate-600 font-medium">
+              <span className="flex items-center gap-1.5 text-slate-300 font-medium">
                 <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: entry.color }} />
                 {entry.name}:
               </span>
-              <span className="font-extrabold text-slate-900 bg-slate-100 px-1.5 py-0.5 rounded text-[11px]">
+              <span className="font-mono font-bold text-white bg-slate-900 border border-slate-800 px-1.5 py-0.5 rounded text-[11px]">
                 {entry.value}
               </span>
             </div>
@@ -66,38 +66,36 @@ export function DepartmentDistributionChart({
   subtitle = "Approved certificates and points earned across academic departments",
 }: DepartmentDistributionChartProps) {
   return (
-    <Card className="p-5 border-slate-200 bg-white">
-      <div className="mb-4">
-        <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">{title}</h3>
-        <p className="text-xs text-slate-500">{subtitle}</p>
+    <Card className="p-5 sm:p-6 rounded-3xl bg-[#0d1322]/90 border border-slate-800/80 shadow-2xl relative overflow-hidden backdrop-blur-xl space-y-4">
+      {/* Laser Top Accent */}
+      <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-80" />
+
+      <div>
+        <div className="flex items-center gap-2">
+          <h3 className="text-sm font-black text-white uppercase tracking-wider">{title}</h3>
+          <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />
+        </div>
+        <p className="text-xs text-slate-400 font-mono mt-0.5">{subtitle}</p>
       </div>
 
       <div className="h-72 w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1e293b" />
             <XAxis
               dataKey="department"
               tickLine={false}
               axisLine={false}
-              tick={{ fontSize: 11, fill: "#64748b" }}
+              tick={{ fontSize: 11, fill: "#94a3b8" }}
             />
             <YAxis
               tickLine={false}
               axisLine={false}
-              tick={{ fontSize: 11, fill: "#64748b" }}
+              tick={{ fontSize: 11, fill: "#94a3b8" }}
             />
             <Tooltip
               content={<CustomDeptTooltip />}
-              contentStyle={{
-                backgroundColor: "#ffffff",
-                borderRadius: "12px",
-                border: "1px solid #e2e8f0",
-                boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
-                color: "#0f172a",
-                fontSize: "12px",
-              }}
-              cursor={{ fill: "#f8fafc" }}
+              cursor={{ fill: "rgba(148, 163, 184, 0.05)" }}
             />
             <Legend
               wrapperStyle={{ fontSize: "11px", paddingTop: "10px" }}
@@ -106,7 +104,7 @@ export function DepartmentDistributionChart({
             <Bar
               dataKey="approved"
               name="Approved Certs"
-              fill="#0284c7"
+              fill="#06b6d4"
               radius={[4, 4, 0, 0]}
             />
             <Bar

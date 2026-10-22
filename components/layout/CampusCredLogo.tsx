@@ -63,9 +63,9 @@ export function CampusCredLogo({
     <div className={`flex items-center gap-3 group select-none ${className}`}>
       {/* Official Nandha Engineering College Emblem with Attractive Aura */}
       <div className="relative shrink-0">
-        <div className="absolute -inset-1 bg-gradient-to-r from-primary-500/20 to-emerald-500/20 rounded-xl blur-xs opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500/30 to-emerald-500/30 rounded-xl blur-xs opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         <div
-          className="relative flex items-center justify-center rounded-xl bg-white p-1.5 border border-slate-200/90 shadow-2xs hover:shadow-md transition-all duration-200 overflow-hidden ring-1 ring-slate-900/5 group-hover:scale-[1.02]"
+          className="relative flex items-center justify-center rounded-xl bg-white p-1.5 border border-cyan-500/30 shadow-[0_0_10px_rgba(6,182,212,0.2)] hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] transition-all duration-200 overflow-hidden group-hover:scale-[1.02]"
           style={{ height: size, width: emblemWidth }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -80,19 +80,19 @@ export function CampusCredLogo({
       {showText && (
         <div className="flex flex-col">
           <div className="flex items-center gap-1.5">
-            <span className={`font-black text-xl tracking-tight leading-tight ${isDark ? "text-white" : "text-slate-900"}`}>
-              NEC <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 to-emerald-500">Portal</span>
+            <span className="font-black text-xl tracking-tight leading-tight text-white">
+              NEC <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">PORTAL</span>
             </span>
-            <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-primary-500/15 text-primary-400 border border-primary-500/30 tracking-wider">
+            <span className="text-[9px] font-mono font-bold uppercase px-1.5 py-0.5 rounded bg-cyan-950/80 text-cyan-300 border border-cyan-500/30 tracking-wider">
               Autonomous
             </span>
           </div>
           {subtitle ? (
-            <span className={`text-[11px] font-medium tracking-tight leading-none mt-0.5 ${isDark ? "text-slate-300" : "text-slate-500"}`}>
+            <span className="text-[11px] font-mono tracking-tight leading-none mt-0.5 text-slate-400">
               {subtitle}
             </span>
           ) : (
-            <span className={`text-[10px] font-semibold tracking-tight leading-none mt-0.5 ${isDark ? "text-slate-400" : "text-slate-500"}`}>
+            <span className="text-[10px] font-mono tracking-tight leading-none mt-0.5 text-slate-400">
               Nandha Engineering College • Erode
             </span>
           )}

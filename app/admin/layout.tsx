@@ -22,7 +22,7 @@ export default async function AdminLayout({
   ).length;
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen bg-[#070913] text-slate-100 flex cyber-grid-bg">
       <Sidebar
         role={user.profile.role}
         userName={user.profile.full_name}

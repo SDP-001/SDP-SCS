@@ -77,6 +77,19 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        cyber: {
+          bg: "#070913",
+          surface: "#0b0f19",
+          card: "#0d1322",
+          cardHover: "#121b30",
+          border: "#1e293b",
+          cyan: "#06b6d4",
+          neonCyan: "#00f0ff",
+          emerald: "#10b981",
+          violet: "#8b5cf6",
+          amber: "#f59e0b",
+          rose: "#f43f5e",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -90,6 +103,10 @@ const config: Config = {
         glow: "0 0 25px -5px rgba(12, 141, 233, 0.4)",
         "glow-emerald": "0 0 25px -5px rgba(16, 185, 129, 0.4)",
         "glow-amber": "0 0 25px -5px rgba(245, 158, 11, 0.4)",
+        "cyber-cyan": "0 0 25px rgba(6, 182, 212, 0.35)",
+        "cyber-emerald": "0 0 25px rgba(16, 185, 129, 0.35)",
+        "cyber-violet": "0 0 25px rgba(139, 92, 246, 0.35)",
+        "cyber-card": "0 12px 36px -4px rgba(0, 0, 0, 0.65)",
       },
       keyframes: {
         float: {
@@ -116,6 +133,10 @@ const config: Config = {
           "0%": { transform: "scale(0.95)", opacity: "0" },
           "100%": { transform: "scale(1)", opacity: "1" },
         },
+        scanline: {
+          "0%": { transform: "translateY(-100%)" },
+          "100%": { transform: "translateY(1000%)" },
+        },
       },
       animation: {
         float: "float 4s ease-in-out infinite",
@@ -124,6 +145,7 @@ const config: Config = {
         "glow-pulse": "glow-pulse 4s ease-in-out infinite",
         "gradient-x": "gradient-x 5s ease infinite",
         "scale-in": "scale-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+        scanline: "scanline 8s linear infinite",
       },
     },
   },
