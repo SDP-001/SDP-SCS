@@ -40,9 +40,7 @@ export function Dialog({ open, onOpenChange, children }: DialogProps) {
         aria-hidden="true"
       />
       {/* Content wrapper */}
-      <div className="relative z-50 w-full max-w-lg overflow-hidden rounded-3xl bg-[#0d1322]/95 border border-slate-800 text-slate-100 p-6 sm:p-7 shadow-[0_0_50px_rgba(0,0,0,0.85)] backdrop-blur-xl transition-all animate-in fade-in zoom-in-95 duration-200">
-        {/* Laser Top Accent */}
-        <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-80" />
+      <div className="relative z-50 w-full max-w-lg overflow-hidden rounded-3xl bg-white border border-slate-200 text-slate-900 p-6 sm:p-7 shadow-2xl transition-all animate-in fade-in zoom-in-95 duration-200">
         {children}
       </div>
     </div>
@@ -67,7 +65,7 @@ export function DialogHeader({ className, children, ...props }: React.HTMLAttrib
 
 export function DialogTitle({ className, children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
-    <h2 className={cn("text-xl font-black text-white tracking-tight", className)} {...props}>
+    <h2 className={cn("text-xl font-bold text-slate-900 tracking-tight", className)} {...props}>
       {children}
     </h2>
   );
@@ -75,7 +73,7 @@ export function DialogTitle({ className, children, ...props }: React.HTMLAttribu
 
 export function DialogDescription({ className, children, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
   return (
-    <p className={cn("text-sm text-slate-400 font-mono", className)} {...props}>
+    <p className={cn("text-sm text-slate-500", className)} {...props}>
       {children}
     </p>
   );
@@ -83,7 +81,7 @@ export function DialogDescription({ className, children, ...props }: React.HTMLA
 
 export function DialogFooter({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 mt-6 pt-4 border-t border-slate-800/80", className)} {...props}>
+    <div className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 mt-6 pt-4 border-t border-slate-100", className)} {...props}>
       {children}
     </div>
   );
@@ -93,7 +91,7 @@ export function DialogClose({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="absolute right-4 top-4 rounded-xl p-1.5 text-slate-400 hover:bg-slate-800/80 hover:text-white border border-transparent hover:border-slate-700 transition-colors focus:outline-none"
+      className="absolute right-4 top-4 rounded-xl p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors focus:outline-none"
       aria-label="Close"
     >
       <X className="h-4 w-4" />

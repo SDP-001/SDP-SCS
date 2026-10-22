@@ -118,33 +118,33 @@ export function Sidebar({
       : "/admin/dashboard";
 
   return (
-    <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 z-40 bg-[#070a14]/95 border-r border-cyan-500/20 backdrop-blur-2xl shadow-2xl">
+    <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 z-40 bg-white border-r border-slate-200/90 shadow-xs">
       {/* Brand Header */}
-      <div className="h-16 flex items-center px-6 border-b border-cyan-500/15 bg-slate-950/40">
+      <div className="h-16 flex items-center px-6 border-b border-slate-100 bg-white">
         <Link href={homeUrl}>
-          <CampusCredLogo size={32} isDark={true} />
+          <CampusCredLogo size={32} isDark={false} />
         </Link>
       </div>
 
       {/* Role Pill & Dept Info */}
-      <div className="px-5 py-3.5 bg-slate-950/60 border-b border-slate-800/80">
+      <div className="px-5 py-3.5 bg-slate-50/70 border-b border-slate-100">
         <div className="flex items-center justify-between">
-          <span className="text-[10px] font-mono font-bold tracking-wider uppercase px-2 py-0.5 rounded-full bg-cyan-950/80 text-cyan-300 border border-cyan-500/40 shadow-[0_0_8px_rgba(6,182,212,0.2)]">
+          <span className="text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200/80">
             {role}
           </span>
           {departmentName && (
-            <span className="text-[11px] font-mono font-semibold text-slate-400 truncate max-w-[120px]">
+            <span className="text-[11px] font-medium text-slate-500 truncate max-w-[120px]">
               {departmentName}
             </span>
           )}
         </div>
-        <p className="text-xs font-bold text-white mt-1.5 truncate">
+        <p className="text-xs font-bold text-slate-900 mt-1.5 truncate">
           {userName}
         </p>
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex-1 px-3 py-4 space-y-1.5 overflow-y-auto">
+      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         {links.map((link) => {
           if (link.href === "/student/profile" && role === "STUDENT") {
             return (
@@ -160,23 +160,23 @@ export function Sidebar({
               key={link.href}
               href={link.href}
               className={cn(
-                "group flex items-center justify-between px-3 py-2.5 text-xs font-bold rounded-xl transition-all duration-200",
+                "group flex items-center justify-between px-3 py-2.5 text-xs rounded-xl transition-all duration-200",
                 isActive
-                  ? "bg-gradient-to-r from-cyan-950/80 via-slate-900 to-indigo-950/50 text-cyan-300 border-l-2 border-cyan-400 shadow-[inset_0_0_15px_rgba(6,182,212,0.15)]"
-                  : "text-slate-400 hover:bg-slate-900/60 hover:text-white"
+                  ? "bg-blue-50 text-blue-700 font-bold border-r-2 border-blue-600 shadow-2xs"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium"
               )}
             >
               <div className="flex items-center gap-3">
                 <Icon
                   className={cn(
                     "h-4 w-4 transition-colors",
-                    isActive ? "text-cyan-400 drop-shadow-[0_0_8px_rgba(6,182,212,0.5)]" : "text-slate-500 group-hover:text-cyan-400"
+                    isActive ? "text-blue-600" : "text-slate-400 group-hover:text-slate-700"
                   )}
                 />
                 <span className="tracking-wide">{link.label}</span>
               </div>
               {link.badge ? (
-                <span className="inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-mono font-black leading-none text-black bg-cyan-400 rounded-full shadow-[0_0_8px_#00f0ff]">
+                <span className="inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold leading-none text-white bg-blue-600 rounded-full shadow-2xs">
                   {link.badge}
                 </span>
               ) : null}
@@ -185,18 +185,18 @@ export function Sidebar({
         })}
       </nav>
 
-      {/* Telemetry Footer & Logout */}
-      <div className="p-3 border-t border-slate-800/80 bg-slate-950/70 space-y-2">
-        <div className="px-2.5 py-1.5 rounded-lg bg-slate-900/80 border border-slate-800/80 flex items-center justify-between text-[10px] font-mono text-slate-400">
-          <span className="flex items-center gap-1.5 text-emerald-400">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
-            SECURE NODE
+      {/* Institutional Footer & Logout */}
+      <div className="p-3 border-t border-slate-100 bg-slate-50/50 space-y-2">
+        <div className="px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 flex items-center justify-between text-[11px] text-slate-500 font-medium shadow-2xs">
+          <span className="flex items-center gap-1.5 text-emerald-600 font-semibold">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
+            Verified Portal
           </span>
-          <span className="text-slate-500">AUTONOMOUS</span>
+          <span className="text-slate-400 text-[10px]">Autonomous</span>
         </div>
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-3 py-2 text-xs font-bold text-rose-400 hover:text-rose-200 rounded-xl hover:bg-rose-950/40 border border-transparent hover:border-rose-500/30 transition-all cursor-pointer"
+          className="w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold text-rose-600 hover:text-rose-700 rounded-xl hover:bg-rose-50 border border-transparent hover:border-rose-200 transition-all cursor-pointer"
         >
           <LogOut className="h-4 w-4" />
           <span>Sign Out</span>

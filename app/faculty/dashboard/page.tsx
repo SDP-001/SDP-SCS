@@ -121,32 +121,28 @@ export default async function FacultyDashboardPage() {
   return (
     <div className="space-y-8 pb-28 md:pb-8">
       {/* Faculty Identity Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#0a0e1a] via-[#0f172a] to-[#0a0e1a] text-white p-6 sm:p-8 border border-emerald-500/30 shadow-[0_0_35px_rgba(16,185,129,0.12)] cyber-hud-corner">
-        {/* Ambient Neon Halos */}
-        <div className="absolute -top-16 -right-16 w-80 h-80 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none animate-pulse-halo" />
-        <div className="absolute -bottom-16 -left-16 w-80 h-80 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none animate-float-gentle" />
-
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white p-6 sm:p-8 shadow-sm">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
             <div className="flex flex-wrap items-center gap-2 mb-2.5">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-950/80 text-emerald-300 text-xs font-mono font-bold border border-emerald-500/40 shadow-[0_0_10px_rgba(16,185,129,0.25)]">
-                <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
-                <span>FACULTY_NODE // {user?.faculty?.department?.code || "CSE"} EVALUATOR</span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 text-white text-xs font-semibold backdrop-blur-md">
+                <ShieldCheck className="h-3.5 w-3.5 text-blue-200" />
+                <span>{user?.faculty?.department?.code || "CSE"} Faculty Reviewer</span>
               </span>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-slate-900/90 text-slate-300 text-[11px] font-mono border border-slate-700/80">
-                Autonomous Verification Suite
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-white/10 text-blue-100 text-[11px] font-medium backdrop-blur-md">
+                Verification Portal
               </span>
             </div>
 
-            <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-white drop-shadow-sm">
+            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
               {user?.profile.full_name}
             </h2>
-            <div className="text-xs text-slate-400 mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 font-mono">
-              <span>Designation: <span className="text-emerald-300 font-semibold">{user?.faculty?.designation || "Faculty"}</span></span>
-              <span className="hidden sm:inline text-slate-600">•</span>
+            <div className="text-xs text-blue-100 mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+              <span>Designation: <span className="text-white font-semibold">{user?.faculty?.designation || "Faculty"}</span></span>
+              <span className="hidden sm:inline text-blue-200">•</span>
               <span>
                 Employee ID:{" "}
-                <span className="font-mono font-bold text-cyan-300 bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-500/30">
+                <span className="font-mono font-bold text-white bg-white/20 px-2 py-0.5 rounded">
                   {user?.faculty?.employee_id}
                 </span>
               </span>
@@ -155,8 +151,8 @@ export default async function FacultyDashboardPage() {
 
           <div className="flex flex-wrap items-center gap-2.5">
             <Link href="/faculty/reviews">
-              <Button className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white text-xs font-bold h-11 px-5 rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.35)] flex items-center justify-center hover:scale-105 active:scale-95 transition-all">
-                <FileCheck2 className="h-4 w-4 mr-2" />
+              <Button className="bg-white hover:bg-slate-50 text-blue-700 font-bold text-xs h-11 px-5 rounded-xl shadow-sm flex items-center justify-center transition-all">
+                <FileCheck2 className="h-4 w-4 mr-2 text-blue-600" />
                 <span>Open Review Queue ({pendingQueue.length + underReview.length})</span>
               </Button>
             </Link>
@@ -170,21 +166,21 @@ export default async function FacultyDashboardPage() {
       {/* Department Review Queue Table */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-4">
-          <div className="flex items-center justify-between pb-1 border-b border-slate-800/80">
+          <div className="flex items-center justify-between pb-1 border-b border-slate-200">
             <div>
-              <h3 className="text-base font-bold text-white tracking-tight flex items-center gap-2">
+              <h3 className="text-base font-bold text-slate-900 tracking-tight flex items-center gap-2">
                 <span>Active Verification Queue</span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-cyan-950/80 text-cyan-300 border border-cyan-500/30">
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
                   {urgentSubmissions.length} Pending
                 </span>
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 Department certificates awaiting primary proof evaluation
               </p>
             </div>
             <Link
               href="/faculty/reviews"
-              className="text-xs font-mono font-bold text-cyan-400 hover:text-cyan-300 inline-flex items-center gap-1 transition-colors"
+              className="text-xs font-bold text-blue-600 hover:text-blue-700 inline-flex items-center gap-1 transition-colors"
             >
               <span>View full queue</span>
               <ArrowRight className="h-3.5 w-3.5" />
@@ -192,26 +188,26 @@ export default async function FacultyDashboardPage() {
           </div>
 
           {urgentSubmissions.length === 0 ? (
-            <Card className="p-10 text-center bg-[#0d1322]/85 border-slate-800/80 rounded-2xl shadow-xl">
-              <FileCheck2 className="h-12 w-12 text-emerald-500/40 mx-auto mb-3 animate-pulse" />
-              <p className="text-sm font-bold text-white">Verification Queue is Clear</p>
-              <p className="text-xs text-slate-400 mt-1 font-mono">
-                [ALL_SUBMISSIONS_PROCESSED: NO_PENDING_REVIEWS]
+            <Card className="p-10 text-center bg-white border border-slate-200 rounded-2xl shadow-xs">
+              <FileCheck2 className="h-12 w-12 text-slate-300 mx-auto mb-3" />
+              <p className="text-sm font-bold text-slate-800">Verification Queue is Clear</p>
+              <p className="text-xs text-slate-500 mt-1">
+                All certificate submissions have been processed.
               </p>
             </Card>
           ) : (
-            <div className="overflow-hidden border border-slate-800/80 rounded-2xl bg-[#0d1322]/90 shadow-xl backdrop-blur-xl">
+            <div className="overflow-hidden border border-slate-200 rounded-2xl bg-white shadow-xs">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-950/80 text-cyan-300 font-mono font-bold border-b border-slate-800/80 uppercase tracking-widest text-[10px]">
+                  <thead className="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200 uppercase tracking-wider text-[11px]">
                     <tr>
-                      <th className="py-3.5 px-4">Student</th>
-                      <th className="py-3.5 px-4">Achievement & Event</th>
-                      <th className="py-3.5 px-4">Status / Lock</th>
-                      <th className="py-3.5 px-4 text-right">Action</th>
+                      <th className="py-3 px-4">Student</th>
+                      <th className="py-3 px-4">Achievement & Event</th>
+                      <th className="py-3 px-4">Status / Lock</th>
+                      <th className="py-3 px-4 text-right">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/60 font-medium">
+                  <tbody className="divide-y divide-slate-100 font-medium">
                     {urgentSubmissions.map((cert) => {
                       const isLockedByOther =
                         cert.status === "UNDER_REVIEW" &&
@@ -219,22 +215,22 @@ export default async function FacultyDashboardPage() {
                         cert.reviewer_id !== user?.faculty?.id;
 
                       return (
-                        <tr key={cert.id} className="hover:bg-slate-800/50 transition-colors">
+                        <tr key={cert.id} className="hover:bg-slate-50/80 transition-colors">
                           <td className="py-3.5 px-4">
-                            <p className="font-bold text-white">
+                            <p className="font-bold text-slate-900">
                               {cert.student?.profile?.full_name || "Student"}
                             </p>
-                            <p className="text-[11px] font-mono text-cyan-400">
+                            <p className="text-[11px] font-mono text-slate-500">
                               {cert.student?.register_number}
                             </p>
                           </td>
 
                           <td className="py-3.5 px-4 max-w-xs">
-                            <p className="font-bold text-white truncate">{cert.title}</p>
-                            <div className="flex items-center gap-1.5 text-[11px] text-slate-400 mt-0.5">
+                            <p className="font-bold text-slate-900 truncate">{cert.title}</p>
+                            <div className="flex items-center gap-1.5 text-[11px] text-slate-500 mt-0.5">
                               <span className="truncate">{cert.event_name}</span>
                               <span>•</span>
-                              <span className="font-semibold text-slate-300">
+                              <span className="font-semibold text-slate-700">
                                 {cert.category?.name}
                               </span>
                             </div>
@@ -244,7 +240,7 @@ export default async function FacultyDashboardPage() {
                             <div className="space-y-1">
                               <StatusBadge status={cert.status} />
                               {cert.status === "UNDER_REVIEW" && (
-                                <p className="text-[10px] text-slate-400 font-mono truncate">
+                                <p className="text-[10px] text-slate-500 truncate">
                                   {isLockedByOther
                                     ? `Reviewing: ${cert.reviewer?.profile?.full_name || "Faculty"}`
                                     : "Claimed by you"}
@@ -275,7 +271,7 @@ export default async function FacultyDashboardPage() {
                               <Link href={`/faculty/reviews/${cert.id}`}>
                                 <Button
                                   size="sm"
-                                  className="text-xs h-8 px-3 rounded-lg bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-500/40 text-cyan-300 font-mono font-bold shadow-[0_0_10px_rgba(6,182,212,0.2)]"
+                                  className="text-xs h-8 px-3 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 font-semibold"
                                 >
                                   {isLockedByOther ? "Inspect" : "Evaluate →"}
                                 </Button>

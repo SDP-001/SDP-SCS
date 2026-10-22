@@ -22,7 +22,7 @@ export default async function HODLayout({
   ).length;
 
   return (
-    <div className="min-h-screen bg-[#070913] text-slate-100 flex cyber-grid-bg">
+    <div className="min-h-screen bg-[#f8fafc] text-slate-900 flex clean-mesh-bg">
       <Sidebar
         role={user.profile.role}
         userName={user.profile.full_name}

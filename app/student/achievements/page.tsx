@@ -61,55 +61,52 @@ export default async function StudentAchievementWalletPage() {
   return (
     <div className="space-y-8 pb-28 md:pb-8">
       {/* Wallet Header Card */}
-      <div className="relative overflow-hidden p-6 sm:p-8 rounded-3xl bg-slate-900 text-white border border-slate-800 shadow-xl">
-        <div className="absolute -top-12 -right-12 w-64 h-64 bg-primary-500/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-12 -left-12 w-64 h-64 bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />
-
+      <div className="relative overflow-hidden p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white shadow-sm">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-amber-400 text-xs font-bold mb-3">
-              <Sparkles className="h-3.5 w-3.5" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 border border-white/20 text-white text-xs font-semibold mb-3">
+              <Sparkles className="h-3.5 w-3.5 text-blue-200" />
               <span>{tier} Recognition Tier</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
               Institutional Achievement Wallet
             </h1>
-            <p className="text-xs text-slate-400 mt-1 max-w-md leading-relaxed">
+            <p className="text-xs text-blue-100 mt-1 max-w-md leading-relaxed">
               Official faculty-certified co-curricular achievements and verified institutional points for {user?.profile.full_name}.
             </p>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 text-right">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-300">
+            <div className="p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-right">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-blue-200">
                 Verified Points Balance
               </p>
-              <div className="text-3xl font-black text-amber-400 mt-0.5">
-                {totalPoints} <span className="text-xs font-semibold text-slate-300">PTS</span>
+              <div className="text-3xl font-extrabold text-white mt-0.5">
+                {totalPoints} <span className="text-xs font-semibold text-blue-200">PTS</span>
               </div>
             </div>
 
             <DigitalPassportTrigger
               variant="outline"
               label="Passport Pop View"
-              className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 border-0 font-bold text-xs h-12 px-4 shadow-lg"
+              className="bg-white hover:bg-slate-50 text-blue-700 border-0 font-bold text-xs h-12 px-4 shadow-sm"
             />
           </div>
         </div>
 
         {/* Tier Progress Bar */}
-        <div className="relative z-10 mt-6 pt-6 border-t border-slate-800">
+        <div className="relative z-10 mt-6 pt-6 border-t border-white/15">
           <div className="flex items-center justify-between text-xs mb-2">
-            <span className="font-semibold text-slate-300">
+            <span className="font-semibold text-blue-100">
               Tier Progress: <span className="text-white font-bold">{tier}</span> → {nextTier}
             </span>
-            <span className="font-mono text-amber-400 font-bold">
+            <span className="font-mono text-white font-bold">
               {totalPoints} / {target} PTS ({progressPercent}%)
             </span>
           </div>
-          <div className="w-full h-3 rounded-full bg-slate-800 overflow-hidden">
+          <div className="w-full h-3 rounded-full bg-white/20 overflow-hidden">
             <div
-              className={`h-full bg-gradient-to-r ${tierColor} transition-all duration-500`}
+              className={`h-full bg-white transition-all duration-500`}
               style={{ width: `${progressPercent}%` }}
             />
           </div>

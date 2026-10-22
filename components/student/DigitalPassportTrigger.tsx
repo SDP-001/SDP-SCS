@@ -106,10 +106,10 @@ export function DigitalPassportTrigger({
         type="button"
         onClick={handleOpen}
         variant="outline"
-        className={`w-full sm:w-auto border-slate-700 bg-slate-800/90 hover:bg-slate-700 text-slate-200 text-xs h-10 px-4 rounded-xl shadow-sm flex items-center justify-center gap-1.5 transition-all hover:scale-105 active:scale-95 cursor-pointer ${className}`}
+        className={`w-full sm:w-auto border-white/25 bg-white/15 hover:bg-white/25 text-white text-xs h-11 px-4 rounded-xl shadow-xs backdrop-blur-sm flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer ${className}`}
       >
-        <Award className="h-4 w-4 text-amber-400" />
-        <span>{isLoading ? "Loading..." : label}</span>
+        <Award className="h-4 w-4 text-amber-300" />
+        <span className="font-semibold">{isLoading ? "Loading..." : label}</span>
       </Button>
     );
   };

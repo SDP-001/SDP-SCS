@@ -120,227 +120,38 @@
   }
 }
 
-/* Micro-animations and Sheen Utilities */
-.card-sheen {
-  position: relative;
-  overflow: hidden;
-}
-.card-sheen::after {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    60deg,
-    transparent 20%,
-    rgba(255, 255, 255, 0.12) 25%,
-    transparent 30%
-  );
-  transform: translateX(-100%);
-  pointer-events: none;
-  transition: transform 0.75s ease-in-out;
-}
-.group:hover .card-sheen::after,
-.card-sheen:hover::after {
-  transform: translateX(100%);
+/* Clean, Modern Institutional Light Theme Utilities */
+.clean-grid-bg {
+  background-color: #f8fafc;
+  background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
-.animated-gradient-text {
-  background: linear-gradient(135deg, #0284c7 0%, #6366f1 50%, #10b981 100%);
-  background-size: 200% auto;
-  color: transparent;
-  -webkit-background-clip: text;
-  background-clip: text;
-  animation: gradient-x 6s ease infinite;
+.clean-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease-in-out;
 }
 
-.glass-panel {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+.clean-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
 }
 
-@keyframes spinSlow {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes spinReverseSlow {
-  from {
-    transform: rotate(360deg);
-  }
-  to {
-    transform: rotate(0deg);
-  }
-}
-
-@keyframes pulseHalo {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 0.5;
-  }
-  50% {
-    transform: scale(1.12);
-    opacity: 0.9;
-  }
-}
-
-@keyframes floatLevitate {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-10px) rotate(0.5deg);
-  }
-}
-
-@keyframes floatGentle {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-6px);
-  }
-}
-
-@keyframes beamPass {
-  0% {
-    transform: translateX(-150%) skewX(-20deg);
-  }
-  40%, 100% {
-    transform: translateX(250%) skewX(-20deg);
-  }
-}
-
-@keyframes gradientShift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-@keyframes glowBorder {
-  0%, 100% {
-    box-shadow: 0 0 15px rgba(16, 185, 129, 0.35), 0 0 30px rgba(99, 102, 241, 0.2);
-  }
-  50% {
-    box-shadow: 0 0 25px rgba(6, 182, 212, 0.5), 0 0 50px rgba(16, 185, 129, 0.35);
-  }
-}
-
-.animate-spin-slow {
-  animation: spinSlow 20s linear infinite;
-}
-
-.animate-spin-reverse-slow {
-  animation: spinReverseSlow 25s linear infinite;
-}
-
-.animate-pulse-halo {
-  animation: pulseHalo 4s ease-in-out infinite;
-}
-
-.animate-float-levitate {
-  animation: floatLevitate 5s ease-in-out infinite;
-}
-
-.animate-float-gentle {
-  animation: floatGentle 3.5s ease-in-out infinite;
-}
-
-.animate-beam-pass {
-  animation: beamPass 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-
-.animate-gradient-shift {
-  background-size: 200% 200%;
-  animation: gradientShift 6s ease infinite;
-}
-
-.glow-border-pulse {
-  animation: glowBorder 4s ease-in-out infinite;
-}
-
-/* Cyber-Tech Campus Design System */
-.cyber-grid-bg {
-  background-color: #070913;
-  background-image: 
-    linear-gradient(rgba(6, 182, 212, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(6, 182, 212, 0.05) 1px, transparent 1px);
-  background-size: 40px 40px;
-}
-
-.cyber-dots-bg {
-  background-image: radial-gradient(rgba(6, 182, 212, 0.12) 1px, transparent 1px);
-  background-size: 24px 24px;
-}
-
-.cyber-card {
-  background: rgba(13, 19, 34, 0.82);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(30, 41, 59, 0.85);
-  box-shadow: 0 12px 36px -4px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(6, 182, 212, 0.08);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.cyber-card:hover {
-  border-color: rgba(6, 182, 212, 0.45);
-  box-shadow: 0 16px 40px -4px rgba(0, 0, 0, 0.8), 0 0 25px rgba(6, 182, 212, 0.18);
-}
-
-.cyber-hud-corner {
-  position: relative;
-}
-
-.cyber-hud-corner::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 8px;
-  height: 8px;
-  border-top: 2px solid #06b6d4;
-  border-left: 2px solid #06b6d4;
-  pointer-events: none;
-}
-
-.cyber-hud-corner::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 8px;
-  height: 8px;
-  border-bottom: 2px solid #06b6d4;
-  border-right: 2px solid #06b6d4;
-  pointer-events: none;
-}
-
-/* Custom Cyber Scrollbar */
+/* Custom Clean Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #070913;
+  background: #f1f5f9;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: #cbd5e1;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #06b6d4;
+  background: #94a3b8;
 }
+

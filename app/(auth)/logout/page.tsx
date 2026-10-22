@@ -11,7 +11,6 @@ import {
   ArrowLeft,
   CheckCircle2,
   AlertTriangle,
-  User,
   ArrowRight,
 } from "lucide-react";
 
@@ -47,7 +46,7 @@ function LogoutContent() {
       setLoggedOut(true);
       setTimeout(() => {
         router.push("/login");
-      }, 1200);
+      }, 1000);
     } catch (err) {
       router.push("/login");
     } finally {
@@ -67,8 +66,8 @@ function LogoutContent() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center p-8 text-center space-y-3">
-        <span className="h-6 w-6 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
-        <p className="text-xs text-slate-400 font-semibold">Checking active session...</p>
+        <span className="h-6 w-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+        <p className="text-xs text-slate-500 font-medium">Checking active session...</p>
       </div>
     );
   }
@@ -76,23 +75,23 @@ function LogoutContent() {
   // Already Signed Out
   if (loggedOut) {
     return (
-      <div className="relative rounded-2xl sm:rounded-3xl bg-slate-900/85 border border-slate-700/80 shadow-2xl p-6 sm:p-8 text-center space-y-5 backdrop-blur-2xl">
-        <div className="h-16 w-16 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center mx-auto shadow-lg">
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 text-center space-y-5">
+        <div className="h-14 w-14 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center mx-auto shadow-xs">
           <CheckCircle2 className="h-8 w-8" />
         </div>
 
-        <div className="space-y-1.5">
-          <h2 className="text-xl sm:text-2xl font-black text-white">
+        <div className="space-y-1">
+          <h2 className="text-xl font-bold text-slate-900">
             Successfully Signed Out
           </h2>
-          <p className="text-xs text-slate-300 leading-relaxed max-w-sm mx-auto">
-            Your session has been securely closed. All encrypted access tokens on this device have been cleared.
+          <p className="text-xs text-slate-500 leading-relaxed max-w-sm mx-auto">
+            Your session has been securely ended. All credentials on this device have been cleared.
           </p>
         </div>
 
         <div className="pt-2">
           <Link href="/login" className="block w-full">
-            <Button className="w-full h-11 rounded-xl bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white font-black text-xs shadow-lg flex items-center justify-center gap-2">
+            <Button className="w-full h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-xs flex items-center justify-center gap-2 cursor-pointer">
               <span>Sign In Again</span>
               <ArrowRight className="h-4 w-4" />
             </Button>
@@ -102,7 +101,7 @@ function LogoutContent() {
         <div className="pt-1">
           <Link
             href="/login"
-            className="text-xs text-slate-400 hover:text-white transition-colors inline-flex items-center gap-1 font-semibold"
+            className="text-xs text-slate-500 hover:text-slate-800 transition-colors inline-flex items-center gap-1 font-medium"
           >
             <ArrowLeft className="h-3.5 w-3.5" /> Return to Login
           </Link>
@@ -115,10 +114,10 @@ function LogoutContent() {
   const roleName = profile?.role || "USER";
 
   return (
-    <div className="relative rounded-2xl sm:rounded-3xl bg-slate-900/85 border border-slate-700/80 shadow-2xl p-5 sm:p-7 space-y-5 backdrop-blur-2xl">
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-7 space-y-5">
       {/* Session User Identity Card */}
-      <div className="p-4 rounded-2xl bg-slate-800/80 border border-slate-700 flex items-center gap-3.5">
-        <div className="h-12 w-12 rounded-xl bg-slate-900 border border-slate-600 text-white font-black text-sm flex items-center justify-center shrink-0 shadow-md">
+      <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center gap-3">
+        <div className="h-11 w-11 rounded-xl bg-blue-600 text-white font-bold text-sm flex items-center justify-center shrink-0 shadow-xs">
           {profile?.avatar_url ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -138,36 +137,36 @@ function LogoutContent() {
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-black text-white truncate block">
+            <span className="text-sm font-bold text-slate-900 truncate block">
               {profile?.full_name}
             </span>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
               {roleName}
             </span>
           </div>
-          <p className="text-[11px] text-slate-400 truncate mt-0.5">
+          <p className="text-xs text-slate-500 truncate mt-0.5">
             {profile?.email}
           </p>
         </div>
       </div>
 
       {/* Confirmation Message */}
-      <div className="p-3.5 rounded-2xl bg-rose-950/40 border border-rose-500/30 text-rose-200 text-xs flex items-start gap-3">
-        <AlertTriangle className="h-4 w-4 text-rose-400 shrink-0 mt-0.5" />
-        <div className="space-y-0.5 leading-relaxed text-[11px]">
-          <span className="font-bold text-rose-100 block">Sign Out Confirmation</span>
-          <p className="text-rose-200/90">
-            Signing out will securely terminate your active session on this device. You will need to sign in again to submit or verify certificates.
+      <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-start gap-2.5">
+        <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+        <div className="space-y-0.5 leading-relaxed">
+          <span className="font-bold text-amber-900 block">Sign Out Confirmation</span>
+          <p className="text-amber-700">
+            Are you sure you want to sign out? You will need to sign in again to submit or verify certificates.
           </p>
         </div>
       </div>
 
       {/* Actions: Sign Out vs Cancel */}
-      <div className="space-y-2.5 pt-1">
+      <div className="space-y-2 pt-1">
         <Button
           onClick={handleSignOut}
           disabled={signingOut}
-          className="w-full h-11 rounded-xl bg-gradient-to-r from-rose-600 via-rose-500 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white font-black text-xs tracking-wide shadow-lg shadow-rose-950/50 hover:shadow-rose-900/50 active:scale-[0.99] transition-all flex items-center justify-center gap-2"
+          className="w-full h-11 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs tracking-wide shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
         >
           {signingOut ? (
             <>
@@ -177,7 +176,7 @@ function LogoutContent() {
           ) : (
             <>
               <LogOut className="h-4 w-4" />
-              <span>Yes, Sign Out Now</span>
+              <span>Yes, Sign Out</span>
             </>
           )}
         </Button>
@@ -185,20 +184,20 @@ function LogoutContent() {
         <Link href={getDashboardUrl()} className="block w-full">
           <Button
             variant="outline"
-            className="w-full h-11 rounded-xl bg-slate-800 hover:bg-slate-750 border-slate-700 text-slate-300 hover:text-white font-bold text-xs transition-colors"
+            className="w-full h-11 rounded-xl border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-slate-900 font-semibold text-xs transition-colors cursor-pointer"
           >
-            Cancel & Stay Signed In
+            Cancel & Return to Dashboard
           </Button>
         </Link>
       </div>
 
       {/* Security Footer Info */}
-      <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
-        <span className="flex items-center gap-1">
-          <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
+      <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
+        <span className="flex items-center gap-1 text-slate-500 font-medium">
+          <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
           <span>Encrypted Session</span>
         </span>
-        <span className="text-[10px] text-slate-500 font-mono">
+        <span className="text-[10px] text-slate-400 font-mono">
           Session ID Protected
         </span>
       </div>
@@ -208,55 +207,42 @@ function LogoutContent() {
 
 export default function LogoutPage() {
   return (
-    <div className="relative min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between py-6 px-4 sm:px-6 overflow-hidden select-none">
-      {/* Background Neon Glowing Halos */}
-      <div className="fixed top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] bg-gradient-to-tr from-rose-600/15 via-indigo-600/20 to-cyan-500/20 blur-[140px] rounded-full pointer-events-none animate-pulse-halo" />
-      <div className="fixed bottom-1/4 right-1/4 w-[450px] h-[450px] bg-rose-500/10 blur-[130px] rounded-full pointer-events-none animate-float-gentle" />
+    <div className="min-h-screen bg-slate-50 flex flex-col justify-center items-center py-8 px-4 sm:px-6 relative clean-grid-bg">
+      <div className="w-full max-w-md mx-auto my-auto">
+        {/* Back Link */}
+        <div className="mb-4">
+          <Link
+            href="/login"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span>Return to Login</span>
+          </Link>
+        </div>
 
-      {/* Top Header Link */}
-      <div className="relative z-20 max-w-sm sm:max-w-md mx-auto w-full flex items-center justify-between mb-4">
-        <Link
-          href="/login"
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-400 hover:text-white transition-colors group"
-        >
-          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-          <span>Login</span>
-        </Link>
-        <span className="text-[11px] font-semibold text-rose-400 bg-rose-500/10 px-2.5 py-1 rounded-full border border-rose-500/20 flex items-center gap-1">
-          <LogOut className="h-3 w-3" />
-          <span>Secure Sign Out</span>
-        </span>
-      </div>
-
-      <div className="relative z-10 sm:mx-auto sm:w-full sm:max-w-md my-auto">
-        {/* Animated Brand Showcase Header */}
+        {/* Clean Header */}
         <div className="text-center mb-6">
           <Link
             href="/login"
-            className="group relative inline-block cursor-pointer transition-transform duration-500 hover:scale-105 active:scale-95"
-            title="Click to go to Login"
+            className="inline-block transition-transform hover:scale-105 active:scale-95"
+            title="Nandha Engineering College"
           >
-            <div className="absolute -inset-4 rounded-3xl bg-gradient-to-r from-rose-500 via-indigo-500 to-cyan-400 opacity-60 blur-xl group-hover:opacity-100 group-hover:blur-2xl transition-all duration-700 pointer-events-none animate-spin-slow" />
-
-            <div className="relative rounded-2xl p-2 bg-gradient-to-b from-white/30 via-slate-800/80 to-slate-950/90 border border-white/40 shadow-2xl backdrop-blur-xl animate-float-levitate">
-              <div className="relative flex items-center justify-center rounded-xl bg-white px-6 py-3 overflow-hidden shadow-inner">
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none animate-beam-pass" />
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/nec-logo.png"
-                  alt="Nandha Engineering College (NEC) Logo"
-                  className="h-14 sm:h-18 w-auto object-contain drop-shadow-sm select-none"
-                />
-              </div>
+            <div className="p-2.5 rounded-2xl bg-white border border-slate-200 shadow-xs inline-flex items-center justify-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/nec-logo.png"
+                alt="Nandha Engineering College (NEC) Logo"
+                className="h-14 sm:h-16 w-auto object-contain select-none"
+              />
             </div>
           </Link>
 
           <div className="mt-3.5 space-y-1">
-            <h2 className="text-2xl font-black tracking-tight text-white drop-shadow-sm">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
               Sign Out Session
-            </h2>
-            <p className="text-xs text-slate-400">
-              Nandha Engineering College (Autonomous) • Institutional Portal
+            </h1>
+            <p className="text-xs text-slate-500">
+              Nandha Engineering College (Autonomous)
             </p>
           </div>
         </div>
@@ -272,8 +258,8 @@ export default function LogoutPage() {
         </Suspense>
 
         {/* Footer */}
-        <p className="text-center text-[11px] text-slate-500 mt-5">
-          © {new Date().getFullYear()} Nandha Engineering College • Erode, Tamil Nadu
+        <p className="text-center text-xs text-slate-400 mt-5">
+          © {new Date().getFullYear()} Nandha Engineering College • Erode, TN
         </p>
       </div>
     </div>
