@@ -143,6 +143,11 @@ export async function createDepartmentAction(data: {
   name: string;
   code: string;
   type?: DepartmentType;
+  hodName?: string;
+  hodEmail?: string;
+  hodPhone?: string;
+  hodEmployeeId?: string;
+  hodDesignation?: string;
 }) {
   const user = await requireRole(["ADMIN"]);
   const db = getDB();
@@ -151,11 +156,14 @@ export async function createDepartmentAction(data: {
     return { success: false, error: "Name and code are required" };
   }
 
+  const cleanName = data.name.trim();
+  const cleanCode = data.code.toUpperCase().trim();
+
   const existing = db.departments.find(
     (d) =>
       d.college_id === user.profile.college_id &&
-      (d.code.toLowerCase() === data.code.toLowerCase().trim() ||
-        d.name.toLowerCase() === data.name.toLowerCase().trim())
+      (d.code.toLowerCase() === cleanCode.toLowerCase() ||
+        d.name.toLowerCase() === cleanName.toLowerCase())
   );
   if (existing) {
     return { success: false, error: "Department code or name already exists" };
@@ -166,8 +174,8 @@ export async function createDepartmentAction(data: {
   const newDept: Department = {
     id: crypto.randomUUID(),
     college_id: user.profile.college_id,
-    name: data.name.trim(),
-    code: data.code.toUpperCase().trim(),
+    name: cleanName,
+    code: cleanCode,
     type: deptType,
     is_active: true,
     created_at: new Date().toISOString(),
@@ -175,22 +183,119 @@ export async function createDepartmentAction(data: {
 
   db.departments.push(newDept);
 
+  // If HOD details are provided, create and link the HOD
+  let createdHod = null;
+  if (data.hodName && data.hodName.trim()) {
+    const hodName = data.hodName.trim();
+    const hodEmail = data.hodEmail && data.hodEmail.trim()
+      ? data.hodEmail.toLowerCase().trim()
+      : `hod.${cleanCode.toLowerCase()}@nandhaengg.org`;
+    const hodEmpId = data.hodEmployeeId && data.hodEmployeeId.trim()
+      ? data.hodEmployeeId.toUpperCase().trim()
+      : `FAC-${cleanCode}-001`;
+    const hodPhone = data.hodPhone ? data.hodPhone.trim() : null;
+    const hodDesignation = data.hodDesignation ? data.hodDesignation.trim() : "Professor & Head";
+
+    // Check if an existing profile has this email
+    let hodProfile = db.profiles.find(
+      (p) => p.email.toLowerCase() === hodEmail.toLowerCase()
+    );
+
+    if (hodProfile) {
+      hodProfile.role = "HOD";
+      hodProfile.full_name = hodName;
+      if (hodPhone) hodProfile.phone_number = hodPhone;
+      hodProfile.updated_at = new Date().toISOString();
+    } else {
+      hodProfile = {
+        id: crypto.randomUUID(),
+        college_id: user.profile.college_id,
+        role: "HOD",
+        email: hodEmail,
+        phone_number: hodPhone,
+        full_name: hodName,
+        avatar_url: null,
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      db.profiles.push(hodProfile);
+    }
+
+    if (!db.passwords) db.passwords = {};
+    if (!db.passwords[hodProfile.id]) {
+      db.passwords[hodProfile.id] = "password123";
+    }
+
+    let existingFaculty = db.faculty.find((f) => f.profile_id === hodProfile!.id);
+    if (existingFaculty) {
+      existingFaculty.department_id = newDept.id;
+      existingFaculty.designation = hodDesignation;
+      existingFaculty.employee_id = hodEmpId;
+      existingFaculty.is_hod = true;
+      createdHod = existingFaculty;
+    } else {
+      createdHod = {
+        id: crypto.randomUUID(),
+        profile_id: hodProfile.id,
+        college_id: user.profile.college_id,
+        department_id: newDept.id,
+        designation: hodDesignation,
+        employee_id: hodEmpId,
+        is_hod: true,
+        created_at: new Date().toISOString(),
+      };
+      db.faculty.push(createdHod);
+    }
+
+    await logAuditEvent({
+      collegeId: user.profile.college_id,
+      actorId: user.profile.id,
+      action: "USER_CREATED",
+      entityType: "FACULTY",
+      entityId: createdHod.id,
+      metadata: {
+        role: "HOD",
+        name: hodName,
+        email: hodEmail,
+        employeeId: hodEmpId,
+        department: cleanCode,
+      },
+    });
+  }
+
   await logAuditEvent({
     collegeId: user.profile.college_id,
     actorId: user.profile.id,
     action: "CONFIGURATION_CHANGED",
     entityType: "DEPARTMENT",
     entityId: newDept.id,
-    metadata: { name: data.name, code: data.code, type: deptType },
+    metadata: {
+      name: newDept.name,
+      code: newDept.code,
+      type: deptType,
+      hodAssigned: !!data.hodName,
+    },
   });
 
   safeRevalidate("/admin/departments");
-  return { success: true, department: newDept };
+  safeRevalidate("/admin/users");
+  return { success: true, department: newDept, hod: createdHod };
 }
 
 export async function updateDepartmentAction(
   id: string,
-  data: { name: string; code: string; type?: DepartmentType; is_active?: boolean }
+  data: {
+    name: string;
+    code: string;
+    type?: DepartmentType;
+    is_active?: boolean;
+    hodName?: string;
+    hodEmail?: string;
+    hodPhone?: string;
+    hodEmployeeId?: string;
+    hodDesignation?: string;
+  }
 ) {
   const user = await requireRole(["ADMIN"]);
   const db = getDB();
@@ -202,13 +307,16 @@ export async function updateDepartmentAction(
     return { success: false, error: "Department not found" };
   }
 
+  const cleanName = data.name.trim();
+  const cleanCode = data.code.toUpperCase().trim();
+
   // Check collision with other departments
   const collision = db.departments.find(
     (d) =>
       d.id !== id &&
       d.college_id === user.profile.college_id &&
-      (d.code.toLowerCase() === data.code.toLowerCase().trim() ||
-        d.name.toLowerCase() === data.name.toLowerCase().trim())
+      (d.code.toLowerCase() === cleanCode.toLowerCase() ||
+        d.name.toLowerCase() === cleanName.toLowerCase())
   );
   if (collision) {
     return {
@@ -217,13 +325,69 @@ export async function updateDepartmentAction(
     };
   }
 
-  dept.name = data.name.trim();
-  dept.code = data.code.toUpperCase().trim();
+  dept.name = cleanName;
+  dept.code = cleanCode;
   if (data.type) {
     dept.type = data.type;
   }
   if (data.is_active !== undefined) {
     dept.is_active = data.is_active;
+  }
+
+  // Update or assign HOD if provided
+  if (data.hodName !== undefined) {
+    const currentHod = db.faculty.find((f) => f.department_id === id && f.is_hod);
+    if (data.hodName.trim()) {
+      const hodName = data.hodName.trim();
+      const hodEmail = data.hodEmail && data.hodEmail.trim()
+        ? data.hodEmail.toLowerCase().trim()
+        : `hod.${cleanCode.toLowerCase()}@nandhaengg.org`;
+      const hodEmpId = data.hodEmployeeId && data.hodEmployeeId.trim()
+        ? data.hodEmployeeId.toUpperCase().trim()
+        : `FAC-${cleanCode}-001`;
+      const hodPhone = data.hodPhone ? data.hodPhone.trim() : null;
+      const hodDesignation = data.hodDesignation ? data.hodDesignation.trim() : "Professor & Head";
+
+      if (currentHod) {
+        const hodProfile = db.profiles.find((p) => p.id === currentHod.profile_id);
+        if (hodProfile) {
+          hodProfile.full_name = hodName;
+          hodProfile.email = hodEmail;
+          if (hodPhone) hodProfile.phone_number = hodPhone;
+          hodProfile.updated_at = new Date().toISOString();
+        }
+        currentHod.employee_id = hodEmpId;
+        currentHod.designation = hodDesignation;
+      } else {
+        const newProfile: Profile = {
+          id: crypto.randomUUID(),
+          college_id: user.profile.college_id,
+          role: "HOD",
+          email: hodEmail,
+          phone_number: hodPhone,
+          full_name: hodName,
+          avatar_url: null,
+          is_active: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        };
+        db.profiles.push(newProfile);
+        if (!db.passwords) db.passwords = {};
+        db.passwords[newProfile.id] = "password123";
+
+        const newFaculty: Faculty = {
+          id: crypto.randomUUID(),
+          profile_id: newProfile.id,
+          college_id: user.profile.college_id,
+          department_id: id,
+          designation: hodDesignation,
+          employee_id: hodEmpId,
+          is_hod: true,
+          created_at: new Date().toISOString(),
+        };
+        db.faculty.push(newFaculty);
+      }
+    }
   }
 
   await logAuditEvent({
@@ -241,6 +405,7 @@ export async function updateDepartmentAction(
   });
 
   safeRevalidate("/admin/departments");
+  safeRevalidate("/admin/users");
   return { success: true, department: dept };
 }
 

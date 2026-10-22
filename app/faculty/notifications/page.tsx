@@ -45,7 +45,7 @@ export default function FacultyNotificationsPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 max-w-4xl mx-auto pb-28 md:pb-8">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">

@@ -123,7 +123,7 @@ export default async function AdminDashboardPage() {
     .slice(0, 5);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-28 md:pb-8">
       {/* Admin Executive Identity Banner */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-4 sm:p-7 lg:p-8 border border-slate-800 shadow-xl">
         {/* Ambient Gradient Glows */}

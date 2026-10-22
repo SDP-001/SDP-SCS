@@ -39,6 +39,8 @@ async function runTests() {
     report("PWA Manifest", false, err.message);
   }
 
+
+
   // TEST 2: Service Worker
   try {
     const res = await fetch(`${BASE_URL}/sw.js`);

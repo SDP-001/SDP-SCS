@@ -5,7 +5,7 @@ import { getDB } from "@/lib/db/store";
 import { certificateFormSchema, CertificateFormData } from "@/lib/validators/certificate";
 import { logAuditEvent } from "@/lib/audit/logger";
 import { sendNotification } from "@/lib/notifications/dispatcher";
-import { calculateSHA256, checkForDuplicateHash, validateCertificateFile } from "@/lib/storage/client";
+import { calculateSHA256, checkForDuplicateHash, validateCertificateFile, saveCertificateFile } from "@/lib/storage/client";
 import { Certificate, CertificateFile, EventLevel } from "@/types/database.types";
 import { revalidatePath } from "next/cache";
 
@@ -76,6 +76,7 @@ export async function createCertificateAction(formData: CertificateFormData, fil
       created_at: new Date().toISOString(),
     };
 
+    saveCertificateFile(storagePath, buffer, fileData.mimeType, fileData.originalFilename);
     filesToInsert.push(newFile);
   }
 
@@ -221,6 +222,7 @@ export async function resubmitCertificateAction(
       created_at: new Date().toISOString(),
     };
 
+    saveCertificateFile(newFile.storage_path, buffer, newFileData.mimeType, newFileData.originalFilename);
     db.certificateFiles.push(newFile);
   }
 

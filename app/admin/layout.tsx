@@ -39,7 +39,7 @@ export default async function AdminLayout({
           title="Dean & Administrator Portal"
         />
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-20 md:pb-8">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-28 md:pb-8">
           {children}
         </main>
 

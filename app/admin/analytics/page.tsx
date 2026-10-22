@@ -25,7 +25,7 @@ export default async function AdminAnalyticsPage() {
   }));
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-28 md:pb-8">
       <div>
         <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
           Institutional Analytics & Accreditation Metrics

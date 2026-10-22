@@ -2,9 +2,11 @@
 
 import React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { CampusCredLogo } from "./CampusCredLogo";
 import { UserRole } from "@/types/database.types";
-import { Bell, Sparkles, LogOut } from "lucide-react";
+import { Bell, Sparkles, LogOut, ArrowLeft } from "lucide-react";
+import { DigitalPassportTrigger } from "@/components/student/DigitalPassportTrigger";
 import { cn } from "@/lib/utils/cn";
 
 interface NavbarProps {
@@ -24,6 +26,17 @@ export function Navbar({
   avatarUrl,
   unreadCount = 0,
 }: NavbarProps) {
+  const router = useRouter();
+
+  const homeUrl =
+    role === "STUDENT"
+      ? "/student/dashboard"
+      : role === "FACULTY"
+      ? "/faculty/dashboard"
+      : role === "HOD"
+      ? "/hod/dashboard"
+      : "/admin/dashboard";
+
   const notifUrl =
     role === "STUDENT"
       ? "/student/notifications"
@@ -42,10 +55,20 @@ export function Navbar({
 
   return (
     <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-slate-200/80 bg-white/90 px-4 md:px-8 backdrop-blur-md">
-      {/* Left: Mobile Logo & Title */}
+      {/* Left: Back Button, Mobile Logo & Title */}
       <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1 mr-2">
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="inline-flex items-center justify-center h-9 w-9 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 transition-all shadow-2xs hover:scale-105 active:scale-95 shrink-0 cursor-pointer"
+          title="Go Back in App"
+          aria-label="Go Back"
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </button>
+
         <div className="md:hidden shrink-0">
-          <Link href="/">
+          <Link href={homeUrl}>
             <CampusCredLogo size={28} showText={false} />
           </Link>
         </div>
@@ -64,17 +87,12 @@ export function Navbar({
         </div>
       </div>
 
-      {/* Right: Notifications & User Card */}
+      {/* Right: Notifications, Digital Passport Pop View & User Card */}
       <div className="flex items-center gap-2.5 sm:gap-3">
-
         {role === "STUDENT" && (
-          <Link
-            href="/student/profile"
-            className="hidden xl:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-amber-500/10 via-amber-500/20 to-amber-600/10 text-amber-900 border border-amber-300 hover:shadow-sm transition-all"
-          >
-            <Sparkles className="h-3.5 w-3.5 text-amber-600" />
-            <span>Digital Passport</span>
-          </Link>
+          <div className="hidden xl:block">
+            <DigitalPassportTrigger variant="navbar" label="Digital Passport" />
+          </div>
         )}
 
         <Link

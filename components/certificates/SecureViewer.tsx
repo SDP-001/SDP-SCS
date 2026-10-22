@@ -36,6 +36,7 @@ export function SecureViewer({ files, title, isDuplicateFlagged }: SecureViewerP
     files[0]?.id || ""
   );
   const [copiedHash, setCopiedHash] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   // Full View & Zoom States
   const [isFullView, setIsFullView] = useState(false);
@@ -101,6 +102,34 @@ export function SecureViewer({ files, title, isDuplicateFlagged }: SecureViewerP
   const downloadUrl = `/api/files/download?path=${encodeURIComponent(
     selectedFile.storage_path
   )}&filename=${encodeURIComponent(selectedFile.original_filename)}`;
+
+  const handleDownload = async (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    try {
+      setIsDownloading(true);
+      const targetUrl = `${downloadUrl}&download=1`;
+      const response = await fetch(targetUrl);
+      if (!response.ok) throw new Error("File fetch failed");
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      const downloadName = selectedFile.original_filename;
+      link.download = downloadName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => window.URL.revokeObjectURL(blobUrl), 1000);
+    } catch {
+      // Fallback direct window location navigation
+      window.location.href = `${downloadUrl}&download=1`;
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   const handleCopyHash = () => {
     navigator.clipboard.writeText(selectedFile.file_hash);
@@ -186,16 +215,17 @@ export function SecureViewer({ files, title, isDuplicateFlagged }: SecureViewerP
               <span>Full View</span>
             </Button>
 
-            <a
-              href={downloadUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white/10 hover:bg-white/20 text-white transition-colors h-9"
-              title="Download original file"
+            <Button
+              onClick={handleDownload}
+              disabled={isDownloading}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition-colors h-9 shadow-sm"
+              title="Download official certificate file"
             >
-              <Download className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Download</span>
-            </a>
+              <Download className={`h-3.5 w-3.5 ${isDownloading ? "animate-bounce" : ""}`} />
+              <span className="hidden sm:inline">
+                {isDownloading ? "Downloading..." : "Download"}
+              </span>
+            </Button>
           </div>
         </div>
 
@@ -221,14 +251,22 @@ export function SecureViewer({ files, title, isDuplicateFlagged }: SecureViewerP
             title="Click to open Full View modal"
           >
             {/* Certificate Preview Element */}
-            <img
-              src={downloadUrl}
-              alt={title}
-              className="max-h-[460px] w-auto object-contain mx-auto transition-transform duration-200 group-hover:scale-[1.01]"
-              onError={(e) => {
-                (e.target as HTMLElement).style.display = "none";
-              }}
-            />
+            {isPdf ? (
+              <iframe
+                src={downloadUrl}
+                title={title}
+                className="w-full h-[460px] rounded-xl border border-slate-300 shadow-sm bg-white pointer-events-none"
+              />
+            ) : (
+              <img
+                src={downloadUrl}
+                alt={title}
+                className="max-h-[460px] w-auto object-contain mx-auto transition-transform duration-200 group-hover:scale-[1.01]"
+                onError={(e) => {
+                  (e.target as HTMLElement).style.display = "none";
+                }}
+              />
+            )}
 
             {/* Hover Full View Backdrop Overlay */}
             <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 backdrop-blur-[2px]">
@@ -357,6 +395,21 @@ export function SecureViewer({ files, title, isDuplicateFlagged }: SecureViewerP
                 <span className="hidden md:inline">Rotate</span>
               </Button>
 
+              {/* Download Button in Modal */}
+              <Button
+                onClick={handleDownload}
+                disabled={isDownloading}
+                variant="outline"
+                size="sm"
+                className="h-7 sm:h-9 px-2 sm:px-3 bg-emerald-600/90 hover:bg-emerald-600 border-emerald-500/50 text-white rounded-xl text-xs font-semibold shadow-sm"
+                title="Download Certificate"
+              >
+                <Download className={`h-3.5 w-3.5 sm:mr-1.5 ${isDownloading ? "animate-bounce" : ""}`} />
+                <span className="hidden md:inline">
+                  {isDownloading ? "Downloading..." : "Download"}
+                </span>
+              </Button>
+
               {/* Print Button */}
               <Button
                 onClick={handlePrint}
@@ -394,12 +447,20 @@ export function SecureViewer({ files, title, isDuplicateFlagged }: SecureViewerP
               }}
               className="w-full max-w-4xl max-h-[82vh] flex items-center justify-center relative z-10 px-2 sm:px-4"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={downloadUrl}
-                alt={title}
-                className="w-full h-auto max-h-[80vh] object-contain rounded-2xl shadow-2xl border border-slate-700/80 bg-white ring-1 ring-white/20 transition-shadow duration-300 hover:shadow-primary-500/10"
-              />
+              {isPdf ? (
+                <iframe
+                  src={downloadUrl}
+                  title={title}
+                  className="w-full h-[78vh] rounded-2xl shadow-2xl border border-slate-700 bg-white"
+                />
+              ) : (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img
+                  src={downloadUrl}
+                  alt={title}
+                  className="w-full h-auto max-h-[80vh] object-contain rounded-2xl shadow-2xl border border-slate-700/80 bg-white ring-1 ring-white/20 transition-shadow duration-300 hover:shadow-primary-500/10"
+                />
+              )}
             </div>
           </div>
 

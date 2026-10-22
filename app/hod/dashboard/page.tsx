@@ -84,7 +84,7 @@ export default async function HODDashboardPage() {
   );
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pb-28 md:pb-8">
       {/* Top Banner */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-6 sm:p-8 border border-slate-800 shadow-xl">
         {/* Ambient Gradient Glows */}

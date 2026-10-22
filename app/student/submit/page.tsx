@@ -14,7 +14,7 @@ export default async function SubmitCertificatePage() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-28 md:pb-8">
       {/* Breadcrumb Header */}
       <div>
         <Link

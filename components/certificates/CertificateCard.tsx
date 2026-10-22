@@ -1,12 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { Certificate, CertificateFile, Category, PointRecord } from "@/types/database.types";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Card } from "@/components/ui/card";
-import { Calendar, Award, Building, FileText, ChevronRight, AlertCircle, Clock } from "lucide-react";
+import { Calendar, Award, Building, FileText, ChevronRight, AlertCircle, Clock, Eye } from "lucide-react";
 import { formatDate, formatDateTime } from "@/lib/utils/formatters";
+import { CertificatePopViewModal } from "./CertificatePopViewModal";
 
 interface CertificateCardProps {
   certificate: Certificate & {
@@ -18,6 +19,7 @@ interface CertificateCardProps {
 }
 
 export function CertificateCard({ certificate, baseHref = "/student/certificates" }: CertificateCardProps) {
+  const [isPopOpen, setIsPopOpen] = useState(false);
   const latestPoints = certificate.points?.find((p) => p.is_latest)?.points;
   const primaryFile = certificate.files?.find((f) => f.file_type === "PRIMARY");
   const targetHref = `${baseHref}/${certificate.id}`;
@@ -96,12 +98,12 @@ export function CertificateCard({ certificate, baseHref = "/student/certificates
         </div>
 
         {/* Footer bar */}
-        <div className="px-5 py-3 bg-slate-50/70 border-t border-slate-100 flex items-center justify-between">
+        <div className="px-5 py-3 bg-slate-50/70 border-t border-slate-100 flex items-center justify-between gap-2">
           <div>
             {certificate.status === "APPROVED" && latestPoints !== undefined ? (
               <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
                 <Award className="h-3.5 w-3.5 text-emerald-600" />
-                +{latestPoints} Points Awarded
+                +{latestPoints} PTS
               </span>
             ) : (
               <span className="text-xs text-slate-400 flex items-center gap-1 font-mono">
@@ -111,12 +113,44 @@ export function CertificateCard({ certificate, baseHref = "/student/certificates
             )}
           </div>
 
-          <div className="inline-flex items-center gap-1 text-xs font-semibold text-primary-600 group-hover:text-primary-700 group-hover:translate-x-0.5 transition-all">
-            <span>View Details</span>
-            <ChevronRight className="h-3.5 w-3.5" />
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsPopOpen(true);
+              }}
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold text-primary-700 bg-primary-50 hover:bg-primary-100 border border-primary-200/80 transition-all shadow-2xs hover:scale-105 active:scale-95"
+              title="Open Certificate Pop View"
+            >
+              <Eye className="h-3.5 w-3.5 text-primary-600" />
+              <span>Pop View</span>
+            </button>
+
+            <div className="inline-flex items-center gap-0.5 text-xs font-semibold text-slate-500 group-hover:text-primary-700 transition-colors">
+              <span className="hidden sm:inline">Details</span>
+              <ChevronRight className="h-3.5 w-3.5" />
+            </div>
           </div>
         </div>
       </Card>
+
+      <CertificatePopViewModal
+        isOpen={isPopOpen}
+        onClose={() => setIsPopOpen(false)}
+        title={certificate.title}
+        achievementId={certificate.achievement_id}
+        status={certificate.status}
+        points={latestPoints}
+        eventName={certificate.event_name}
+        organizer={certificate.organizer}
+        eventDate={certificate.event_date}
+        eventLevel={certificate.event_level}
+        achievement={certificate.achievement}
+        submittedAt={certificate.submitted_at || certificate.created_at}
+        files={certificate.files || []}
+      />
     </Link>
   );
 }

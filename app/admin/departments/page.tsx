@@ -40,6 +40,10 @@ import {
   Briefcase,
   TrendingUp,
   Laptop,
+  UserCheck,
+  Mail,
+  Phone,
+  Hash,
 } from "lucide-react";
 
 interface DepartmentData {
@@ -53,9 +57,11 @@ interface DepartmentData {
   hod?: {
     id: string;
     designation: string;
+    employee_id?: string;
     profile?: {
       full_name: string;
       email: string;
+      phone_number?: string | null;
     };
   };
 }
@@ -73,6 +79,11 @@ export default function AdminDepartmentsPage() {
   const [addName, setAddName] = useState("");
   const [addCode, setAddCode] = useState("");
   const [addType, setAddType] = useState<DepartmentType>("UG");
+  const [addHodName, setAddHodName] = useState("");
+  const [addHodEmail, setAddHodEmail] = useState("");
+  const [addHodPhone, setAddHodPhone] = useState("");
+  const [addHodEmpId, setAddHodEmpId] = useState("");
+  const [addHodDesignation, setAddHodDesignation] = useState("Professor & Head");
 
   // Edit Department State
   const [editingDept, setEditingDept] = useState<DepartmentData | null>(null);
@@ -80,6 +91,11 @@ export default function AdminDepartmentsPage() {
   const [editCode, setEditCode] = useState("");
   const [editType, setEditType] = useState<DepartmentType>("UG");
   const [editActive, setEditActive] = useState(true);
+  const [editHodName, setEditHodName] = useState("");
+  const [editHodEmail, setEditHodEmail] = useState("");
+  const [editHodPhone, setEditHodPhone] = useState("");
+  const [editHodEmpId, setEditHodEmpId] = useState("");
+  const [editHodDesignation, setEditHodDesignation] = useState("Professor & Head");
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -100,6 +116,20 @@ export default function AdminDepartmentsPage() {
     fetchDepts();
   }, []);
 
+  const handleAddCodeChange = (val: string) => {
+    const code = val.toUpperCase();
+    setAddCode(code);
+    const trimmed = code.trim();
+    if (trimmed) {
+      if (!addHodEmail || addHodEmail.startsWith("hod.")) {
+        setAddHodEmail(`hod.${trimmed.toLowerCase()}@nandhaengg.org`);
+      }
+      if (!addHodEmpId || addHodEmpId.startsWith("FAC-")) {
+        setAddHodEmpId(`FAC-${trimmed}-001`);
+      }
+    }
+  };
+
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!addName.trim() || !addCode.trim()) {
@@ -114,6 +144,11 @@ export default function AdminDepartmentsPage() {
         name: addName.trim(),
         code: addCode.trim().toUpperCase(),
         type: addType,
+        hodName: addHodName.trim(),
+        hodEmail: addHodEmail.trim(),
+        hodPhone: addHodPhone.trim(),
+        hodEmployeeId: addHodEmpId.trim(),
+        hodDesignation: addHodDesignation.trim(),
       });
       if (!res.success) {
         setError(res.error || "Failed to create department");
@@ -124,9 +159,18 @@ export default function AdminDepartmentsPage() {
       setAddName("");
       setAddCode("");
       setAddType("UG");
+      setAddHodName("");
+      setAddHodEmail("");
+      setAddHodPhone("");
+      setAddHodEmpId("");
+      setAddHodDesignation("Professor & Head");
       setShowAdd(false);
-      setSuccessMsg(`Department ${res.department?.code} (${res.department?.type}) created successfully.`);
-      setTimeout(() => setSuccessMsg(null), 3500);
+      setSuccessMsg(
+        `Department ${res.department?.code} (${res.department?.type}) created successfully${
+          addHodName ? ` with HOD ${addHodName}` : ""
+        }.`
+      );
+      setTimeout(() => setSuccessMsg(null), 4000);
       await fetchDepts();
     } catch (err: any) {
       setError(err?.message || "An error occurred");
@@ -141,6 +185,11 @@ export default function AdminDepartmentsPage() {
     setEditCode(dept.code);
     setEditType(dept.type || "UG");
     setEditActive(dept.is_active);
+    setEditHodName(dept.hod?.profile?.full_name || "");
+    setEditHodEmail(dept.hod?.profile?.email || (dept.code ? `hod.${dept.code.toLowerCase()}@nandhaengg.org` : ""));
+    setEditHodPhone(dept.hod?.profile?.phone_number || "");
+    setEditHodEmpId(dept.hod?.employee_id || (dept.code ? `FAC-${dept.code.toUpperCase()}-001` : ""));
+    setEditHodDesignation(dept.hod?.designation || "Professor & Head");
     setError(null);
   };
 
@@ -161,6 +210,11 @@ export default function AdminDepartmentsPage() {
         code: editCode.trim().toUpperCase(),
         type: editType,
         is_active: editActive,
+        hodName: editHodName.trim(),
+        hodEmail: editHodEmail.trim(),
+        hodPhone: editHodPhone.trim(),
+        hodEmployeeId: editHodEmpId.trim(),
+        hodDesignation: editHodDesignation.trim(),
       });
 
       if (!res.success) {
@@ -319,7 +373,7 @@ export default function AdminDepartmentsPage() {
     });
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pb-28 md:pb-8">
       {/* Executive Engineering & Postgraduate Governance Header Banner */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-6 sm:p-8 border border-slate-800 shadow-xl">
         <div className="absolute -top-16 -right-16 w-72 h-72 bg-primary-500/20 rounded-full blur-3xl pointer-events-none" />
@@ -625,18 +679,45 @@ export default function AdminDepartmentsPage() {
                     </div>
 
                     {/* HOD Leadership Box */}
-                    <div className="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-100 mb-4 text-xs">
-                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block mb-1">
-                        Head of Department (HOD)
-                      </span>
+                    <div className="p-3.5 rounded-2xl bg-gradient-to-br from-slate-50 to-emerald-50/30 border border-slate-200/80 mb-4 text-xs space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="font-bold text-slate-800 text-xs truncate max-w-[180px]">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 flex items-center gap-1">
+                          <UserCheck className="h-3 w-3 text-emerald-600" />
+                          Head of Dept (HOD)
+                        </span>
+                        {dept.hod?.employee_id && (
+                          <span className="font-mono text-[9px] font-bold px-1.5 py-0.5 rounded bg-white border border-slate-200 text-slate-600">
+                            {dept.hod.employee_id}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-baseline justify-between gap-1">
+                        <span className="font-bold text-slate-900 text-xs truncate">
                           {dept.hod?.profile?.full_name || "Unassigned"}
                         </span>
-                        <span className="text-[10px] text-slate-500 font-medium">
+                        <span className="text-[10px] text-slate-500 shrink-0 font-medium">
                           {dept.hod?.designation || "Prof & Head"}
                         </span>
                       </div>
+
+                      {dept.hod?.profile?.email && (
+                        <div className="flex items-center gap-1.5 text-[11px] text-slate-600 truncate pt-0.5 border-t border-slate-100/80">
+                          <Mail className="h-3 w-3 text-slate-400 shrink-0" />
+                          <span className="truncate text-[10.5px] text-slate-600 font-mono">
+                            {dept.hod.profile.email}
+                          </span>
+                        </div>
+                      )}
+
+                      {dept.hod?.profile?.phone_number && (
+                        <div className="flex items-center gap-1.5 text-[11px] text-slate-600 truncate">
+                          <Phone className="h-3 w-3 text-slate-400 shrink-0" />
+                          <span className="text-[10.5px] text-slate-600">
+                            {dept.hod.profile.phone_number}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -689,7 +770,7 @@ export default function AdminDepartmentsPage() {
               </DialogTitle>
             </div>
             <p className="text-xs text-slate-500">
-              Create a new Undergraduate or Postgraduate branch in Nandha Engineering College.
+              Create a new Undergraduate or Postgraduate branch with assigned Head of Department (HOD).
             </p>
           </DialogHeader>
 
@@ -744,34 +825,123 @@ export default function AdminDepartmentsPage() {
               </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
-                Department Name <span className="text-rose-500">*</span>
-              </label>
-              <Input
-                placeholder={
-                  addType === "PG"
-                    ? "e.g. Master of Business Administration or M.E. Embedded Systems"
-                    : "e.g. Electrical and Electronics Engineering"
-                }
-                value={addName}
-                onChange={(e) => setAddName(e.target.value)}
-                required
-                className="text-xs rounded-xl"
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="sm:col-span-2">
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  Department Name <span className="text-rose-500">*</span>
+                </label>
+                <Input
+                  placeholder={
+                    addType === "PG"
+                      ? "e.g. Master of Business Administration or M.E. Embedded Systems"
+                      : "e.g. Electrical and Electronics Engineering"
+                  }
+                  value={addName}
+                  onChange={(e) => setAddName(e.target.value)}
+                  required
+                  className="text-xs rounded-xl"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  Department Code <span className="text-rose-500">*</span>
+                </label>
+                <Input
+                  placeholder={addType === "PG" ? "e.g. ME-ES or MBA" : "e.g. EEE"}
+                  value={addCode}
+                  onChange={(e) => handleAddCodeChange(e.target.value)}
+                  required
+                  className="uppercase text-xs font-mono rounded-xl font-bold"
+                />
+              </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
-                Department Code <span className="text-rose-500">*</span>
-              </label>
-              <Input
-                placeholder={addType === "PG" ? "e.g. ME-ES or MBA" : "e.g. EEE"}
-                value={addCode}
-                onChange={(e) => setAddCode(e.target.value)}
-                required
-                className="uppercase text-xs font-mono rounded-xl font-bold"
-              />
+            {/* Head of Department (HOD) Details Card */}
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-slate-50 to-emerald-50/40 border border-emerald-200/70 space-y-3 shadow-2xs">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <UserCheck className="h-4 w-4 text-emerald-600" />
+                  <span className="text-xs font-black text-slate-900">
+                    Head of Department (HOD) Details
+                  </span>
+                </div>
+                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-100/80 text-emerald-800 border border-emerald-300">
+                  Apex Leadership
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-500 leading-tight">
+                Specify the HOD name, official email, employee ID, and contact number for this branch.
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                    HOD Full Name
+                  </label>
+                  <Input
+                    placeholder="e.g. Dr. S. Prabakaran"
+                    value={addHodName}
+                    onChange={(e) => setAddHodName(e.target.value)}
+                    className="text-xs rounded-xl bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                    Academic Designation
+                  </label>
+                  <Input
+                    placeholder="e.g. Professor & Head"
+                    value={addHodDesignation}
+                    onChange={(e) => setAddHodDesignation(e.target.value)}
+                    className="text-xs rounded-xl bg-white"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="sm:col-span-2">
+                  <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                    Official Institutional Email
+                  </label>
+                  <Input
+                    type="email"
+                    placeholder="e.g. hod.eee@nandhaengg.org"
+                    value={addHodEmail}
+                    onChange={(e) => setAddHodEmail(e.target.value)}
+                    className="text-xs rounded-xl bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                    Employee ID
+                  </label>
+                  <Input
+                    placeholder="e.g. FAC-EEE-001"
+                    value={addHodEmpId}
+                    onChange={(e) => setAddHodEmpId(e.target.value)}
+                    className="text-xs font-mono rounded-xl bg-white uppercase font-bold"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                  Contact Phone Number
+                </label>
+                <Input
+                  placeholder="e.g. +91 94432 00101"
+                  value={addHodPhone}
+                  onChange={(e) => setAddHodPhone(e.target.value)}
+                  className="text-xs rounded-xl bg-white"
+                />
+              </div>
+
+              <p className="text-[10px] text-slate-400 italic">
+                * Note: Default initial password for newly created HOD login is <strong className="text-slate-600 font-mono">password123</strong>.
+              </p>
             </div>
 
             <DialogFooter className="gap-2 sm:gap-0 pt-2">
@@ -788,28 +958,28 @@ export default function AdminDepartmentsPage() {
                 disabled={saving}
                 className="bg-primary-600 hover:bg-primary-700 text-white font-bold text-xs rounded-xl shadow-sm"
               >
-                {saving ? "Creating..." : "Save Department"}
+                {saving ? "Creating..." : "Save Department & Assign HOD"}
               </Button>
             </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
 
-      {/* Edit Department Modal (with Programme Level: UG vs PG) */}
+      {/* Edit Department Modal (with Programme Level & HOD Details) */}
       <Dialog
         open={Boolean(editingDept)}
         onOpenChange={(open) => !open && setEditingDept(null)}
       >
-        <DialogContent className="max-w-md bg-white rounded-3xl p-6 shadow-2xl">
+        <DialogContent className="max-w-lg bg-white rounded-3xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <div className="flex items-center gap-2 text-primary-600 mb-1">
               <Pencil className="h-5 w-5" />
               <DialogTitle className="text-base font-black text-slate-900">
-                Edit Department
+                Edit Department & HOD
               </DialogTitle>
             </div>
             <p className="text-xs text-slate-500">
-              Update branch title, degree level (UG/PG), and active enrollment status.
+              Update branch title, degree level (UG/PG), active status, and Head of Department leadership.
             </p>
           </DialogHeader>
 
@@ -864,28 +1034,110 @@ export default function AdminDepartmentsPage() {
               </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
-                Department Name <span className="text-rose-500">*</span>
-              </label>
-              <Input
-                value={editName}
-                onChange={(e) => setEditName(e.target.value)}
-                required
-                className="text-xs rounded-xl"
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="sm:col-span-2">
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  Department Name <span className="text-rose-500">*</span>
+                </label>
+                <Input
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  required
+                  className="text-xs rounded-xl"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  Department Code <span className="text-rose-500">*</span>
+                </label>
+                <Input
+                  value={editCode}
+                  onChange={(e) => setEditCode(e.target.value.toUpperCase())}
+                  required
+                  className="uppercase text-xs font-mono rounded-xl font-bold"
+                />
+              </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
-                Department Code <span className="text-rose-500">*</span>
-              </label>
-              <Input
-                value={editCode}
-                onChange={(e) => setEditCode(e.target.value)}
-                required
-                className="uppercase text-xs font-mono rounded-xl font-bold"
-              />
+            {/* Head of Department (HOD) Assignment Card */}
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-slate-50 to-purple-50/40 border border-purple-200/70 space-y-3 shadow-2xs">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <UserCheck className="h-4 w-4 text-purple-600" />
+                  <span className="text-xs font-black text-slate-900">
+                    Head of Department (HOD) Leadership
+                  </span>
+                </div>
+                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-purple-100/80 text-purple-800 border border-purple-300">
+                  Leadership
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                    HOD Full Name
+                  </label>
+                  <Input
+                    placeholder="e.g. Dr. S. Prabakaran"
+                    value={editHodName}
+                    onChange={(e) => setEditHodName(e.target.value)}
+                    className="text-xs rounded-xl bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                    Designation
+                  </label>
+                  <Input
+                    placeholder="e.g. Professor & Head"
+                    value={editHodDesignation}
+                    onChange={(e) => setEditHodDesignation(e.target.value)}
+                    className="text-xs rounded-xl bg-white"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="sm:col-span-2">
+                  <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                    Official Email
+                  </label>
+                  <Input
+                    type="email"
+                    placeholder="e.g. hod.cse@nandhaengg.org"
+                    value={editHodEmail}
+                    onChange={(e) => setEditHodEmail(e.target.value)}
+                    className="text-xs rounded-xl bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                    Employee ID
+                  </label>
+                  <Input
+                    placeholder="e.g. FAC-CSE-001"
+                    value={editHodEmpId}
+                    onChange={(e) => setEditHodEmpId(e.target.value.toUpperCase())}
+                    className="text-xs font-mono rounded-xl bg-white uppercase font-bold"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                  Contact Phone Number
+                </label>
+                <Input
+                  placeholder="e.g. +91 94432 00101"
+                  value={editHodPhone}
+                  onChange={(e) => setEditHodPhone(e.target.value)}
+                  className="text-xs rounded-xl bg-white"
+                />
+              </div>
             </div>
 
             {/* Active Status Checkbox */}

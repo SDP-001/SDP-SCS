@@ -17,8 +17,8 @@ export function CampusCredLogo({
   isDark = false,
   variant = "standard",
 }: LogoProps) {
-  // Respect official logo's aspect ratio (~1.82)
-  const emblemWidth = Math.round(size * 1.82);
+  // Respect official logo's aspect ratio (~1.46)
+  const emblemWidth = Math.round(size * 1.46);
 
   if (variant === "showcase") {
     return (

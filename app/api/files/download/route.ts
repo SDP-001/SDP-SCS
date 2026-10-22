@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth/session";
+import { getCertificateFile } from "@/lib/storage/client";
 
 export async function GET(req: NextRequest) {
   const user = await getCurrentUser();
@@ -18,7 +19,26 @@ export async function GET(req: NextRequest) {
     });
   }
 
-  // Provide a clean SVG certificate viewer preview for demonstrations & development
+  const isDownload =
+    searchParams.get("download") === "1" ||
+    searchParams.get("download") === "true";
+
+  // If the actual uploaded file is in storage (disk or memory), serve it directly!
+  const stored = getCertificateFile(path);
+  if (stored) {
+    const filename = stored.filename || path.split("/").pop() || "certificate";
+    return new NextResponse(new Uint8Array(stored.buffer), {
+      headers: {
+        "Content-Type": stored.mimeType,
+        "Content-Disposition": isDownload
+          ? `attachment; filename="${encodeURIComponent(filename)}"`
+          : `inline; filename="${encodeURIComponent(filename)}"`,
+        "Cache-Control": "private, max-age=3600",
+      },
+    });
+  }
+
+  // Fallback for seed demonstration records without a physical upload
   const isPdf = path.endsWith(".pdf");
   const fileName = path.split("/").pop() || "certificate";
 
@@ -86,9 +106,19 @@ export async function GET(req: NextRequest) {
     </svg>
   `;
 
+  const requestedFilename = searchParams.get("filename") || fileName;
+
+  const safeFilename = requestedFilename.replace(/[^a-zA-Z0-9._-]/g, "_");
+  const attachmentFilename = safeFilename.toLowerCase().endsWith(".svg")
+    ? safeFilename
+    : `${safeFilename}.svg`;
+
   return new NextResponse(svgContent, {
     headers: {
-      "Content-Type": "image/svg+xml",
+      "Content-Type": "image/svg+xml; charset=utf-8",
+      "Content-Disposition": isDownload
+        ? `attachment; filename="${attachmentFilename}"`
+        : `inline; filename="${safeFilename}"`,
       "Cache-Control": "private, max-age=60",
     },
   });

@@ -78,3 +78,86 @@ export async function generateSignedUrl(
     return `/api/files/download?path=${encodeURIComponent(storagePath)}&expires=${Date.now() + expiresInSeconds * 1000}`;
   }
 }
+
+export interface StoredCertificateFile {
+  buffer: Buffer;
+  mimeType: string;
+  filename: string;
+}
+
+declare global {
+  // eslint-disable-next-line no-var
+  var __CAMPUSCRED_FILE_STORE: Map<string, StoredCertificateFile> | undefined;
+}
+
+function getFileStoreMap(): Map<string, StoredCertificateFile> {
+  if (!globalThis.__CAMPUSCRED_FILE_STORE) {
+    globalThis.__CAMPUSCRED_FILE_STORE = new Map<string, StoredCertificateFile>();
+  }
+  return globalThis.__CAMPUSCRED_FILE_STORE;
+}
+
+export function saveCertificateFile(
+  storagePath: string,
+  buffer: Buffer,
+  mimeType: string,
+  filename: string
+): void {
+  const store = getFileStoreMap();
+  const fileObj: StoredCertificateFile = { buffer, mimeType, filename };
+  store.set(storagePath, fileObj);
+  store.set(filename, fileObj);
+
+  // Also write to local storage directory on disk
+  try {
+    const fs = require("fs");
+    const path = require("path");
+    const uploadsDir = path.join(process.cwd(), ".data", "uploads");
+    const fullPath = path.join(uploadsDir, storagePath);
+    const dir = path.dirname(fullPath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(fullPath, buffer);
+  } catch (err) {
+    console.error("Failed to write certificate file to disk:", err);
+  }
+}
+
+export function getCertificateFile(storagePath: string): StoredCertificateFile | null {
+  const store = getFileStoreMap();
+  if (store.has(storagePath)) {
+    return store.get(storagePath)!;
+  }
+
+  const path = require("path");
+  const filename = path.basename(storagePath);
+  if (store.has(filename)) {
+    return store.get(filename)!;
+  }
+
+  // Check if available on disk
+  try {
+    const fs = require("fs");
+    const uploadsDir = path.join(process.cwd(), ".data", "uploads");
+    const fullPath = path.join(uploadsDir, storagePath);
+    if (fs.existsSync(fullPath)) {
+      const buffer = fs.readFileSync(fullPath);
+      const ext = path.extname(storagePath).toLowerCase();
+      let mimeType = "application/octet-stream";
+      if (ext === ".pdf") mimeType = "application/pdf";
+      else if (ext === ".jpg" || ext === ".jpeg") mimeType = "image/jpeg";
+      else if (ext === ".png") mimeType = "image/png";
+      else if (ext === ".webp") mimeType = "image/webp";
+      else if (ext === ".svg") mimeType = "image/svg+xml";
+
+      const fileObj: StoredCertificateFile = { buffer, mimeType, filename };
+      store.set(storagePath, fileObj);
+      return fileObj;
+    }
+  } catch (err) {
+    console.error("Failed to read certificate file from disk:", err);
+  }
+
+  return null;
+}

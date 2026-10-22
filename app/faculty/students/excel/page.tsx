@@ -25,7 +25,7 @@ export default async function FacultyStudentsExcelPage() {
   const totalEnrolled = db.students.filter((s) => s.department_id === deptId).length;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-28 md:pb-8">
       {/* Header with Navigation */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

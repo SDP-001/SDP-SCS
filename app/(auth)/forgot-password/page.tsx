@@ -134,9 +134,9 @@ export default function ForgotPasswordPage() {
         {/* Animated Brand Showcase Header */}
         <div className="text-center mb-6">
           <Link
-            href="/"
+            href="/login"
             className="group relative inline-block cursor-pointer transition-transform duration-500 hover:scale-105 active:scale-95"
-            title="Click to go to Homepage"
+            title="Click to go to Login"
           >
             {/* Outer Glowing Rotating Halo */}
             <div className="absolute -inset-4 rounded-3xl bg-gradient-to-r from-emerald-500 via-indigo-500 to-cyan-400 opacity-70 blur-xl group-hover:opacity-100 group-hover:blur-2xl transition-all duration-700 pointer-events-none animate-spin-slow" />

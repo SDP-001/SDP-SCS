@@ -20,6 +20,7 @@ import {
   Building,
   User,
 } from "lucide-react";
+import { CertificatePopViewTrigger } from "@/components/certificates/CertificatePopViewTrigger";
 
 export default async function FacultyDashboardPage() {
   const user = await getCurrentUser();
@@ -82,12 +83,16 @@ export default async function FacultyDashboardPage() {
       const category = db.categories.find((cat) => cat.id === c.category_id);
       const reviewer = c.reviewer_id ? db.faculty.find((f) => f.id === c.reviewer_id) : undefined;
       const reviewerProfile = reviewer ? db.profiles.find((p) => p.id === reviewer.profile_id) : undefined;
+      const files = db.certificateFiles.filter((f) => f.certificate_id === c.id);
+      const points = db.pointRecords.find((p) => p.certificate_id === c.id && p.is_latest);
 
       return {
         ...c,
         student: student ? { ...student, profile: studentProfile } : undefined,
         category,
         reviewer: reviewer ? { ...reviewer, profile: reviewerProfile } : undefined,
+        files,
+        points,
       };
     });
 
@@ -114,7 +119,7 @@ export default async function FacultyDashboardPage() {
   });
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pb-28 md:pb-8">
       {/* Faculty Identity Banner */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-6 sm:p-8 border border-slate-800 shadow-xl">
         {/* Ambient Gradient Glows */}
@@ -244,14 +249,33 @@ export default async function FacultyDashboardPage() {
                           </td>
 
                           <td className="py-3.5 px-4 text-right">
-                            <Link href={`/faculty/reviews/${cert.id}`}>
-                              <Button
-                                size="sm"
-                                className="text-xs h-8 bg-slate-900 hover:bg-slate-800 text-white"
-                              >
-                                {isLockedByOther ? "Inspect" : "Evaluate"}
-                              </Button>
-                            </Link>
+                            <div className="flex items-center justify-end gap-2">
+                              <CertificatePopViewTrigger
+                                title={cert.title}
+                                achievementId={cert.achievement_id}
+                                status={cert.status}
+                                points={cert.points?.points}
+                                eventName={cert.event_name}
+                                organizer={cert.organizer}
+                                eventDate={cert.event_date}
+                                eventLevel={cert.event_level}
+                                achievement={cert.achievement}
+                                submittedAt={cert.submitted_at || cert.created_at}
+                                files={cert.files || []}
+                                buttonText="Pop View"
+                                variant="compact"
+                                showDownload={false}
+                              />
+
+                              <Link href={`/faculty/reviews/${cert.id}`}>
+                                <Button
+                                  size="sm"
+                                  className="text-xs h-8 bg-slate-900 hover:bg-slate-800 text-white font-bold"
+                                >
+                                  {isLockedByOther ? "Inspect" : "Evaluate"}
+                                </Button>
+                              </Link>
+                            </div>
                           </td>
                         </tr>
                       );

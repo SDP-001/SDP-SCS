@@ -15,6 +15,7 @@ import {
   FileText,
   UserCheck,
 } from "lucide-react";
+import { CertificatePopViewTrigger } from "@/components/certificates/CertificatePopViewTrigger";
 
 export default async function FacultyReviewsQueuePage({
   searchParams,
@@ -82,7 +83,7 @@ export default async function FacultyReviewsQueuePage({
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-28 md:pb-8">
       {/* Header */}
       <div>
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-50 text-primary-700 text-xs font-bold border border-primary-200/80 mb-2">
@@ -121,7 +122,7 @@ export default async function FacultyReviewsQueuePage({
         ))}
       </div>
 
-      {/* Queue Table */}
+      {/* Queue View: Mobile Cards & Desktop Table */}
       {enriched.length === 0 ? (
         <Card className="p-12 text-center border-dashed border-2 border-slate-200">
           <FileCheck2 className="h-10 w-10 text-slate-300 mx-auto mb-2" />
@@ -131,98 +132,214 @@ export default async function FacultyReviewsQueuePage({
           </p>
         </Card>
       ) : (
-        <div className="overflow-hidden border border-slate-200 rounded-xl bg-white shadow-2xs">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 uppercase tracking-wider text-[10px]">
-                <tr>
-                  <th className="py-3 px-4">Student</th>
-                  <th className="py-3 px-4">Achievement & Event</th>
-                  <th className="py-3 px-4">Category</th>
-                  <th className="py-3 px-4">Event &amp; Submission Time</th>
-                  <th className="py-3 px-4">Status &amp; Lock</th>
-                  <th className="py-3 px-4 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 font-medium">
-                {enriched.map((cert) => (
-                  <tr key={cert.id} className="hover:bg-slate-50/60">
-                    <td className="py-3.5 px-4">
-                      <p className="font-bold text-slate-900">
-                        {cert.student?.profile?.full_name || "Student"}
-                      </p>
-                      <p className="text-[11px] font-mono text-slate-400">
-                        {cert.student?.register_number}
-                      </p>
-                    </td>
+        <>
+          {/* Mobile Card List (md:hidden) */}
+          <div className="md:hidden space-y-3">
+            {enriched.map((cert) => (
+              <Card
+                key={cert.id}
+                className="p-4 border-slate-200/90 rounded-2xl bg-white shadow-xs space-y-3"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <p className="font-bold text-slate-900 text-sm">
+                      {cert.student?.profile?.full_name || "Student"}
+                    </p>
+                    <p className="text-[11px] font-mono text-slate-400">
+                      {cert.student?.register_number}
+                    </p>
+                  </div>
+                  <StatusBadge status={cert.status} />
+                </div>
 
-                    <td className="py-3.5 px-4 max-w-xs">
-                      <p className="font-bold text-slate-900 truncate">{cert.title}</p>
-                      <p className="text-[11px] text-slate-500 truncate">
-                        {cert.event_name} • {cert.achievement}
-                      </p>
-                    </td>
+                <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
+                  <p className="font-bold text-slate-900 text-xs line-clamp-1">{cert.title}</p>
+                  <p className="text-[11px] text-slate-500 line-clamp-1">
+                    {cert.event_name} • {cert.achievement}
+                  </p>
+                  <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                    <span className="px-2 py-0.5 rounded bg-white text-slate-700 text-[10px] font-semibold border border-slate-200 shadow-2xs">
+                      {cert.category?.name}
+                    </span>
+                    <span className="text-[10px] text-slate-400 font-mono">
+                      Event: {formatDate(cert.event_date)}
+                    </span>
+                  </div>
+                </div>
 
-                    <td className="py-3.5 px-4">
-                      <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-semibold border border-slate-200">
-                        {cert.category?.name}
-                      </span>
-                    </td>
+                <div className="flex items-center justify-between text-[11px] text-slate-500 font-mono">
+                  <span className="flex items-center gap-1">
+                    <Clock className="h-3 w-3 text-primary-500 shrink-0" />
+                    <span>{formatDateTime(cert.submitted_at || cert.created_at)}</span>
+                  </span>
+                  {cert.status === "APPROVED" && cert.points && (
+                    <span className="font-bold text-emerald-700">
+                      +{cert.points.points} PTS
+                    </span>
+                  )}
+                </div>
 
-                    <td className="py-3.5 px-4 whitespace-nowrap">
-                      <p className="text-xs font-semibold text-slate-800">
-                        {formatDate(cert.event_date)}
-                      </p>
-                      <p className="text-[11px] text-slate-500 font-mono mt-0.5 flex items-center gap-1">
-                        <Clock className="h-3 w-3 text-primary-500 shrink-0" />
-                        <span>Submitted: {formatDateTime(cert.submitted_at || cert.created_at)}</span>
-                      </p>
-                    </td>
+                {cert.isLockedByOther && (
+                  <div className="flex items-center gap-1 text-[10px] text-amber-800 bg-amber-50 px-2 py-1 rounded-lg border border-amber-200">
+                    <Lock className="h-3 w-3 shrink-0" />
+                    <span className="truncate">
+                      Locked by: {cert.reviewer?.profile?.full_name || "Faculty"}
+                    </span>
+                    {cert.lockExpired && (
+                      <span className="text-rose-600 font-bold ml-1">(Expired)</span>
+                    )}
+                  </div>
+                )}
 
-                    <td className="py-3.5 px-4">
-                      <div className="space-y-1">
-                        <StatusBadge status={cert.status} />
+                <div className="flex items-center gap-2 pt-1">
+                  <CertificatePopViewTrigger
+                    title={cert.title}
+                    achievementId={cert.achievement_id}
+                    status={cert.status}
+                    points={cert.points?.points}
+                    eventName={cert.event_name}
+                    organizer={cert.organizer}
+                    eventDate={cert.event_date}
+                    eventLevel={cert.event_level}
+                    achievement={cert.achievement}
+                    submittedAt={cert.submitted_at || cert.created_at}
+                    files={cert.files}
+                    buttonText="Pop View"
+                    variant="outline"
+                    className="flex-1"
+                    showDownload={false}
+                  />
 
-                        {cert.status === "APPROVED" && cert.points && (
-                          <span className="block text-[10px] font-bold text-emerald-700 font-mono">
-                            +{cert.points.points} PTS
-                          </span>
-                        )}
-
-                        {cert.isLockedByOther && (
-                          <div className="flex items-center gap-1 text-[10px] text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
-                            <Lock className="h-3 w-3 shrink-0" />
-                            <span className="truncate max-w-[120px]">
-                              {cert.reviewer?.profile?.full_name || "Faculty"}
-                            </span>
-                            {cert.lockExpired && (
-                              <span className="text-rose-600 font-bold ml-1">(Expired)</span>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    </td>
-
-                    <td className="py-3.5 px-4 text-right">
-                      <Link href={`/faculty/reviews/${cert.id}`}>
-                        <Button
-                          size="sm"
-                          className={`text-xs h-8 ${
-                            cert.isLockedByOther && !cert.lockExpired
-                              ? "bg-slate-200 text-slate-700 hover:bg-slate-300"
-                              : "bg-slate-900 hover:bg-slate-800 text-white font-bold"
-                          }`}
-                        >
-                          {cert.isLockedByOther && !cert.lockExpired ? "Inspect" : "Workbench →"}
-                        </Button>
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                  <Link href={`/faculty/reviews/${cert.id}`} className="flex-1">
+                    <Button
+                      size="sm"
+                      className={`w-full text-xs h-9 rounded-xl ${
+                        cert.isLockedByOther && !cert.lockExpired
+                          ? "bg-slate-200 text-slate-700 hover:bg-slate-300"
+                          : "bg-slate-900 hover:bg-slate-800 text-white font-bold shadow-xs"
+                      }`}
+                    >
+                      {cert.isLockedByOther && !cert.lockExpired ? "Inspect Details" : "Open Workbench →"}
+                    </Button>
+                  </Link>
+                </div>
+              </Card>
+            ))}
           </div>
-        </div>
+
+          {/* Desktop Table View (hidden md:block) */}
+          <div className="hidden md:block overflow-hidden border border-slate-200 rounded-2xl bg-white shadow-2xs">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 uppercase tracking-wider text-[10px]">
+                  <tr>
+                    <th className="py-3 px-4">Student</th>
+                    <th className="py-3 px-4">Achievement & Event</th>
+                    <th className="py-3 px-4">Category</th>
+                    <th className="py-3 px-4">Event &amp; Submission Time</th>
+                    <th className="py-3 px-4">Status &amp; Lock</th>
+                    <th className="py-3 px-4 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 font-medium">
+                  {enriched.map((cert) => (
+                    <tr key={cert.id} className="hover:bg-slate-50/60">
+                      <td className="py-3.5 px-4">
+                        <p className="font-bold text-slate-900">
+                          {cert.student?.profile?.full_name || "Student"}
+                        </p>
+                        <p className="text-[11px] font-mono text-slate-400">
+                          {cert.student?.register_number}
+                        </p>
+                      </td>
+
+                      <td className="py-3.5 px-4 max-w-xs">
+                        <p className="font-bold text-slate-900 truncate">{cert.title}</p>
+                        <p className="text-[11px] text-slate-500 truncate">
+                          {cert.event_name} • {cert.achievement}
+                        </p>
+                      </td>
+
+                      <td className="py-3.5 px-4">
+                        <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-semibold border border-slate-200">
+                          {cert.category?.name}
+                        </span>
+                      </td>
+
+                      <td className="py-3.5 px-4 whitespace-nowrap">
+                        <p className="text-xs font-semibold text-slate-800">
+                          {formatDate(cert.event_date)}
+                        </p>
+                        <p className="text-[11px] text-slate-500 font-mono mt-0.5 flex items-center gap-1">
+                          <Clock className="h-3 w-3 text-primary-500 shrink-0" />
+                          <span>Submitted: {formatDateTime(cert.submitted_at || cert.created_at)}</span>
+                        </p>
+                      </td>
+
+                      <td className="py-3.5 px-4">
+                        <div className="space-y-1">
+                          <StatusBadge status={cert.status} />
+
+                          {cert.status === "APPROVED" && cert.points && (
+                            <span className="block text-[10px] font-bold text-emerald-700 font-mono">
+                              +{cert.points.points} PTS
+                            </span>
+                          )}
+
+                          {cert.isLockedByOther && (
+                            <div className="flex items-center gap-1 text-[10px] text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
+                              <Lock className="h-3 w-3 shrink-0" />
+                              <span className="truncate max-w-[120px]">
+                                {cert.reviewer?.profile?.full_name || "Faculty"}
+                              </span>
+                              {cert.lockExpired && (
+                                <span className="text-rose-600 font-bold ml-1">(Expired)</span>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </td>
+
+                      <td className="py-3.5 px-4 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <CertificatePopViewTrigger
+                            title={cert.title}
+                            achievementId={cert.achievement_id}
+                            status={cert.status}
+                            points={cert.points?.points}
+                            eventName={cert.event_name}
+                            organizer={cert.organizer}
+                            eventDate={cert.event_date}
+                            eventLevel={cert.event_level}
+                            achievement={cert.achievement}
+                            submittedAt={cert.submitted_at || cert.created_at}
+                            files={cert.files}
+                            buttonText="Pop View"
+                            variant="compact"
+                            showDownload={false}
+                          />
+
+                          <Link href={`/faculty/reviews/${cert.id}`}>
+                            <Button
+                              size="sm"
+                              className={`text-xs h-8 ${
+                                cert.isLockedByOther && !cert.lockExpired
+                                  ? "bg-slate-200 text-slate-700 hover:bg-slate-300"
+                                  : "bg-slate-900 hover:bg-slate-800 text-white font-bold"
+                              }`}
+                            >
+                              {cert.isLockedByOther && !cert.lockExpired ? "Inspect" : "Workbench →"}
+                            </Button>
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

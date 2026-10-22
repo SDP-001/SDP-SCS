@@ -5,7 +5,7 @@ import { FileSpreadsheet, Download, ShieldCheck, FileCheck2, Users } from "lucid
 
 export default function HODReportsPage() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-28 md:pb-8">
       <div>
         <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
           Department Accreditation Reports & CSV Exporters

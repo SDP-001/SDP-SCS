@@ -24,6 +24,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
+import { DigitalPassportTrigger } from "@/components/student/DigitalPassportTrigger";
 
 interface SidebarProps {
   role: UserRole;
@@ -107,11 +108,20 @@ export function Sidebar({
     window.location.href = "/login";
   };
 
+  const homeUrl =
+    role === "STUDENT"
+      ? "/student/dashboard"
+      : role === "FACULTY"
+      ? "/faculty/dashboard"
+      : role === "HOD"
+      ? "/hod/dashboard"
+      : "/admin/dashboard";
+
   return (
     <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 z-40 bg-white border-r border-slate-200">
       {/* Brand Header */}
       <div className="h-16 flex items-center px-6 border-b border-slate-100">
-        <Link href="/">
+        <Link href={homeUrl}>
           <CampusCredLogo size={32} />
         </Link>
       </div>
@@ -136,6 +146,13 @@ export function Sidebar({
       {/* Navigation Links */}
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         {links.map((link) => {
+          if (link.href === "/student/profile" && role === "STUDENT") {
+            return (
+              <div key="passport-trigger" className="py-0.5">
+                <DigitalPassportTrigger variant="sidebar" label={link.label} />
+              </div>
+            );
+          }
           const Icon = link.icon;
           const isActive = pathname === link.href || pathname.startsWith(`${link.href}/`);
           return (

@@ -7,6 +7,7 @@ import { CertificateCard } from "@/components/certificates/CertificateCard";
 import { ActivityFeed, ActivityItem } from "@/components/dashboard/ActivityFeed";
 import { Button } from "@/components/ui/button";
 import { UploadCloud, ArrowRight, Award, Sparkles } from "lucide-react";
+import { DigitalPassportTrigger } from "@/components/student/DigitalPassportTrigger";
 
 export default async function StudentDashboardPage() {
   const user = await getCurrentUser();
@@ -85,7 +86,7 @@ export default async function StudentDashboardPage() {
   }));
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pb-28 md:pb-8">
       {/* Top Banner */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-6 sm:p-8 border border-slate-800 shadow-xl">
         {/* Ambient Gradient Glows */}
@@ -118,12 +119,7 @@ export default async function StudentDashboardPage() {
           </div>
 
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full sm:w-auto">
-            <Link href="/student/profile" className="w-full sm:w-auto">
-              <Button variant="outline" className="w-full sm:w-auto border-slate-700 bg-slate-800/90 hover:bg-slate-700 text-slate-200 text-xs h-10 shadow-sm flex items-center justify-center">
-                <Award className="h-4 w-4 mr-1.5 text-amber-400" />
-                Digital Passport
-              </Button>
-            </Link>
+            <DigitalPassportTrigger variant="dashboard" label="Digital Passport" />
             <Link href="/student/submit" className="w-full sm:w-auto">
               <Button className="w-full sm:w-auto bg-primary-600 hover:bg-primary-500 text-white text-xs font-bold h-10 shadow-md flex items-center justify-center">
                 <UploadCloud className="h-4 w-4 mr-1.5" />

@@ -87,11 +87,11 @@ const ROLES: RoleOption[] = [
     label: "Dean / Admin",
     badge: "Apex Admin",
     idLabel: "Administrator Email / User ID",
-    placeholder: "e.g. admin@abctech.edu or admin",
+    placeholder: "e.g. admin@nandhaengg.org or admin",
     icon: ShieldCheck,
     activeColor: "border-amber-400 bg-amber-950/60 text-amber-200 ring-2 ring-amber-500/30",
     activeBadge: "bg-amber-500/20 text-amber-300 border-amber-500/30",
-    sampleId: "admin@abctech.edu",
+    sampleId: "admin@nandhaengg.org",
   },
 ];
 
@@ -271,7 +271,7 @@ function LoginFormContent() {
           ? "/hod/dashboard"
           : res.role === "ADMIN"
           ? "/admin/dashboard"
-          : "/";
+          : "/login";
 
       window.location.href = targetUrl;
     } catch (err: any) {
@@ -359,9 +359,9 @@ function LoginFormContent() {
       {/* Animated Brand Showcase Header */}
       <div className="text-center mb-5">
         <Link
-          href="/"
+          href="/login"
           className="group relative inline-block cursor-pointer transition-transform duration-500 hover:scale-105 active:scale-95"
-          title="Click to go to Homepage"
+          title="Nandha Engineering College"
         >
           {/* Outer Glowing Rotating Halo */}
           <div className="absolute -inset-4 rounded-3xl bg-gradient-to-r from-emerald-500 via-indigo-500 to-cyan-400 opacity-70 blur-xl group-hover:opacity-100 group-hover:blur-2xl transition-all duration-700 pointer-events-none animate-spin-slow" />
@@ -918,12 +918,9 @@ function LoginFormContent() {
             <CheckCircle2 className="h-3 w-3 text-emerald-400" />
             <span>Encrypted Session</span>
           </span>
-          <Link
-            href="/"
-            className="font-semibold text-emerald-400 hover:text-emerald-300 transition-colors"
-          >
-            Portal Home
-          </Link>
+          <span className="text-[11px] font-medium text-slate-500">
+            Nandha Engineering College (Autonomous)
+          </span>
         </div>
       </div>
 
@@ -953,16 +950,7 @@ export default function LoginPage() {
         }}
       />
 
-      {/* Top Header Link */}
-      <div className="relative z-20 max-w-md mx-auto w-full flex items-center justify-between mb-2">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-400 hover:text-white transition-colors group"
-        >
-          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-          <span>Back to Home</span>
-        </Link>
-      </div>
+
 
       <Suspense
         fallback={

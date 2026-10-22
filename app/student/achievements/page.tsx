@@ -15,6 +15,7 @@ import {
   Printer,
 } from "lucide-react";
 import { formatDate } from "@/lib/utils/formatters";
+import { DigitalPassportTrigger } from "@/components/student/DigitalPassportTrigger";
 
 export default async function StudentAchievementWalletPage() {
   const user = await getCurrentUser();
@@ -58,7 +59,7 @@ export default async function StudentAchievementWalletPage() {
   const progressPercent = Math.min(Math.round((totalPoints / target) * 100), 100);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pb-28 md:pb-8">
       {/* Wallet Header Card */}
       <div className="relative overflow-hidden p-6 sm:p-8 rounded-3xl bg-slate-900 text-white border border-slate-800 shadow-xl">
         <div className="absolute -top-12 -right-12 w-64 h-64 bg-primary-500/20 rounded-full blur-3xl pointer-events-none" />
@@ -88,12 +89,11 @@ export default async function StudentAchievementWalletPage() {
               </div>
             </div>
 
-            <Link href="/student/profile">
-              <Button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold text-xs h-12 px-4 shadow-lg">
-                <Printer className="h-4 w-4 mr-1.5" />
-                Print Passport
-              </Button>
-            </Link>
+            <DigitalPassportTrigger
+              variant="outline"
+              label="Passport Pop View"
+              className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 border-0 font-bold text-xs h-12 px-4 shadow-lg"
+            />
           </div>
         </div>
 

@@ -15,6 +15,7 @@ import {
 } from "@/types/database.types";
 import { SecureViewer } from "./SecureViewer";
 import { TimelineJourney } from "./TimelineJourney";
+import { CertificatePopViewTrigger } from "./CertificatePopViewTrigger";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -118,7 +119,7 @@ export function ReviewWorkbench({
     certificate.status !== "REJECTED";
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-28 md:pb-8">
       {/* Top Breadcrumb & Lock Status */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <Link
@@ -128,7 +129,22 @@ export function ReviewWorkbench({
           <ArrowLeft className="h-3.5 w-3.5" /> Back to Review Queue
         </Link>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <CertificatePopViewTrigger
+            title={certificate.title}
+            achievementId={certificate.achievement_id}
+            status={certificate.status}
+            points={points.find((p) => p.is_latest)?.points}
+            eventName={certificate.event_name}
+            organizer={certificate.organizer}
+            eventDate={certificate.event_date}
+            eventLevel={certificate.event_level}
+            achievement={certificate.achievement}
+            submittedAt={certificate.submitted_at || certificate.created_at}
+            files={files}
+            buttonText="Pop View Certificate"
+            variant="compact"
+          />
           <StatusBadge status={certificate.status} />
           {certificate.achievement_id && (
             <span className="text-xs font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
@@ -208,7 +224,24 @@ export function ReviewWorkbench({
                 <span>Primary Evidence Certificate Proof</span>
               </h3>
             </div>
-            <span className="text-xs text-slate-500 font-medium">{files.length} File Version(s)</span>
+            <div className="flex items-center gap-2">
+              <CertificatePopViewTrigger
+                title={certificate.title}
+                achievementId={certificate.achievement_id}
+                status={certificate.status}
+                points={points.find((p) => p.is_latest)?.points}
+                eventName={certificate.event_name}
+                organizer={certificate.organizer}
+                eventDate={certificate.event_date}
+                eventLevel={certificate.event_level}
+                achievement={certificate.achievement}
+                submittedAt={certificate.submitted_at || certificate.created_at}
+                files={files}
+                buttonText="Open Pop View Modal"
+                variant="compact"
+              />
+              <span className="text-xs text-slate-500 font-medium">{files.length} File Version(s)</span>
+            </div>
           </div>
 
           <SecureViewer

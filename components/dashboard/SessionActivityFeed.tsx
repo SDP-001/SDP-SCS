@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   SessionActivityItem,
   getSessionActivityLogsAction,
@@ -43,6 +43,25 @@ export function SessionActivityFeed({
   const [roleFilter, setRoleFilter] = useState<string>("ALL");
   const [isRefreshing, setIsRefreshing] = useState(false);
 
+  // Auto-refresh the live feed every 12 seconds to ensure real-time synchronization
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        const updated = await getSessionActivityLogsAction({
+          roleFilter: roleFilter === "ALL" ? undefined : roleFilter,
+          limit: 100,
+        });
+        if (updated && updated.length > 0) {
+          setActivities(updated);
+        }
+      } catch {
+        // Silent catch for background poll
+      }
+    }, 12000);
+
+    return () => clearInterval(interval);
+  }, [roleFilter]);
+
   const handleRefresh = async () => {
     setIsRefreshing(true);
     try {
@@ -58,26 +77,28 @@ export function SessionActivityFeed({
     }
   };
 
-  // Filter items in client
-  const filteredActivities = activities.filter((item) => {
-    // Action filter
-    if (actionFilter !== "ALL" && item.action !== actionFilter) return false;
+  // Filter and strictly sort items descending by timestamp
+  const filteredActivities = activities
+    .filter((item) => {
+      // Action filter
+      if (actionFilter !== "ALL" && item.action !== actionFilter) return false;
 
-    // Role filter
-    if (roleFilter !== "ALL" && item.role !== roleFilter) return false;
+      // Role filter
+      if (roleFilter !== "ALL" && item.role !== roleFilter) return false;
 
-    // Search query
-    if (search.trim()) {
-      const q = search.toLowerCase().trim();
-      const matchName = item.fullName.toLowerCase().includes(q);
-      const matchId = item.identifier.toLowerCase().includes(q);
-      const matchEmail = item.email.toLowerCase().includes(q);
-      const matchDept = item.departmentName.toLowerCase().includes(q);
-      return matchName || matchId || matchEmail || matchDept;
-    }
+      // Search query
+      if (search.trim()) {
+        const q = search.toLowerCase().trim();
+        const matchName = item.fullName.toLowerCase().includes(q);
+        const matchId = item.identifier.toLowerCase().includes(q);
+        const matchEmail = item.email.toLowerCase().includes(q);
+        const matchDept = item.departmentName.toLowerCase().includes(q);
+        return matchName || matchId || matchEmail || matchDept;
+      }
 
-    return true;
-  });
+      return true;
+    })
+    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
   const getDefaultTitle = () => {
     switch (callerRole) {
@@ -182,8 +203,9 @@ export function SessionActivityFeed({
               <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
                 {title || getDefaultTitle()}
               </h3>
-              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 animate-pulse">
-                Live Feed
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span>Live Feed</span>
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
@@ -535,10 +557,10 @@ export function SessionActivityFeed({
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-1 text-slate-500 text-[10px] font-medium shrink-0">
+                      <div className="flex items-center gap-1.5 text-slate-500 text-[10px] font-medium shrink-0">
                         <Calendar className="h-3 w-3 text-slate-400" />
                         <span>{log.formattedDate}</span>
-                        <span className="text-slate-400">({log.relativeTime})</span>
+                        <span className="text-emerald-700 font-bold">({log.relativeTime})</span>
                       </div>
                     </div>
                   </div>

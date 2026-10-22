@@ -319,7 +319,7 @@ export function AccountSettingsForm({ role }: AccountSettingsFormProps) {
           title: "Dean / Admin Security & Credentials",
           subtitle: "Institutional administrative governance, root email ID, and master password.",
           idLabel: "Administrator User ID / Email",
-          idPlaceholder: "e.g. admin@abctech.edu",
+          idPlaceholder: "e.g. admin@nandhaengg.org",
           icon: ShieldCheck,
           badgeColor: "bg-amber-50 text-amber-700 border-amber-200",
         };

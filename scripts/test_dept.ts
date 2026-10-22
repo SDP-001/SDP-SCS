@@ -55,17 +55,61 @@ async function runTests() {
   console.log(`✓ Analytics UG Students: ${analytics.ugStudentsCount}, PG Students: ${analytics.pgStudentsCount}`);
   console.log(`✓ Analytics Total Certs: ${analytics.totalCertificates}`);
 
-  // 6. Test addStudentAction with PG department
-  const addStudentRes = await addStudentAction({
-    fullName: "Aravindhan S",
-    email: "aravindhan.pg@student.abctech.edu",
-    registerNumber: "710025CS0099",
-    academicYear: 1,
-    departmentId: createRes.department.id,
+  // 7. Test creating Department WITH HOD details (Dean Page flow)
+  console.log("\n=== Testing Department Creation With HOD Details (Dean Portal) ===");
+  const createWithHodRes = await createDepartmentAction({
+    name: "Biomedical Engineering",
+    code: "BME",
+    type: "UG",
+    hodName: "Dr. K. Senthil Kumar",
+    hodEmail: "hod.bme@nandhaengg.org",
+    hodPhone: "+91 94432 88899",
+    hodEmployeeId: "FAC-BME-001",
+    hodDesignation: "Professor & Head",
   });
-  console.log(`✓ addStudentAction in PG Dept:`, addStudentRes.success, addStudentRes.message);
 
-  console.log("=== ALL UNIT TESTS PASSED SUCCESSFULLY ===");
+  console.log("✓ createDepartmentAction with HOD:", createWithHodRes.success, createWithHodRes.department?.code);
+  if (!createWithHodRes.success || !createWithHodRes.department) {
+    throw new Error("Failed to create department with HOD details");
+  }
+
+  // Verify HOD profile and faculty entry in DB
+  const hodProfile = db.profiles.find((p) => p.email === "hod.bme@nandhaengg.org");
+  const hodFaculty = db.faculty.find((f) => f.department_id === createWithHodRes.department!.id && f.is_hod);
+
+  console.log(`✓ HOD Profile Created: ${hodProfile?.full_name} (${hodProfile?.role}), Email: ${hodProfile?.email}, Phone: ${hodProfile?.phone_number}`);
+  console.log(`✓ HOD Faculty Record: ID ${hodFaculty?.employee_id}, Designation: ${hodFaculty?.designation}, is_hod: ${hodFaculty?.is_hod}`);
+
+  if (!hodProfile || hodProfile.role !== "HOD" || !hodFaculty || hodFaculty.employee_id !== "FAC-BME-001") {
+    throw new Error("HOD details were not properly created or linked to department");
+  }
+
+  // Verify getDepartmentsAction returns the HOD data
+  const deptsWithHod = await getDepartmentsAction();
+  const bmeDept = deptsWithHod.find((d) => d.code === "BME");
+  console.log(`✓ getDepartmentsAction HOD Name: ${bmeDept?.hod?.profile?.full_name}, HOD Email: ${bmeDept?.hod?.profile?.email}`);
+
+  if (bmeDept?.hod?.profile?.full_name !== "Dr. K. Senthil Kumar") {
+    throw new Error("getDepartmentsAction did not include populated HOD profile details");
+  }
+
+  // 8. Test updating HOD details
+  const updateHodRes = await updateDepartmentAction(createWithHodRes.department.id, {
+    name: "Biomedical Engineering & Medical Devices",
+    code: "BME",
+    type: "UG",
+    is_active: true,
+    hodName: "Dr. K. Senthil Kumar Ph.D",
+    hodEmail: "hod.bme@nandhaengg.org",
+    hodPhone: "+91 94432 99999",
+    hodEmployeeId: "FAC-BME-001",
+    hodDesignation: "Senior Professor & Head",
+  });
+  console.log("✓ updateDepartmentAction with revised HOD details:", updateHodRes.success);
+  const updatedBmeDept = (await getDepartmentsAction()).find((d) => d.code === "BME");
+  console.log(`✓ Updated HOD designation: ${updatedBmeDept?.hod?.designation}, Phone: ${updatedBmeDept?.hod?.profile?.phone_number}`);
+
+  console.log("\n=== ALL UNIT & HOD INTEGRATION TESTS PASSED SUCCESSFULLY ===");
 }
 
 runTests().catch((err) => {

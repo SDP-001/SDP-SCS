@@ -101,10 +101,10 @@ function LogoutContent() {
 
         <div className="pt-1">
           <Link
-            href="/"
+            href="/login"
             className="text-xs text-slate-400 hover:text-white transition-colors inline-flex items-center gap-1 font-semibold"
           >
-            <ArrowLeft className="h-3.5 w-3.5" /> Return to Portal Home
+            <ArrowLeft className="h-3.5 w-3.5" /> Return to Login
           </Link>
         </div>
       </div>
@@ -216,11 +216,11 @@ export default function LogoutPage() {
       {/* Top Header Link */}
       <div className="relative z-20 max-w-sm sm:max-w-md mx-auto w-full flex items-center justify-between mb-4">
         <Link
-          href="/"
+          href="/login"
           className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-400 hover:text-white transition-colors group"
         >
           <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-          <span>Home</span>
+          <span>Login</span>
         </Link>
         <span className="text-[11px] font-semibold text-rose-400 bg-rose-500/10 px-2.5 py-1 rounded-full border border-rose-500/20 flex items-center gap-1">
           <LogOut className="h-3 w-3" />
@@ -232,9 +232,9 @@ export default function LogoutPage() {
         {/* Animated Brand Showcase Header */}
         <div className="text-center mb-6">
           <Link
-            href="/"
+            href="/login"
             className="group relative inline-block cursor-pointer transition-transform duration-500 hover:scale-105 active:scale-95"
-            title="Click to go to Homepage"
+            title="Click to go to Login"
           >
             <div className="absolute -inset-4 rounded-3xl bg-gradient-to-r from-rose-500 via-indigo-500 to-cyan-400 opacity-60 blur-xl group-hover:opacity-100 group-hover:blur-2xl transition-all duration-700 pointer-events-none animate-spin-slow" />
 

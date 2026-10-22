@@ -184,9 +184,9 @@ export async function getSessionActivityLogsAction(params?: {
       if (actorRole !== "STUDENT") continue;
       if (userDeptId && actorDeptId && actorDeptId !== userDeptId) continue;
     }
-    // 2. HOD: sees Student and Faculty logins/logouts in their department
+    // 2. HOD: sees Student, Faculty, and HOD logins/logouts in their department
     else if (callerRole === "HOD") {
-      if (actorRole !== "STUDENT" && actorRole !== "FACULTY") continue;
+      if (actorRole !== "STUDENT" && actorRole !== "FACULTY" && actorRole !== "HOD") continue;
       if (userDeptId && actorDeptId && actorDeptId !== userDeptId) continue;
     }
     // 3. Dean / Admin: sees Student, Faculty, and HOD logins/logouts
@@ -202,28 +202,37 @@ export async function getSessionActivityLogsAction(params?: {
       if (actorRole !== params.roleFilter) continue;
     }
 
-    const logDate = new Date(log.created_at || log.metadata?.timestamp || Date.now());
-    const formattedDate =
-      log.metadata?.date ||
-      logDate.toLocaleDateString("en-IN", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        timeZone: "Asia/Kolkata",
-      });
+    const now = Date.now();
+    const rawDate = log.created_at || (log.metadata as any)?.timestamp || now;
+    let logDate = new Date(rawDate);
+    if (isNaN(logDate.getTime())) {
+      logDate = new Date(now);
+    }
+    // Cap to now to avoid future timestamps appearing out of order
+    if (logDate.getTime() > now) {
+      logDate = new Date(now);
+    }
 
-    const formattedTime =
-      log.metadata?.time ||
-      logDate.toLocaleTimeString("en-IN", {
+    // Always derive exact Indian Standard Time formatted date and time from valid logDate
+    const formattedDate = logDate.toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      timeZone: "Asia/Kolkata",
+    });
+
+    const formattedTime = logDate
+      .toLocaleTimeString("en-IN", {
         hour: "2-digit",
         minute: "2-digit",
         second: "2-digit",
         hour12: true,
         timeZone: "Asia/Kolkata",
-      });
+      })
+      .toUpperCase();
 
-    // Relative time calculation
-    const diffMs = Math.max(0, Date.now() - logDate.getTime());
+    // Accurate relative time calculation
+    const diffMs = Math.max(0, now - logDate.getTime());
     const diffSec = Math.floor(diffMs / 1000);
     const diffMin = Math.floor(diffSec / 60);
     const diffHour = Math.floor(diffMin / 60);
@@ -259,14 +268,14 @@ export async function getSessionActivityLogsAction(params?: {
       departmentName: actorDeptName || "NEC Department",
       departmentId: actorDeptId,
       action: actionType,
-      timestamp: log.created_at,
+      timestamp: logDate.toISOString(),
       formattedDate,
       formattedTime,
       relativeTime,
     });
   }
 
-  // Sort newest first
+  // Strictly sort newest first (descending chronological order)
   items.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
   return items.slice(0, limit);
