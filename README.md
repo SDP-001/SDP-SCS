@@ -1,6 +1,14 @@
 # NEC-SCS — Nandha Engineering College Student Credential System
 > **CampusCred**: Verified Achievements. Trusted Institutional Records.
 
+## 🚀 1-Click Permanent Cloud Deployment (24/7 Access)
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FSDP-001%2FSDP-SCS)
+
+Click the button above to deploy this entire application permanently to Vercel for free. It is online 24/7/365 with automatic SSL/HTTPS, global CDN, and installable on any phone or laptop.
+
+---
+
 [![Next.js](https://img.shields.io/badge/Next.js-16.3.6-black?style=flat&logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.0.0-61dafb?style=flat&logo=react)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7.3-3178c6?style=flat&logo=typescript)](https://www.typescriptlang.org/)
