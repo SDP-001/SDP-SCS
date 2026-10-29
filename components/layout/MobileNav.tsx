@@ -86,6 +86,7 @@ export function MobileNav({ role, unreadNotifications = 0 }: MobileNavProps) {
             <Link
               key={link.href}
               href={link.href}
+              prefetch={true}
               className={cn(
                 "flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-xs transition-all relative",
                 isActive

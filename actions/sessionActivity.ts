@@ -89,18 +89,6 @@ export async function logSessionActivityAction(
     },
   });
 
-  try {
-    revalidatePath("/faculty/dashboard");
-    revalidatePath("/faculty/students");
-    revalidatePath("/hod/dashboard");
-    revalidatePath("/hod/students");
-    revalidatePath("/hod/faculty");
-    revalidatePath("/admin/dashboard");
-    revalidatePath("/admin/audit-logs");
-  } catch {
-    // Non-fatal if invoked outside Next.js request context (e.g. test runner)
-  }
-
   return log;
 }
 

@@ -155,7 +155,13 @@ function LoginFormContent() {
         }
       })
       .catch((err) => console.error("Failed to load departments:", err));
-  }, [searchParams]);
+
+    // Warm up and prefetch all dashboards for instant sub-second transitions
+    router.prefetch("/student/dashboard");
+    router.prefetch("/faculty/dashboard");
+    router.prefetch("/hod/dashboard");
+    router.prefetch("/admin/dashboard");
+  }, [searchParams, router]);
 
   // Identity detection on typing identifier in Login mode
   useEffect(() => {
@@ -174,6 +180,15 @@ function LoginFormContent() {
           setSelectedRole(res.role);
           setError(null);
           setShowRegisterPrompt(false);
+          const target =
+            res.role === "STUDENT"
+              ? "/student/dashboard"
+              : res.role === "FACULTY"
+              ? "/faculty/dashboard"
+              : res.role === "HOD"
+              ? "/hod/dashboard"
+              : "/admin/dashboard";
+          router.prefetch(target);
         } else {
           setDetectedUser(null);
         }
@@ -185,7 +200,7 @@ function LoginFormContent() {
     }, 250);
 
     return () => clearTimeout(timer);
-  }, [identifier, authMode]);
+  }, [identifier, authMode, router]);
 
   const activeConfig = ROLES.find((r) => r.key === (authMode === "LOGIN" ? selectedRole : regRole)) || ROLES[0];
   const ActiveRoleIcon = activeConfig.icon;
@@ -254,7 +269,8 @@ function LoginFormContent() {
           ? "/admin/dashboard"
           : "/login";
 
-      window.location.href = targetUrl;
+      router.push(targetUrl);
+      router.refresh();
     } catch (err: any) {
       setError(err?.message || "An unexpected error occurred during login.");
       setLoading(false);

@@ -108,13 +108,13 @@ export default async function HODDashboardPage() {
           </div>
 
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
-            <Link href="/hod/reports" className="w-full sm:w-auto">
+            <Link href="/hod/reports" prefetch={true} className="w-full sm:w-auto">
               <Button variant="outline" className="w-full sm:w-auto border-white/30 bg-white/10 hover:bg-white/20 text-white text-xs font-bold h-11 px-4 shadow-sm flex items-center justify-center rounded-xl backdrop-blur-md">
                 <FileSpreadsheet className="h-4 w-4 mr-2 text-white" />
                 <span>Ledger Export</span>
               </Button>
             </Link>
-            <Link href="/faculty/reviews" className="w-full sm:w-auto">
+            <Link href="/faculty/reviews" prefetch={true} className="w-full sm:w-auto">
               <Button className="w-full sm:w-auto bg-white hover:bg-slate-50 text-blue-700 text-xs font-bold h-11 px-5 shadow-sm flex items-center justify-center rounded-xl transition-all">
                 <FileCheck2 className="h-4 w-4 mr-2 text-blue-600" />
                 <span>Review Workbench ({inQueue.length})</span>

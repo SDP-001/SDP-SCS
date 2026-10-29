@@ -103,8 +103,8 @@ export async function loginAction(data: LoginFormData) {
   // Set session cookie
   await setSessionUser(matchedProfile.id);
 
-  // Log session LOGIN event with exact time, date, role and identifier
-  await logSessionActivityAction(matchedProfile.id, "LOGIN");
+  // Log session LOGIN event asynchronously without delaying authentication response
+  void logSessionActivityAction(matchedProfile.id, "LOGIN").catch(() => {});
 
   return {
     success: true,
@@ -115,11 +115,10 @@ export async function loginAction(data: LoginFormData) {
 export async function logoutAction() {
   const user = await getCurrentUser();
   if (user) {
-    // Log session LOGOUT event with exact time, date, role and identifier
-    await logSessionActivityAction(user.profile.id, "LOGOUT");
+    // Log session LOGOUT event asynchronously
+    void logSessionActivityAction(user.profile.id, "LOGOUT").catch(() => {});
   }
   await clearSessionUser();
-  revalidatePath("/");
   return { success: true };
 }
 

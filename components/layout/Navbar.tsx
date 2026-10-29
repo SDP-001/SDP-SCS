@@ -68,7 +68,7 @@ export function Navbar({
         </button>
 
         <div className="md:hidden shrink-0">
-          <Link href={homeUrl}>
+          <Link href={homeUrl} prefetch={true}>
             <CampusCredLogo size={28} showText={false} isDark={false} />
           </Link>
         </div>
@@ -97,6 +97,7 @@ export function Navbar({
 
         <Link
           href={notifUrl}
+          prefetch={true}
           className="relative rounded-xl p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 transition-all"
           title="Notifications"
         >
@@ -111,6 +112,7 @@ export function Navbar({
         {/* User profile avatar & link to settings */}
         <Link
           href={settingsUrl}
+          prefetch={true}
           title="Click to view Profile & Security Settings"
           className="flex items-center gap-2 pl-2 border-l border-slate-200 hover:opacity-90 transition-opacity group"
         >

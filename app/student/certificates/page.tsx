@@ -60,7 +60,7 @@ export default async function StudentCertificatesPage({
           </p>
         </div>
 
-        <Link href="/student/submit">
+        <Link href="/student/submit" prefetch={true}>
           <Button className="bg-primary-600 hover:bg-primary-700 text-white text-xs font-bold h-10 shadow-sm">
             <UploadCloud className="h-4 w-4 mr-1.5" />
             Submit New Certificate
@@ -81,6 +81,7 @@ export default async function StudentCertificatesPage({
           <Link
             key={tab.key}
             href={`/student/certificates?status=${tab.key}`}
+            prefetch={true}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
               currentStatus === tab.key
                 ? "bg-slate-900 text-white shadow-xs"

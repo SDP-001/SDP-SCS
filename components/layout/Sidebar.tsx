@@ -121,7 +121,7 @@ export function Sidebar({
     <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 z-40 bg-white border-r border-slate-200/90 shadow-xs">
       {/* Brand Header */}
       <div className="h-16 flex items-center px-6 border-b border-slate-100 bg-white">
-        <Link href={homeUrl}>
+        <Link href={homeUrl} prefetch={true}>
           <CampusCredLogo size={32} isDark={false} />
         </Link>
       </div>
@@ -159,6 +159,7 @@ export function Sidebar({
             <Link
               key={link.href}
               href={link.href}
+              prefetch={true}
               className={cn(
                 "group flex items-center justify-between px-3 py-2.5 text-xs rounded-xl transition-all duration-200",
                 isActive

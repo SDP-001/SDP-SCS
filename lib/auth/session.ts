@@ -1,7 +1,6 @@
 import { cookies } from "next/headers";
 import { getDB } from "@/lib/db/store";
 import { Profile, Student, Faculty, Department, UserRole } from "@/types/database.types";
-import { createServerSupabaseClient } from "./supabase-server";
 
 export interface AuthenticatedUser {
   profile: Profile;
@@ -27,7 +26,7 @@ export async function getCurrentUser(): Promise<AuthenticatedUser | null> {
     return null;
   }
 
-  // 1. Direct cookie session (fast, reliable across mobile and LAN)
+  // 1. Direct cookie session (instant sub-millisecond local in-memory lookup)
   if (sessionUserId) {
     const profile = db.profiles.find((p) => p.id === sessionUserId && p.is_active);
     if (profile) {
@@ -35,23 +34,7 @@ export async function getCurrentUser(): Promise<AuthenticatedUser | null> {
     }
   }
 
-  // 2. Try Supabase Auth session if Supabase is active and has authenticated user
-  try {
-    const supabase = await createServerSupabaseClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (user) {
-      const profile = db.profiles.find((p) => p.id === user.id && p.is_active);
-      if (profile) {
-        return buildAuthenticatedUser(profile, db);
-      }
-    }
-  } catch {
-    // If Supabase is unreachable or offline
-  }
-
+  // Instant zero-lag return when not authenticated (no blocking external network requests)
   return null;
 }
 
@@ -102,12 +85,6 @@ export async function clearSessionUser(): Promise<void> {
     cookieStore.delete(SESSION_COOKIE_NAME);
   } catch {
     // Ignore outside request scope
-  }
-  try {
-    const supabase = await createServerSupabaseClient();
-    await supabase.auth.signOut();
-  } catch {
-    // Ignore Supabase signout error if offline
   }
 }
 

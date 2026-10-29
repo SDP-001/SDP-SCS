@@ -187,19 +187,19 @@ export default async function AdminDashboardPage() {
 
           {/* Executive Quick Actions */}
           <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2 sm:gap-2.5 w-full lg:w-auto shrink-0">
-            <Link href="/admin/departments" className="w-full sm:w-auto flex-1 sm:flex-initial">
+            <Link href="/admin/departments" prefetch={true} className="w-full sm:w-auto flex-1 sm:flex-initial">
               <Button variant="outline" className="w-full border-white/30 bg-white/10 hover:bg-white/20 text-white text-xs font-bold h-11 sm:h-10 px-3.5 shadow-sm flex items-center justify-center gap-1.5 rounded-xl whitespace-nowrap backdrop-blur-md">
                 <Building2 className="h-4 w-4 text-white shrink-0" />
                 <span>Branches</span>
               </Button>
             </Link>
-            <Link href="/admin/reports" className="w-full sm:w-auto flex-1 sm:flex-initial">
+            <Link href="/admin/reports" prefetch={true} className="w-full sm:w-auto flex-1 sm:flex-initial">
               <Button variant="outline" className="w-full border-white/30 bg-white/10 hover:bg-white/20 text-white text-xs font-bold h-11 sm:h-10 px-3.5 shadow-sm flex items-center justify-center gap-1.5 rounded-xl whitespace-nowrap backdrop-blur-md">
                 <FileSpreadsheet className="h-4 w-4 text-white shrink-0" />
                 <span>Reports CSV</span>
               </Button>
             </Link>
-            <Link href="/admin/settings" className="w-full sm:w-auto flex-1 sm:flex-initial">
+            <Link href="/admin/settings" prefetch={true} className="w-full sm:w-auto flex-1 sm:flex-initial">
               <Button className="w-full bg-white hover:bg-slate-50 text-blue-700 text-xs font-bold h-11 sm:h-10 px-4 rounded-xl shadow-sm transition-all flex items-center justify-center gap-1.5 whitespace-nowrap">
                 <Settings className="h-4 w-4 shrink-0" />
                 <span>Settings</span>

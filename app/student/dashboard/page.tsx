@@ -124,7 +124,7 @@ export default async function StudentDashboardPage() {
 
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
             <DigitalPassportTrigger variant="dashboard" label="Digital Passport" />
-            <Link href="/student/submit" className="w-full sm:w-auto">
+            <Link href="/student/submit" prefetch={true} className="w-full sm:w-auto">
               <Button className="w-full sm:w-auto bg-white hover:bg-slate-50 text-blue-700 font-bold text-xs h-11 px-5 rounded-xl shadow-xs flex items-center justify-center hover:scale-105 active:scale-95 transition-all">
                 <UploadCloud className="h-4 w-4 mr-2 text-blue-600" />
                 <span>Submit Certificate</span>
@@ -152,6 +152,7 @@ export default async function StudentDashboardPage() {
             </div>
             <Link
               href="/student/certificates"
+              prefetch={true}
               className="text-xs font-semibold text-blue-600 hover:text-blue-700 inline-flex items-center gap-1 transition-colors"
             >
               <span>View all ({certificates.length})</span>
@@ -166,7 +167,7 @@ export default async function StudentDashboardPage() {
               <p className="text-xs text-slate-500 mt-1 mb-5">
                 Submit your first certificate for faculty evaluation and points.
               </p>
-              <Link href="/student/submit">
+              <Link href="/student/submit" prefetch={true}>
                 <Button className="text-xs text-white font-medium h-10 px-5 rounded-xl">
                   Submit Now →
                 </Button>

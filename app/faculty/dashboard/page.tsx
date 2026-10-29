@@ -150,7 +150,7 @@ export default async function FacultyDashboardPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5">
-            <Link href="/faculty/reviews">
+            <Link href="/faculty/reviews" prefetch={true}>
               <Button className="bg-white hover:bg-slate-50 text-blue-700 font-bold text-xs h-11 px-5 rounded-xl shadow-sm flex items-center justify-center transition-all">
                 <FileCheck2 className="h-4 w-4 mr-2 text-blue-600" />
                 <span>Open Review Queue ({pendingQueue.length + underReview.length})</span>
@@ -180,6 +180,7 @@ export default async function FacultyDashboardPage() {
             </div>
             <Link
               href="/faculty/reviews"
+              prefetch={true}
               className="text-xs font-bold text-blue-600 hover:text-blue-700 inline-flex items-center gap-1 transition-colors"
             >
               <span>View full queue</span>
