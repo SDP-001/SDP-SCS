@@ -46,9 +46,15 @@ departments = [
     { "id": "33333333-3333-3333-3333-333333333314", "college_id": DEFAULT_COLLEGE_ID, "name": "Chemical Engineering", "code": "CHEMICAL", "type": "UG", "is_active": True, "created_at": "2026-01-01T00:00:00.000Z" },
     { "id": "33333333-3333-3333-3333-333333333315", "college_id": DEFAULT_COLLEGE_ID, "name": "Computer Science and Engineering (Cyber Security)", "code": "CSE(CS)", "type": "UG", "is_active": True, "created_at": "2026-01-01T00:00:00.000Z" },
     { "id": "33333333-3333-3333-3333-333333333316", "college_id": DEFAULT_COLLEGE_ID, "name": "Computer Science and Engineering (Internet of Things)", "code": "CSE(IoT)", "type": "UG", "is_active": True, "created_at": "2026-01-01T00:00:00.000Z" },
+    { "id": "33333333-3333-3333-3333-333333333317", "college_id": DEFAULT_COLLEGE_ID, "name": "Artificial Intelligence and Machine Learning", "code": "AIML", "type": "UG", "is_active": True, "created_at": "2026-01-01T00:00:00.000Z" },
+    { "id": "33333333-3333-3333-3333-333333333318", "college_id": DEFAULT_COLLEGE_ID, "name": "Computer Science and Business Systems", "code": "CSBS", "type": "UG", "is_active": True, "created_at": "2026-01-01T00:00:00.000Z" },
+    { "id": "33333333-3333-3333-3333-333333333319", "college_id": DEFAULT_COLLEGE_ID, "name": "Aeronautical Engineering", "code": "AERO", "type": "UG", "is_active": True, "created_at": "2026-01-01T00:00:00.000Z" },
+    { "id": "33333333-3333-3333-3333-333333333322", "college_id": DEFAULT_COLLEGE_ID, "name": "Science and Humanities", "code": "S&H", "type": "UG", "is_active": True, "created_at": "2026-01-01T00:00:00.000Z" },
     # PG
     { "id": "33333333-3333-3333-3333-333333333308", "college_id": DEFAULT_COLLEGE_ID, "name": "M.E. Computer Science and Engineering", "code": "ME-CSE", "type": "PG", "is_active": True, "created_at": "2026-01-01T00:00:00.000Z" },
     { "id": "33333333-3333-3333-3333-333333333309", "college_id": DEFAULT_COLLEGE_ID, "name": "M.E. VLSI Design", "code": "ME-VLSI", "type": "PG", "is_active": True, "created_at": "2026-01-01T00:00:00.000Z" },
+    { "id": "33333333-3333-3333-3333-333333333320", "college_id": DEFAULT_COLLEGE_ID, "name": "M.E. Engineering Design", "code": "ME-ED", "type": "PG", "is_active": True, "created_at": "2026-01-01T00:00:00.000Z" },
+    { "id": "33333333-3333-3333-3333-333333333321", "college_id": DEFAULT_COLLEGE_ID, "name": "M.E. Structural Engineering", "code": "ME-SE", "type": "PG", "is_active": True, "created_at": "2026-01-01T00:00:00.000Z" },
     { "id": "33333333-3333-3333-3333-333333333310", "college_id": DEFAULT_COLLEGE_ID, "name": "Master of Business Administration", "code": "MBA", "type": "PG", "is_active": True, "created_at": "2026-01-01T00:00:00.000Z" },
     { "id": "33333333-3333-3333-3333-333333333311", "college_id": DEFAULT_COLLEGE_ID, "name": "Master of Computer Applications", "code": "MCA", "type": "PG", "is_active": True, "created_at": "2026-01-01T00:00:00.000Z" },
 ]
@@ -67,8 +73,15 @@ dept_map = {
     "CHEMICAL": "33333333-3333-3333-3333-333333333314",
     "CSE(CS)": "33333333-3333-3333-3333-333333333315",
     "CSE(IoT)": "33333333-3333-3333-3333-333333333316",
+    "AIML": "33333333-3333-3333-3333-333333333317",
+    "AI&ML": "33333333-3333-3333-3333-333333333317",
+    "CSBS": "33333333-3333-3333-3333-333333333318",
+    "AERO": "33333333-3333-3333-3333-333333333319",
+    "S&H": "33333333-3333-3333-3333-333333333322",
     "ME-CSE": "33333333-3333-3333-3333-333333333308",
     "ME-VLSI": "33333333-3333-3333-3333-333333333309",
+    "ME-ED": "33333333-3333-3333-3333-333333333320",
+    "ME-SE": "33333333-3333-3333-3333-333333333321",
     "MBA": "33333333-3333-3333-3333-333333333310",
     "MCA": "33333333-3333-3333-3333-333333333311",
 }
@@ -200,6 +213,34 @@ faculty_config = [
     # MCA
     { "deptCode": "MCA", "deptId": "33333333-3333-3333-3333-333333333311", "members": [
         { "profileId": generate_deterministic_uuid("fac-mca-hod"), "facultyId": generate_deterministic_uuid("fac-rec-mca-hod"), "empId": "FAC-MCA-001", "name": "Dr. P. Sathish (HOD-MCA)", "email": "hod.mca@nandhaengg.org", "designation": "Professor & Head", "isHod": True, "phone": "+91 94432 01101" },
+    ]},
+    # AIML
+    { "deptCode": "AIML", "deptId": "33333333-3333-3333-3333-333333333317", "members": [
+        { "profileId": generate_deterministic_uuid("fac-aiml-hod"), "facultyId": generate_deterministic_uuid("fac-rec-aiml-hod"), "empId": "FAC-AIML-001", "name": "Dr. K. S. Arunkumar (HOD-AIML)", "email": "hod.aiml@nandhaengg.org", "designation": "Professor & Head", "isHod": True, "phone": "+91 94432 01701" },
+        { "profileId": generate_deterministic_uuid("fac-aiml-p1"), "facultyId": generate_deterministic_uuid("fac-rec-aiml-p1"), "empId": "FAC-AIML-101", "name": "Prof. M. Karthika", "email": "prof.karthika.aiml@nandhaengg.org", "designation": "Assistant Professor", "isHod": False, "phone": "+91 94432 01702" },
+    ]},
+    # CSBS
+    { "deptCode": "CSBS", "deptId": "33333333-3333-3333-3333-333333333318", "members": [
+        { "profileId": generate_deterministic_uuid("fac-csbs-hod"), "facultyId": generate_deterministic_uuid("fac-rec-csbs-hod"), "empId": "FAC-CSBS-001", "name": "Dr. R. Preetha (HOD-CSBS)", "email": "hod.csbs@nandhaengg.org", "designation": "Professor & Head", "isHod": True, "phone": "+91 94432 01801" },
+        { "profileId": generate_deterministic_uuid("fac-csbs-p1"), "facultyId": generate_deterministic_uuid("fac-rec-csbs-p1"), "empId": "FAC-CSBS-101", "name": "Prof. G. Vasanth", "email": "prof.vasanth.csbs@nandhaengg.org", "designation": "Assistant Professor", "isHod": False, "phone": "+91 94432 01802" },
+    ]},
+    # AERO
+    { "deptCode": "AERO", "deptId": "33333333-3333-3333-3333-333333333319", "members": [
+        { "profileId": generate_deterministic_uuid("fac-aero-hod"), "facultyId": generate_deterministic_uuid("fac-rec-aero-hod"), "empId": "FAC-AERO-001", "name": "Dr. V. Boopathi (HOD-AERO)", "email": "hod.aero@nandhaengg.org", "designation": "Professor & Head", "isHod": True, "phone": "+91 94432 01901" },
+        { "profileId": generate_deterministic_uuid("fac-aero-p1"), "facultyId": generate_deterministic_uuid("fac-rec-aero-p1"), "empId": "FAC-AERO-101", "name": "Prof. R. Anandhakumar", "email": "prof.anand.aero@nandhaengg.org", "designation": "Assistant Professor", "isHod": False, "phone": "+91 94432 01902" },
+    ]},
+    # ME-ED
+    { "deptCode": "ME-ED", "deptId": "33333333-3333-3333-3333-333333333320", "members": [
+        { "profileId": generate_deterministic_uuid("fac-meed-hod"), "facultyId": generate_deterministic_uuid("fac-rec-meed-hod"), "empId": "FAC-MEED-001", "name": "Dr. S. Ravikumar (HOD-M.E. ED)", "email": "hod.meed@nandhaengg.org", "designation": "Professor & Head (PG)", "isHod": True, "phone": "+91 94432 02001" },
+    ]},
+    # ME-SE
+    { "deptCode": "ME-SE", "deptId": "33333333-3333-3333-3333-333333333321", "members": [
+        { "profileId": generate_deterministic_uuid("fac-mese-hod"), "facultyId": generate_deterministic_uuid("fac-rec-mese-hod"), "empId": "FAC-MESE-001", "name": "Dr. M. Mohanraj (HOD-M.E. SE)", "email": "hod.mese@nandhaengg.org", "designation": "Professor & Head (PG)", "isHod": True, "phone": "+91 94432 02101" },
+    ]},
+    # S&H
+    { "deptCode": "S&H", "deptId": "33333333-3333-3333-3333-333333333322", "members": [
+        { "profileId": generate_deterministic_uuid("fac-sh-hod"), "facultyId": generate_deterministic_uuid("fac-rec-sh-hod"), "empId": "FAC-SH-001", "name": "Dr. C. Shanthi (HOD-S&H)", "email": "hod.sh@nandhaengg.org", "designation": "Professor & Head", "isHod": True, "phone": "+91 94432 02201" },
+        { "profileId": generate_deterministic_uuid("fac-sh-p1"), "facultyId": generate_deterministic_uuid("fac-rec-sh-p1"), "empId": "FAC-SH-101", "name": "Prof. P. Selvakumar", "email": "prof.selva.sh@nandhaengg.org", "designation": "Associate Professor", "isHod": False, "phone": "+91 94432 02202" },
     ]},
 ]
 

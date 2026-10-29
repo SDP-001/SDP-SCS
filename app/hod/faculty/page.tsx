@@ -378,25 +378,31 @@ export default function HODFacultyPage() {
                           </td>
 
                           <td className="py-3.5 px-4 text-right">
-                            <Button
-                              size="sm"
-                              variant={f.profile?.is_active ? "outline" : "default"}
-                              onClick={() =>
-                                handleToggle(f.profile?.id, f.profile?.full_name || "Faculty")
-                              }
-                              disabled={togglingId === f.profile?.id}
-                              className={`text-xs h-8 ${
-                                f.profile?.is_active
-                                  ? "text-rose-600 hover:bg-rose-50 border-rose-200"
-                                  : "bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
-                              }`}
-                            >
-                              {togglingId === f.profile?.id
-                                ? "Processing..."
-                                : f.profile?.is_active
-                                ? "Disable"
-                                : "Activate"}
-                            </Button>
+                            {f.is_hod ? (
+                              <span className="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200">
+                                Department Head (Self)
+                              </span>
+                            ) : (
+                              <Button
+                                size="sm"
+                                variant={f.profile?.is_active ? "outline" : "default"}
+                                onClick={() =>
+                                  handleToggle(f.profile?.id, f.profile?.full_name || "Faculty")
+                                }
+                                disabled={togglingId === f.profile?.id}
+                                className={`text-xs h-8 ${
+                                  f.profile?.is_active
+                                    ? "text-rose-600 hover:bg-rose-50 border-rose-200"
+                                    : "bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+                                }`}
+                              >
+                                {togglingId === f.profile?.id
+                                  ? "Processing..."
+                                  : f.profile?.is_active
+                                  ? "Disable"
+                                  : "Activate"}
+                              </Button>
+                            )}
                           </td>
                         </tr>
                       ))}
@@ -478,25 +484,33 @@ export default function HODFacultyPage() {
                     </div>
 
                     <div className="pt-2 border-t border-slate-100">
-                      <Button
-                        size="sm"
-                        variant={f.profile?.is_active ? "outline" : "default"}
-                        onClick={() =>
-                          handleToggle(f.profile?.id, f.profile?.full_name || "Faculty")
-                        }
-                        disabled={togglingId === f.profile?.id}
-                        className={`w-full text-xs h-8.5 font-bold ${
-                          f.profile?.is_active
-                            ? "text-rose-600 hover:bg-rose-50 border-rose-200"
-                            : "bg-emerald-600 hover:bg-emerald-700 text-white"
-                        }`}
-                      >
-                        {togglingId === f.profile?.id
-                          ? "Processing..."
-                          : f.profile?.is_active
-                          ? "Disable Account"
-                          : "Activate Account"}
-                      </Button>
+                      {f.is_hod ? (
+                        <div className="text-center py-1">
+                          <span className="text-[11px] font-bold text-purple-700 bg-purple-50 px-2.5 py-1 rounded-md border border-purple-200">
+                            Department Head (Self)
+                          </span>
+                        </div>
+                      ) : (
+                        <Button
+                          size="sm"
+                          variant={f.profile?.is_active ? "outline" : "default"}
+                          onClick={() =>
+                            handleToggle(f.profile?.id, f.profile?.full_name || "Faculty")
+                          }
+                          disabled={togglingId === f.profile?.id}
+                          className={`w-full text-xs h-8.5 font-bold ${
+                            f.profile?.is_active
+                              ? "text-rose-600 hover:bg-rose-50 border-rose-200"
+                              : "bg-emerald-600 hover:bg-emerald-700 text-white"
+                          }`}
+                        >
+                          {togglingId === f.profile?.id
+                            ? "Processing..."
+                            : f.profile?.is_active
+                            ? "Disable Account"
+                            : "Activate Account"}
+                        </Button>
+                      )}
                     </div>
                   </div>
                 ))}

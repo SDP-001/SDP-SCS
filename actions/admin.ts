@@ -16,47 +16,102 @@ function safeRevalidate(path: string) {
 }
 
 export async function getAdminUsersAction() {
-  const user = await requireRole(["ADMIN", "HOD"]);
+  const caller = await requireRole(["ADMIN", "HOD", "FACULTY"]);
   const db = getDB();
 
-  const students = db.students.map((s) => {
-    const profile = db.profiles.find((p) => p.id === s.profile_id);
-    const department = db.departments.find((d) => d.id === s.department_id);
-    const certCount = db.certificates.filter((c) => c.student_id === s.id).length;
-    const approvedCount = db.certificates.filter((c) => c.student_id === s.id && c.status === "APPROVED").length;
-    const totalPoints = db.pointRecords
-      .filter((p) => p.student_id === s.id && p.is_latest)
-      .reduce((sum, p) => sum + p.points, 0);
+  const callerRole = caller.profile.role;
+  const callerDeptId =
+    caller.faculty?.department_id ||
+    db.faculty.find((f) => f.profile_id === caller.profile.id)?.department_id;
 
-    return {
-      ...s,
-      profile,
-      department,
-      certCount,
-      approvedCount,
-      totalPoints,
-    };
-  });
+  // Filter students based on role
+  let rawStudents = db.students;
+  if (callerRole === "FACULTY" || callerRole === "HOD") {
+    if (callerDeptId) {
+      rawStudents = db.students.filter((s) => s.department_id === callerDeptId);
+    }
+  }
 
-  const faculty = db.faculty.map((f) => {
-    const profile = db.profiles.find((p) => p.id === f.profile_id);
-    const department = db.departments.find((d) => d.id === f.department_id);
-    const reviewCount = db.certificateReviews.filter((r) => r.reviewer_id === f.id).length;
-    const activeLockCount = db.certificates.filter(
-      (c) => c.reviewer_id === f.id && c.status === "UNDER_REVIEW"
-    ).length;
+  // Pre-index collections with Map for instant lookup
+  const profileMap = new Map(db.profiles.map((p) => [p.id, p]));
+  const deptMap = new Map(db.departments.map((d) => [d.id, d]));
 
+  const certsByStudent = new Map<string, number>();
+  const approvedByStudent = new Map<string, number>();
+  for (const c of db.certificates) {
+    certsByStudent.set(c.student_id, (certsByStudent.get(c.student_id) || 0) + 1);
+    if (c.status === "APPROVED") {
+      approvedByStudent.set(c.student_id, (approvedByStudent.get(c.student_id) || 0) + 1);
+    }
+  }
+
+  const pointsByStudent = new Map<string, number>();
+  for (const p of db.pointRecords) {
+    if (p.is_latest) {
+      pointsByStudent.set(p.student_id, (pointsByStudent.get(p.student_id) || 0) + p.points);
+    }
+  }
+
+  const students = rawStudents.map((s) => ({
+    ...s,
+    profile: profileMap.get(s.profile_id),
+    department: deptMap.get(s.department_id),
+    certCount: certsByStudent.get(s.id) || 0,
+    approvedCount: approvedByStudent.get(s.id) || 0,
+    totalPoints: pointsByStudent.get(s.id) || 0,
+  }));
+
+  // FACULTY: Strictly only views student accounts (faculty roster is empty)
+  if (callerRole === "FACULTY") {
+    return { students, faculty: [] };
+  }
+
+  // Filter faculty based on role
+  let rawFaculty = db.faculty;
+  if (callerRole === "HOD") {
+    if (callerDeptId) {
+      // HOD sees department faculty members
+      rawFaculty = db.faculty.filter((f) => f.department_id === callerDeptId);
+    }
+  }
+
+  const reviewsByFaculty = new Map<string, number>();
+  for (const r of db.certificateReviews) {
+    reviewsByFaculty.set(r.reviewer_id, (reviewsByFaculty.get(r.reviewer_id) || 0) + 1);
+  }
+
+  const lockByFaculty = new Map<string, number>();
+  for (const c of db.certificates) {
+    if (c.status === "UNDER_REVIEW" && c.reviewer_id) {
+      lockByFaculty.set(c.reviewer_id, (lockByFaculty.get(c.reviewer_id) || 0) + 1);
+    }
+  }
+
+  const mappedFaculty = rawFaculty.map((f) => {
+    const profile = profileMap.get(f.profile_id);
+    const department = deptMap.get(f.department_id);
     return {
       ...f,
       profile,
       department,
-      reviewCount,
-      activeLockCount,
+      reviewCount: reviewsByFaculty.get(f.id) || 0,
+      activeLockCount: lockByFaculty.get(f.id) || 0,
       is_dean: f.is_dean || profile?.role === "ADMIN",
     };
   });
 
-  // Ensure Admin / Dean profile is included for institutional leadership visibility
+  // HOD: Only returns department faculty (no Dean or external faculty)
+  if (callerRole === "HOD") {
+    const sortedDeptFaculty = mappedFaculty.sort((a, b) => {
+      const aHod = a.is_hod ? 1 : 0;
+      const bHod = b.is_hod ? 1 : 0;
+      if (aHod !== bHod) return bHod - aHod;
+      return (a.profile?.full_name || "").localeCompare(b.profile?.full_name || "");
+    });
+    return { students, faculty: sortedDeptFaculty };
+  }
+
+  // DEAN / ADMIN: Full institutional visibility with Dean on top
   const existingFacultyProfileIds = new Set(db.faculty.map((f) => f.profile_id));
   const adminProfiles = db.profiles.filter(
     (p) => p.role === "ADMIN" && !existingFacultyProfileIds.has(p.id)
@@ -83,19 +138,15 @@ export async function getAdminUsersAction() {
     activeLockCount: 0,
   }));
 
-  // ORDER HIERARCHY: Dean (Upper) -> HOD (Upper) -> Faculty (Below)
-  const orderedFaculty = [...deans, ...faculty].sort((a, b) => {
-    // 1. Dean first in upper position
+  const orderedFaculty = [...deans, ...mappedFaculty].sort((a, b) => {
     const aDean = a.is_dean || a.profile?.role === "ADMIN" ? 1 : 0;
     const bDean = b.is_dean || b.profile?.role === "ADMIN" ? 1 : 0;
     if (aDean !== bDean) return bDean - aDean;
 
-    // 2. HOD next in upper position
     const aHod = a.is_hod || a.profile?.role === "HOD" ? 1 : 0;
     const bHod = b.is_hod || b.profile?.role === "HOD" ? 1 : 0;
     if (aHod !== bHod) return bHod - aHod;
 
-    // 3. Faculty alphabetically by name
     return (a.profile?.full_name || "").localeCompare(b.profile?.full_name || "");
   });
 
@@ -103,13 +154,85 @@ export async function getAdminUsersAction() {
 }
 
 export async function toggleUserStatusAction(profileId: string) {
-  const user = await requireRole(["ADMIN"]);
+  const caller = await requireRole(["ADMIN", "HOD", "FACULTY"]);
   const db = getDB();
 
   const targetProfile = db.profiles.find((p) => p.id === profileId);
   if (!targetProfile) {
-    return { success: false, error: "User profile not found" };
+    return { success: false, error: "User profile not found." };
   }
+
+  // Safety safeguard: Users cannot disable their own active account
+  if (caller.profile.id === targetProfile.id) {
+    return { success: false, error: "You cannot disable your own active account." };
+  }
+
+  const callerRole = caller.profile.role;
+  const callerDeptId =
+    caller.faculty?.department_id ||
+    db.faculty.find((f) => f.profile_id === caller.profile.id)?.department_id;
+
+  // 1. FACULTY PERMISSIONS:
+  // Faculty only see student accounts and can ONLY disable student accounts in their department
+  if (callerRole === "FACULTY") {
+    if (targetProfile.role !== "STUDENT") {
+      return {
+        success: false,
+        error: "Faculty members are only authorized to disable or activate student accounts.",
+      };
+    }
+    const student = db.students.find((s) => s.profile_id === targetProfile.id);
+    if (!student || (callerDeptId && student.department_id !== callerDeptId)) {
+      return {
+        success: false,
+        error: "Faculty members can only manage student accounts within their assigned department.",
+      };
+    }
+  }
+
+  // 2. HOD PERMISSIONS:
+  // HOD can disable both student and faculty accounts in their department
+  // HOD cannot disable Dean/Admin or other HODs
+  else if (callerRole === "HOD") {
+    if (targetProfile.role === "ADMIN") {
+      return {
+        success: false,
+        error: "HODs are not authorized to disable Dean or Administrator accounts.",
+      };
+    }
+
+    if (targetProfile.role === "STUDENT") {
+      const student = db.students.find((s) => s.profile_id === targetProfile.id);
+      if (!student || (callerDeptId && student.department_id !== callerDeptId)) {
+        return {
+          success: false,
+          error: "HODs can only manage student accounts within their department.",
+        };
+      }
+    } else if (targetProfile.role === "FACULTY" || targetProfile.role === "HOD") {
+      const facultyMem = db.faculty.find((f) => f.profile_id === targetProfile.id);
+      if (!facultyMem || (callerDeptId && facultyMem.department_id !== callerDeptId)) {
+        return {
+          success: false,
+          error: "HODs can only manage faculty within their department.",
+        };
+      }
+      if (facultyMem.is_hod && targetProfile.id !== caller.profile.id) {
+        return {
+          success: false,
+          error: "HODs cannot disable other Department Heads.",
+        };
+      }
+    } else {
+      return {
+        success: false,
+        error: "HODs can only manage student and faculty accounts within their department.",
+      };
+    }
+  }
+
+  // 3. DEAN / ADMIN PERMISSIONS:
+  // Dean is authorized to disable/activate all accounts across the entire institution!
 
   const previousStatus = targetProfile.is_active;
   targetProfile.is_active = !previousStatus;
@@ -117,14 +240,17 @@ export async function toggleUserStatusAction(profileId: string) {
 
   // Audit Log
   await logAuditEvent({
-    collegeId: user.profile.college_id,
-    actorId: user.profile.id,
-    action: "USER_DISABLED",
+    collegeId: caller.profile.college_id,
+    actorId: caller.profile.id,
+    action: targetProfile.is_active ? "USER_UPDATED" : "USER_DISABLED",
     entityType: "USER",
     entityId: targetProfile.id,
     metadata: {
       user: targetProfile.full_name,
+      role: targetProfile.role,
       newActiveState: targetProfile.is_active,
+      modifiedBy: caller.profile.full_name,
+      modifierRole: callerRole,
     },
   });
 
@@ -142,13 +268,13 @@ export async function toggleUserStatusAction(profileId: string) {
           releasedCount++;
 
           logAuditEvent({
-            collegeId: user.profile.college_id,
-            actorId: user.profile.id,
+            collegeId: caller.profile.college_id,
+            actorId: caller.profile.id,
             action: "CERTIFICATE_RECLAIMED",
             entityType: "CERTIFICATE",
             entityId: c.id,
             metadata: {
-              reason: "Faculty member disabled by admin; locked review released back to SUBMITTED",
+              reason: "Faculty member disabled; locked review released back to SUBMITTED queue",
               faculty: targetProfile.full_name,
             },
           });
@@ -158,7 +284,10 @@ export async function toggleUserStatusAction(profileId: string) {
   }
 
   safeRevalidate("/admin/users");
+  safeRevalidate("/faculty/students");
   safeRevalidate("/faculty/reviews");
+  safeRevalidate("/hod/students");
+  safeRevalidate("/hod/faculty");
   return { success: true, isActive: targetProfile.is_active };
 }
 

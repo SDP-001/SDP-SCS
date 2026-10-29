@@ -3,10 +3,10 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { getDB } from "@/lib/db/store";
 import { Card } from "@/components/ui/card";
 import { FileCheck2, Award, GraduationCap, FileSpreadsheet } from "lucide-react";
-
 import { AddStudentModal } from "@/components/students/AddStudentModal";
 import { getSessionActivityLogsAction } from "@/actions/sessionActivity";
 import { SessionActivityFeed } from "@/components/dashboard/SessionActivityFeed";
+import { DepartmentStudentsTable } from "@/components/students/DepartmentStudentsTable";
 
 export default async function HODStudentsPage() {
   const user = await getCurrentUser();
@@ -15,21 +15,47 @@ export default async function HODStudentsPage() {
   const sessionActivities = await getSessionActivityLogsAction({ roleFilter: "STUDENT", limit: 20 });
 
   const deptId = user?.faculty?.department_id;
+  const deptName = user?.faculty?.department?.name || "Department";
+
+  // Pre-index for instant lookup
+  const profileMap = new Map(db.profiles.map((p) => [p.id, p]));
+  const certsByStudent = new Map<string, any[]>();
+  for (const c of db.certificates) {
+    if (!certsByStudent.has(c.student_id)) certsByStudent.set(c.student_id, []);
+    certsByStudent.get(c.student_id)!.push(c);
+  }
+
+  const pointsByStudent = new Map<string, number>();
+  for (const p of db.pointRecords) {
+    if (p.is_latest) {
+      pointsByStudent.set(p.student_id, (pointsByStudent.get(p.student_id) || 0) + p.points);
+    }
+  }
+
   const students = db.students
     .filter((s) => s.department_id === deptId)
     .map((s) => {
-      const profile = db.profiles.find((p) => p.id === s.profile_id);
-      const studentCerts = db.certificates.filter((c) => c.student_id === s.id);
+      const profile = profileMap.get(s.profile_id);
+      const studentCerts = certsByStudent.get(s.id) || [];
       const approvedCount = studentCerts.filter((c) => c.status === "APPROVED").length;
-      const totalPoints = db.pointRecords
-        .filter((p) => p.student_id === s.id && p.is_latest)
-        .reduce((sum, p) => sum + p.points, 0);
+      const totalPoints = pointsByStudent.get(s.id) || 0;
 
       return {
-        ...s,
-        profile,
+        id: s.id,
+        register_number: s.register_number,
+        academic_year: s.academic_year,
+        department_id: s.department_id,
         approvedCount,
         totalPoints,
+        profile: profile
+          ? {
+              id: profile.id,
+              full_name: profile.full_name,
+              email: profile.email,
+              is_active: profile.is_active,
+              role: profile.role,
+            }
+          : null,
       };
     })
     .sort((a, b) => b.totalPoints - a.totalPoints);
@@ -44,16 +70,16 @@ export default async function HODStudentsPage() {
             </span>
           </div>
           <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-            Department Student Performance & Credits
+            Department Student Performance & Account Control
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
-            Student achievement standings for {user?.faculty?.department?.name || "Department"}.
+            Student achievement standings and account controls for {deptName}. As HOD, you can disable or activate student accounts.
           </p>
         </div>
 
         <AddStudentModal
           defaultDepartmentId={deptId}
-          defaultDepartmentName={user?.faculty?.department?.name}
+          defaultDepartmentName={deptName}
           buttonLabel="Enroll Student (Manual / Excel)"
         />
       </div>
@@ -80,62 +106,19 @@ export default async function HODStudentsPage() {
         <div className="flex items-center gap-2 shrink-0">
           <AddStudentModal
             defaultDepartmentId={deptId}
-            defaultDepartmentName={user?.faculty?.department?.name}
+            defaultDepartmentName={deptName}
             buttonLabel="Upload Excel Sheet (OK to Submit)"
             buttonVariant="banner"
           />
         </div>
       </div>
 
-      <div className="overflow-hidden border border-slate-200 rounded-xl bg-white shadow-2xs">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 uppercase tracking-wider text-[10px]">
-              <tr>
-                <th className="py-3.5 px-4">Rank</th>
-                <th className="py-3.5 px-4">Student</th>
-                <th className="py-3.5 px-4">Register Number</th>
-                <th className="py-3.5 px-4">Year</th>
-                <th className="py-3.5 px-4">Verified Submissions</th>
-                <th className="py-3.5 px-4 text-right">Points Balance</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 font-medium">
-              {students.map((student, idx) => (
-                <tr key={student.id} className="hover:bg-slate-50/60">
-                  <td className="py-3.5 px-4 font-mono font-bold text-slate-400">
-                    #{idx + 1}
-                  </td>
-
-                  <td className="py-3.5 px-4">
-                    <p className="font-bold text-slate-900">{student.profile?.full_name}</p>
-                    <p className="text-[11px] text-slate-400">{student.profile?.email}</p>
-                  </td>
-
-                  <td className="py-3.5 px-4 font-mono font-semibold text-slate-800">
-                    {student.register_number}
-                  </td>
-
-                  <td className="py-3.5 px-4 text-slate-600">Year {student.academic_year}</td>
-
-                  <td className="py-3.5 px-4">
-                    <span className="inline-flex items-center gap-1 font-semibold text-slate-800">
-                      <FileCheck2 className="h-3.5 w-3.5 text-emerald-600" />
-                      <span>{student.approvedCount} Approved</span>
-                    </span>
-                  </td>
-
-                  <td className="py-3.5 px-4 text-right">
-                    <span className="font-mono font-black text-emerald-700 text-sm">
-                      +{student.totalPoints} PTS
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      {/* Interactive Table with Live Search & Disable/Activate Action */}
+      <DepartmentStudentsTable
+        initialStudents={students}
+        callerRole="HOD"
+        departmentName={deptName}
+      />
 
       {/* Department Students Session Activity Feed */}
       <SessionActivityFeed

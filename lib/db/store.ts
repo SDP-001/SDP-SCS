@@ -172,6 +172,42 @@ function initializeState(): DBState {
     "created_at": "2026-01-01T00:00:00.000Z"
   },
   {
+    "id": "33333333-3333-3333-3333-333333333317",
+    "college_id": "11111111-1111-1111-1111-111111111111",
+    "name": "Artificial Intelligence and Machine Learning",
+    "code": "AIML",
+    "type": "UG",
+    "is_active": true,
+    "created_at": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "33333333-3333-3333-3333-333333333318",
+    "college_id": "11111111-1111-1111-1111-111111111111",
+    "name": "Computer Science and Business Systems",
+    "code": "CSBS",
+    "type": "UG",
+    "is_active": true,
+    "created_at": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "33333333-3333-3333-3333-333333333319",
+    "college_id": "11111111-1111-1111-1111-111111111111",
+    "name": "Aeronautical Engineering",
+    "code": "AERO",
+    "type": "UG",
+    "is_active": true,
+    "created_at": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "33333333-3333-3333-3333-333333333322",
+    "college_id": "11111111-1111-1111-1111-111111111111",
+    "name": "Science and Humanities",
+    "code": "S&H",
+    "type": "UG",
+    "is_active": true,
+    "created_at": "2026-01-01T00:00:00.000Z"
+  },
+  {
     "id": "33333333-3333-3333-3333-333333333308",
     "college_id": "11111111-1111-1111-1111-111111111111",
     "name": "M.E. Computer Science and Engineering",
@@ -185,6 +221,24 @@ function initializeState(): DBState {
     "college_id": "11111111-1111-1111-1111-111111111111",
     "name": "M.E. VLSI Design",
     "code": "ME-VLSI",
+    "type": "PG",
+    "is_active": true,
+    "created_at": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "33333333-3333-3333-3333-333333333320",
+    "college_id": "11111111-1111-1111-1111-111111111111",
+    "name": "M.E. Engineering Design",
+    "code": "ME-ED",
+    "type": "PG",
+    "is_active": true,
+    "created_at": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "33333333-3333-3333-3333-333333333321",
+    "college_id": "11111111-1111-1111-1111-111111111111",
+    "name": "M.E. Structural Engineering",
+    "code": "ME-SE",
     "type": "PG",
     "is_active": true,
     "created_at": "2026-01-01T00:00:00.000Z"
@@ -670,6 +724,126 @@ function initializeState(): DBState {
     "email": "hod.mca@nandhaengg.org",
     "phone_number": "+91 94432 01101",
     "full_name": "Dr. P. Sathish (HOD-MCA)",
+    "avatar_url": null,
+    "is_active": true,
+    "created_at": "2026-01-01T00:00:00Z",
+    "updated_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "51e59436-6e54-4773-a6f4-f99291d4caba",
+    "college_id": "11111111-1111-1111-1111-111111111111",
+    "role": "HOD",
+    "email": "hod.aiml@nandhaengg.org",
+    "phone_number": "+91 94432 01701",
+    "full_name": "Dr. K. S. Arunkumar (HOD-AIML)",
+    "avatar_url": null,
+    "is_active": true,
+    "created_at": "2026-01-01T00:00:00Z",
+    "updated_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "9840daf7-a1e0-4e41-a192-c46ad40411b3",
+    "college_id": "11111111-1111-1111-1111-111111111111",
+    "role": "FACULTY",
+    "email": "prof.karthika.aiml@nandhaengg.org",
+    "phone_number": "+91 94432 01702",
+    "full_name": "Prof. M. Karthika",
+    "avatar_url": null,
+    "is_active": true,
+    "created_at": "2026-01-01T00:00:00Z",
+    "updated_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "d9cc12df-800f-44d1-a7b8-bd2eb07bacc0",
+    "college_id": "11111111-1111-1111-1111-111111111111",
+    "role": "HOD",
+    "email": "hod.csbs@nandhaengg.org",
+    "phone_number": "+91 94432 01801",
+    "full_name": "Dr. R. Preetha (HOD-CSBS)",
+    "avatar_url": null,
+    "is_active": true,
+    "created_at": "2026-01-01T00:00:00Z",
+    "updated_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "b978d0a0-fd40-4298-a272-effca2952b9b",
+    "college_id": "11111111-1111-1111-1111-111111111111",
+    "role": "FACULTY",
+    "email": "prof.vasanth.csbs@nandhaengg.org",
+    "phone_number": "+91 94432 01802",
+    "full_name": "Prof. G. Vasanth",
+    "avatar_url": null,
+    "is_active": true,
+    "created_at": "2026-01-01T00:00:00Z",
+    "updated_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "bb127cd1-bb26-43f0-a45f-62a844ad6337",
+    "college_id": "11111111-1111-1111-1111-111111111111",
+    "role": "HOD",
+    "email": "hod.aero@nandhaengg.org",
+    "phone_number": "+91 94432 01901",
+    "full_name": "Dr. V. Boopathi (HOD-AERO)",
+    "avatar_url": null,
+    "is_active": true,
+    "created_at": "2026-01-01T00:00:00Z",
+    "updated_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "d0648225-13e9-460f-a942-3a86a83a9be5",
+    "college_id": "11111111-1111-1111-1111-111111111111",
+    "role": "FACULTY",
+    "email": "prof.anand.aero@nandhaengg.org",
+    "phone_number": "+91 94432 01902",
+    "full_name": "Prof. R. Anandhakumar",
+    "avatar_url": null,
+    "is_active": true,
+    "created_at": "2026-01-01T00:00:00Z",
+    "updated_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "cabe3065-3768-4496-ada4-7843447d9dcb",
+    "college_id": "11111111-1111-1111-1111-111111111111",
+    "role": "HOD",
+    "email": "hod.meed@nandhaengg.org",
+    "phone_number": "+91 94432 02001",
+    "full_name": "Dr. S. Ravikumar (HOD-M.E. ED)",
+    "avatar_url": null,
+    "is_active": true,
+    "created_at": "2026-01-01T00:00:00Z",
+    "updated_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "f207fad8-96b1-4441-acc5-d9c74631160f",
+    "college_id": "11111111-1111-1111-1111-111111111111",
+    "role": "HOD",
+    "email": "hod.mese@nandhaengg.org",
+    "phone_number": "+91 94432 02101",
+    "full_name": "Dr. M. Mohanraj (HOD-M.E. SE)",
+    "avatar_url": null,
+    "is_active": true,
+    "created_at": "2026-01-01T00:00:00Z",
+    "updated_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "ec2d9036-8e6b-4285-a553-1229d63d0b77",
+    "college_id": "11111111-1111-1111-1111-111111111111",
+    "role": "HOD",
+    "email": "hod.sh@nandhaengg.org",
+    "phone_number": "+91 94432 02201",
+    "full_name": "Dr. C. Shanthi (HOD-S&H)",
+    "avatar_url": null,
+    "is_active": true,
+    "created_at": "2026-01-01T00:00:00Z",
+    "updated_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "9a114456-5b6f-4133-adfb-e99b34927653",
+    "college_id": "11111111-1111-1111-1111-111111111111",
+    "role": "FACULTY",
+    "email": "prof.selva.sh@nandhaengg.org",
+    "phone_number": "+91 94432 02202",
+    "full_name": "Prof. P. Selvakumar",
     "avatar_url": null,
     "is_active": true,
     "created_at": "2026-01-01T00:00:00Z",
@@ -13302,6 +13476,106 @@ function initializeState(): DBState {
     "employee_id": "FAC-MCA-001",
     "is_hod": true,
     "created_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "77d9ff0c-7a12-482b-a48e-123162666fa7",
+    "profile_id": "51e59436-6e54-4773-a6f4-f99291d4caba",
+    "college_id": "11111111-1111-1111-1111-111111111111",
+    "department_id": "33333333-3333-3333-3333-333333333317",
+    "designation": "Professor & Head",
+    "employee_id": "FAC-AIML-001",
+    "is_hod": true,
+    "created_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "3dac3d73-12cb-408a-af08-913374380fd9",
+    "profile_id": "9840daf7-a1e0-4e41-a192-c46ad40411b3",
+    "college_id": "11111111-1111-1111-1111-111111111111",
+    "department_id": "33333333-3333-3333-3333-333333333317",
+    "designation": "Assistant Professor",
+    "employee_id": "FAC-AIML-101",
+    "is_hod": false,
+    "created_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "bfcfd5b2-5d8b-489e-af76-674972c47284",
+    "profile_id": "d9cc12df-800f-44d1-a7b8-bd2eb07bacc0",
+    "college_id": "11111111-1111-1111-1111-111111111111",
+    "department_id": "33333333-3333-3333-3333-333333333318",
+    "designation": "Professor & Head",
+    "employee_id": "FAC-CSBS-001",
+    "is_hod": true,
+    "created_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "6e6bbaa3-e3db-4026-ab7d-7415864aae3f",
+    "profile_id": "b978d0a0-fd40-4298-a272-effca2952b9b",
+    "college_id": "11111111-1111-1111-1111-111111111111",
+    "department_id": "33333333-3333-3333-3333-333333333318",
+    "designation": "Assistant Professor",
+    "employee_id": "FAC-CSBS-101",
+    "is_hod": false,
+    "created_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "865e03ff-0346-4c5e-a395-73b75d53e557",
+    "profile_id": "bb127cd1-bb26-43f0-a45f-62a844ad6337",
+    "college_id": "11111111-1111-1111-1111-111111111111",
+    "department_id": "33333333-3333-3333-3333-333333333319",
+    "designation": "Professor & Head",
+    "employee_id": "FAC-AERO-001",
+    "is_hod": true,
+    "created_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "1f86296b-fc8b-479b-ae9d-ff05027cbbef",
+    "profile_id": "d0648225-13e9-460f-a942-3a86a83a9be5",
+    "college_id": "11111111-1111-1111-1111-111111111111",
+    "department_id": "33333333-3333-3333-3333-333333333319",
+    "designation": "Assistant Professor",
+    "employee_id": "FAC-AERO-101",
+    "is_hod": false,
+    "created_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "840b6207-fade-42d2-a658-e31666830ec8",
+    "profile_id": "cabe3065-3768-4496-ada4-7843447d9dcb",
+    "college_id": "11111111-1111-1111-1111-111111111111",
+    "department_id": "33333333-3333-3333-3333-333333333320",
+    "designation": "Professor & Head (PG)",
+    "employee_id": "FAC-MEED-001",
+    "is_hod": true,
+    "created_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "801819f1-0d3b-4041-a399-52d458c6c17e",
+    "profile_id": "f207fad8-96b1-4441-acc5-d9c74631160f",
+    "college_id": "11111111-1111-1111-1111-111111111111",
+    "department_id": "33333333-3333-3333-3333-333333333321",
+    "designation": "Professor & Head (PG)",
+    "employee_id": "FAC-MESE-001",
+    "is_hod": true,
+    "created_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "f28a7d8a-9661-4796-ae99-a6ffadf25bf8",
+    "profile_id": "ec2d9036-8e6b-4285-a553-1229d63d0b77",
+    "college_id": "11111111-1111-1111-1111-111111111111",
+    "department_id": "33333333-3333-3333-3333-333333333322",
+    "designation": "Professor & Head",
+    "employee_id": "FAC-SH-001",
+    "is_hod": true,
+    "created_at": "2026-01-01T00:00:00Z"
+  },
+  {
+    "id": "d2a4ab65-db29-4169-a1c6-55ebbf566406",
+    "profile_id": "9a114456-5b6f-4133-adfb-e99b34927653",
+    "college_id": "11111111-1111-1111-1111-111111111111",
+    "department_id": "33333333-3333-3333-3333-333333333322",
+    "designation": "Associate Professor",
+    "employee_id": "FAC-SH-101",
+    "is_hod": false,
+    "created_at": "2026-01-01T00:00:00Z"
   }
 ];
   const students: Student[] = [
@@ -22641,7 +22915,7 @@ function initializeState(): DBState {
     "metadata": {
       "event": "OFFICIAL_DATABASE_LOADED",
       "enrolled_students": 1028,
-      "departments": 16
+      "departments": 22
     },
     "ip_address": "127.0.0.1",
     "created_at": "2026-10-29T10:00:00Z"
@@ -22678,6 +22952,16 @@ function initializeState(): DBState {
   "b4e1a8ad-3c96-423a-aeda-2aa8bfdec23c": "password123",
   "1672c067-1373-4884-a4c4-3531d23755e1": "password123",
   "b116c60a-3dde-45b1-af41-d2c57f6513a4": "password123",
+  "51e59436-6e54-4773-a6f4-f99291d4caba": "password123",
+  "9840daf7-a1e0-4e41-a192-c46ad40411b3": "password123",
+  "d9cc12df-800f-44d1-a7b8-bd2eb07bacc0": "password123",
+  "b978d0a0-fd40-4298-a272-effca2952b9b": "password123",
+  "bb127cd1-bb26-43f0-a45f-62a844ad6337": "password123",
+  "d0648225-13e9-460f-a942-3a86a83a9be5": "password123",
+  "cabe3065-3768-4496-ada4-7843447d9dcb": "password123",
+  "f207fad8-96b1-4441-acc5-d9c74631160f": "password123",
+  "ec2d9036-8e6b-4285-a553-1229d63d0b77": "password123",
+  "9a114456-5b6f-4133-adfb-e99b34927653": "password123",
   "f52fad80-bd06-4779-a089-744a6ecaef0a": "Nec8825678060",
   "334b1b1d-d9f4-4359-a588-8cb0e8f8be02": "Nec6383271860",
   "42a8dfa1-0187-4b85-ac56-b82aac313d01": "Nec8903219109",

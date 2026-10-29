@@ -291,13 +291,40 @@ export default function AdminDepartmentsPage() {
         borderHover: "hover:border-teal-300",
       };
     }
-    if (c === "AIDS" || c === "AI&DS") {
+    if (c === "AIDS" || c === "AI&DS" || c === "AIML" || c === "AI&ML") {
       return {
         icon: Sparkles,
         badgeColor: "bg-purple-50 text-purple-700 border-purple-200",
         accentColor: "from-purple-500 to-indigo-600",
         iconBg: "bg-purple-500/10 text-purple-600 border-purple-200/60",
         borderHover: "hover:border-purple-300",
+      };
+    }
+    if (c === "CSBS") {
+      return {
+        icon: Briefcase,
+        badgeColor: "bg-indigo-50 text-indigo-700 border-indigo-200",
+        accentColor: "from-indigo-500 to-blue-700",
+        iconBg: "bg-indigo-500/10 text-indigo-600 border-indigo-200/60",
+        borderHover: "hover:border-indigo-300",
+      };
+    }
+    if (c === "AERO") {
+      return {
+        icon: Globe,
+        badgeColor: "bg-cyan-50 text-cyan-700 border-cyan-200",
+        accentColor: "from-cyan-500 to-sky-600",
+        iconBg: "bg-cyan-500/10 text-cyan-600 border-cyan-200/60",
+        borderHover: "hover:border-cyan-300",
+      };
+    }
+    if (c === "S&H") {
+      return {
+        icon: BookOpen,
+        badgeColor: "bg-slate-100 text-slate-700 border-slate-300",
+        accentColor: "from-slate-600 to-slate-800",
+        iconBg: "bg-slate-500/10 text-slate-700 border-slate-200",
+        borderHover: "hover:border-slate-400",
       };
     }
     // PG specific stylings
@@ -317,6 +344,24 @@ export default function AdminDepartmentsPage() {
         accentColor: "from-fuchsia-500 to-pink-600",
         iconBg: "bg-fuchsia-500/10 text-fuchsia-600 border-fuchsia-200/60",
         borderHover: "hover:border-fuchsia-300",
+      };
+    }
+    if (c.includes("ME-ED") || c.includes("ENGINEERING DESIGN")) {
+      return {
+        icon: Cog,
+        badgeColor: "bg-orange-50 text-orange-800 border-orange-200",
+        accentColor: "from-orange-500 to-amber-600",
+        iconBg: "bg-orange-500/10 text-orange-600 border-orange-200/60",
+        borderHover: "hover:border-orange-300",
+      };
+    }
+    if (c.includes("ME-SE") || c.includes("STRUCTURAL")) {
+      return {
+        icon: Building2,
+        badgeColor: "bg-stone-50 text-stone-800 border-stone-200",
+        accentColor: "from-stone-500 to-zinc-700",
+        iconBg: "bg-stone-500/10 text-stone-600 border-stone-200/60",
+        borderHover: "hover:border-stone-300",
       };
     }
     if (c.includes("MBA")) {
