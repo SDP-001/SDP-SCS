@@ -464,7 +464,7 @@ export function AddStudentModal({
               {/* ========================================================================= */}
               {activeTab === "MANUAL" && (
                 <form onSubmit={handleManualSubmit} className="space-y-4">
-                  {/* Register Number Input with Live Database Verification */}
+                  {/* Register Number Input with Institutional Database Verification */}
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
                       <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">

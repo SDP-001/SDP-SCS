@@ -29,7 +29,7 @@ export interface VerifiedFacultyData {
   departmentId: string;
   departmentName: string;
   departmentCode: string;
-  role: "FACULTY" | "HOD";
+  role: "FACULTY" | "HOD" | "DEAN";
   designation: string;
   isActive: boolean;
 }
@@ -52,10 +52,18 @@ export interface ExistingFacultyRef {
   email: string;
   fullName: string;
   departmentCode?: string;
-  role?: "FACULTY" | "HOD";
+  role?: "FACULTY" | "HOD" | "DEAN";
 }
 
 export const SAMPLE_FACULTY_DATASET: RawFacultyRow[] = [
+  {
+    employeeId: "FAC-ADM-001",
+    fullName: "Dr. Arthur Vance",
+    email: "admin@nandhaengg.org",
+    department: "Institutional Leadership",
+    role: "DEAN",
+    designation: "Dean & Academic Administrator",
+  },
   {
     employeeId: "FAC-CSE-201",
     fullName: "Dr. S. K. Nandhakumar",
@@ -105,7 +113,7 @@ export function verifyAndNormalizeFaculty(
   row: RawFacultyRow,
   departments: DepartmentRef[],
   existingFaculty: ExistingFacultyRef[] = [],
-  enforcedRole?: "FACULTY" | "HOD"
+  enforcedRole?: "FACULTY" | "HOD" | "DEAN"
 ): FacultyRowVerification {
   const id = generateUUID();
   const corrections: string[] = [];
@@ -163,10 +171,12 @@ export function verifyAndNormalizeFaculty(
   }
 
   // 4. Role
-  let role: "FACULTY" | "HOD" = enforcedRole || "FACULTY";
+  let role: "FACULTY" | "HOD" | "DEAN" = (enforcedRole as any) || "FACULTY";
   if (!enforcedRole) {
     const rawRole = (row.role || row["Role"] || "").toString().trim().toUpperCase();
-    if (rawRole.includes("HOD") || rawRole.includes("HEAD")) {
+    if (rawRole.includes("DEAN") || rawRole.includes("ADMIN")) {
+      role = "DEAN";
+    } else if (rawRole.includes("HOD") || rawRole.includes("HEAD")) {
       role = "HOD";
     } else {
       role = "FACULTY";
@@ -182,7 +192,12 @@ export function verifyAndNormalizeFaculty(
   ).toString().trim();
 
   if (!rawDesignation) {
-    rawDesignation = role === "HOD" ? "Professor & Head" : "Assistant Professor";
+    rawDesignation =
+      role === "DEAN"
+        ? "Dean & Academic Administrator"
+        : role === "HOD"
+        ? "Professor & Head"
+        : "Assistant Professor";
     corrections.push(`Designation defaulted to '${rawDesignation}'`);
   }
 

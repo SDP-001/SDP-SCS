@@ -81,7 +81,13 @@ export default async function StudentDashboardPage() {
   const recentCerts = certificates.slice(0, 4).map((c) => ({
     ...c,
     category: db.categories.find((cat) => cat.id === c.category_id),
-    files: db.certificateFiles.filter((f) => f.certificate_id === c.id),
+    files: db.certificateFiles
+      .filter((f) => f.certificate_id === c.id)
+      .sort((a, b) => {
+        if (a.file_type === "PRIMARY" && b.file_type !== "PRIMARY") return -1;
+        if (b.file_type === "PRIMARY" && a.file_type !== "PRIMARY") return 1;
+        return b.version - a.version;
+      }),
     points: db.pointRecords.filter((p) => p.certificate_id === c.id),
   }));
 

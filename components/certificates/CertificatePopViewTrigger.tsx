@@ -45,7 +45,12 @@ export function CertificatePopViewTrigger({
   const [isDownloading, setIsDownloading] = useState(false);
 
   const safeFiles = files || [];
-  const primaryFile = safeFiles.find((f) => f.file_type === "PRIMARY") || safeFiles[0];
+  const sortedFiles = [...safeFiles].sort((a, b) => {
+    if (a.file_type === "PRIMARY" && b.file_type !== "PRIMARY") return -1;
+    if (b.file_type === "PRIMARY" && a.file_type !== "PRIMARY") return 1;
+    return b.version - a.version;
+  });
+  const primaryFile = sortedFiles[0] || null;
   const shouldShowDownload = showDownload !== undefined ? showDownload : (variant === "primary");
 
   const handleDownload = async (e: React.MouseEvent) => {
@@ -166,7 +171,7 @@ export function CertificatePopViewTrigger({
         eventLevel={eventLevel}
         achievement={achievement}
         submittedAt={submittedAt}
-        files={safeFiles}
+        files={sortedFiles}
       />
     </>
   );

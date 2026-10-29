@@ -39,7 +39,7 @@ It replaces disorganized spreadsheets, lost paper certificates, and unverified c
 | **Accreditation SSR Engine** | One-click report generator formatted for NAAC Criteria 3.4/5.3 and NIRF institutional portfolios. |
 | **Dual Persistence Engine** | Runs zero-config out of the box using an in-memory persistent store (`lib/db/store.ts`) or connects directly to Supabase PostgreSQL. |
 | **Dual-Mode Student Enrollment** | Enroll students individually via **Manual Form** with real-time DB verification, or in bulk via **Excel / CSV Sheet Upload** (`.xlsx`, `.xls`, `.csv`). |
-| **Database Verification & Auto-Correction** | Live verification engine checks Register Numbers against DB, auto-resolves branch aliases (e.g. `CSE`, `Mechanical`, `MCA`), and auto-formats official emails. |
+| **Database Verification & Auto-Correction** | Institutional verification engine checks Register Numbers against DB, auto-resolves branch aliases (e.g. `CSE`, `Mechanical`, `MCA`), and auto-formats official emails. |
 | **Offline-Ready PWA** | Progressive Web App compliant with service worker caching (`sw.js`) and app manifest (`manifest.json`). |
 
 ---
@@ -83,7 +83,7 @@ It replaces disorganized spreadsheets, lost paper certificates, and unverified c
 ### 1. 🎓 Student Portal (`/student`)
 - **Submit Achievements**: Enter event level (*College, District, State, National, International*), title, organizer, date, and upload primary certificate + supporting files.
 - **Duplicate Protection**: File upload runs SHA-256 hash extraction. If byte-identical to any existing certificate in NEC's repository, a warning is displayed.
-- **Status Tracking**: Live status badges: `DRAFT` ➔ `SUBMITTED` ➔ `UNDER_REVIEW` ➔ `APPROVED` / `CORRECTION_REQUIRED` / `REJECTED`.
+- **Status Tracking**: Status badges: `DRAFT` ➔ `SUBMITTED` ➔ `UNDER_REVIEW` ➔ `APPROVED` / `CORRECTION_REQUIRED` / `REJECTED`.
 - **Resubmission on Correction**: If faculty requests changes, students can edit details or re-upload files without losing history.
 - **Credit Portfolio**: Visual dashboard of cumulative credit points, category breakdown (Academic, Technical, Hackathon, Sports, etc.), and department rank.
 

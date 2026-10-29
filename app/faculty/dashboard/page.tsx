@@ -298,7 +298,7 @@ export default async function FacultyDashboardPage() {
       <SessionActivityFeed
         initialActivities={sessionActivities}
         callerRole="FACULTY"
-        title="Student Live Session & Password Activity Log"
+        title="Student Session & Password Activity Log"
         subtitle="Real-time chronological log of enrolled students logging into, out of the portal, and resetting passwords with exact date, time, and register number."
       />
     </div>

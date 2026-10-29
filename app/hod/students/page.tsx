@@ -38,6 +38,11 @@ export default async function HODStudentsPage() {
     <div className="space-y-6 pb-28 md:pb-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
+          <div className="mb-1.5 flex items-center gap-2">
+            <span className="inline-flex text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800 border border-indigo-200 tracking-wider shrink-0">
+              HOD Portal
+            </span>
+          </div>
           <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
             Department Student Performance & Credits
           </h2>
@@ -137,7 +142,7 @@ export default async function HODStudentsPage() {
         initialActivities={sessionActivities}
         callerRole="HOD"
         title="Department Students Session & Password Log"
-        subtitle="Live chronological monitoring of enrolled department students logging in, logging out, and resetting passwords with date, time, and register number."
+        subtitle="Chronological monitoring of enrolled department students logging in, logging out, and resetting passwords with date, time, and register number."
       />
     </div>
   );

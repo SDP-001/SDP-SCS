@@ -149,7 +149,7 @@ export function MobileAppShowcase({
                       </div>
                     </div>
 
-                    {/* Quick Live Verification Notification */}
+                    {/* Quick Verification Notification */}
                     <div className="p-3 rounded-xl bg-slate-800/80 border border-slate-700/80 flex items-start gap-2.5">
                       <div className="h-7 w-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
                         <Award className="h-3.5 w-3.5" />
@@ -267,7 +267,7 @@ export function MobileAppShowcase({
                   Instant QR Off-Campus Verification
                 </h4>
                 <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                  During job placement interviews, hackathons, and technical symposiums, recruiters scan the student’s QR code to view live faculty attestations and point breakdown directly on NEC servers.
+                  During job placement interviews, hackathons, and technical symposiums, recruiters scan the student’s QR code to view verified faculty attestations and point breakdown directly on NEC servers.
                 </p>
               </div>
             </div>

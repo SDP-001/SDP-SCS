@@ -5,6 +5,7 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { getDB } from "@/lib/db/store";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { CertificatePopViewTrigger } from "@/components/certificates/CertificatePopViewTrigger";
+import { SecureViewer } from "@/components/certificates/SecureViewer";
 import { TimelineJourney } from "@/components/certificates/TimelineJourney";
 import { CorrectionForm } from "@/components/forms/CorrectionForm";
 import { Card } from "@/components/ui/card";
@@ -37,7 +38,13 @@ export default async function StudentCertificateDetailPage({
   }
 
   const category = db.categories.find((c) => c.id === certificate.category_id);
-  const files = db.certificateFiles.filter((f) => f.certificate_id === certificate.id);
+  const files = db.certificateFiles
+    .filter((f) => f.certificate_id === certificate.id)
+    .sort((a, b) => {
+      if (a.file_type === "PRIMARY" && b.file_type !== "PRIMARY") return -1;
+      if (b.file_type === "PRIMARY" && a.file_type !== "PRIMARY") return 1;
+      return b.version - a.version;
+    });
   const reviews = db.certificateReviews
     .filter((r) => r.certificate_id === certificate.id)
     .map((r) => {
@@ -162,6 +169,41 @@ export default async function StudentCertificateDetailPage({
           </div>
         )}
       </Card>
+
+      {/* Official Certificate Evidence & Secure Viewer Section */}
+      <div className="space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+              <FileText className="h-4 w-4 text-primary-600" />
+              <span>Official Document Evidence &amp; Download</span>
+            </h3>
+            <p className="text-xs text-slate-500">
+              Verified institutional archive. Preview inline, inspect cryptographic seal, or download original deliverable.
+            </p>
+          </div>
+          <CertificatePopViewTrigger
+            title={certificate.title}
+            achievementId={certificate.achievement_id}
+            status={certificate.status}
+            points={latestPoints?.points}
+            eventName={certificate.event_name}
+            organizer={certificate.organizer}
+            eventDate={certificate.event_date}
+            eventLevel={certificate.event_level}
+            achievement={certificate.achievement}
+            submittedAt={certificate.submitted_at || certificate.created_at}
+            files={files}
+            buttonText="Open Pop View Modal"
+            variant="outline"
+          />
+        </div>
+
+        <SecureViewer
+          files={files}
+          title={certificate.title}
+        />
+      </div>
 
       {/* Correction Form if Status is CORRECTION_REQUIRED */}
       {certificate.status === "CORRECTION_REQUIRED" && (

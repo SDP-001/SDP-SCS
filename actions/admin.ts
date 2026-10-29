@@ -52,10 +52,54 @@ export async function getAdminUsersAction() {
       department,
       reviewCount,
       activeLockCount,
+      is_dean: f.is_dean || profile?.role === "ADMIN",
     };
   });
 
-  return { students, faculty };
+  // Ensure Admin / Dean profile is included for institutional leadership visibility
+  const existingFacultyProfileIds = new Set(db.faculty.map((f) => f.profile_id));
+  const adminProfiles = db.profiles.filter(
+    (p) => p.role === "ADMIN" && !existingFacultyProfileIds.has(p.id)
+  );
+
+  const deans = adminProfiles.map((ap) => ({
+    id: `dean-${ap.id}`,
+    profile_id: ap.id,
+    college_id: ap.college_id,
+    department_id: "inst-dean",
+    designation: "Dean & Institutional Administrator",
+    employee_id: "DEAN-ADM-001",
+    is_hod: false,
+    is_dean: true,
+    created_at: ap.created_at,
+    profile: ap,
+    department: {
+      id: "inst-dean",
+      name: "Office of the Dean & Academic Affairs",
+      code: "DEAN",
+      type: "UG" as DepartmentType,
+    },
+    reviewCount: db.certificateReviews.length,
+    activeLockCount: 0,
+  }));
+
+  // ORDER HIERARCHY: Dean (Upper) -> HOD (Upper) -> Faculty (Below)
+  const orderedFaculty = [...deans, ...faculty].sort((a, b) => {
+    // 1. Dean first in upper position
+    const aDean = a.is_dean || a.profile?.role === "ADMIN" ? 1 : 0;
+    const bDean = b.is_dean || b.profile?.role === "ADMIN" ? 1 : 0;
+    if (aDean !== bDean) return bDean - aDean;
+
+    // 2. HOD next in upper position
+    const aHod = a.is_hod || a.profile?.role === "HOD" ? 1 : 0;
+    const bHod = b.is_hod || b.profile?.role === "HOD" ? 1 : 0;
+    if (aHod !== bHod) return bHod - aHod;
+
+    // 3. Faculty alphabetically by name
+    return (a.profile?.full_name || "").localeCompare(b.profile?.full_name || "");
+  });
+
+  return { students, faculty: orderedFaculty };
 }
 
 export async function toggleUserStatusAction(profileId: string) {
@@ -1001,7 +1045,7 @@ export interface AddFacultyInput {
   employeeId: string;
   departmentId?: string;
   designation?: string;
-  role?: "FACULTY" | "HOD";
+  role?: "FACULTY" | "HOD" | "ADMIN" | "DEAN";
 }
 
 export async function addFacultyAction(input: AddFacultyInput) {
@@ -1011,17 +1055,33 @@ export async function addFacultyAction(input: AddFacultyInput) {
   const fullName = input.fullName.trim();
   const email = input.email.trim().toLowerCase();
   const employeeId = input.employeeId.trim().toUpperCase();
-  const role: "FACULTY" | "HOD" = caller.profile.role === "HOD" ? "FACULTY" : (input.role || "FACULTY");
-  const designation = input.designation?.trim() || (role === "HOD" ? "Professor & Head" : "Assistant Professor");
+  const rawRole = (input.role || "FACULTY").toUpperCase();
+  const isDean = rawRole === "ADMIN" || rawRole === "DEAN";
+  const role: "FACULTY" | "HOD" | "ADMIN" =
+    caller.profile.role === "HOD"
+      ? "FACULTY"
+      : isDean
+      ? "ADMIN"
+      : rawRole === "HOD"
+      ? "HOD"
+      : "FACULTY";
+
+  const designation =
+    input.designation?.trim() ||
+    (role === "ADMIN"
+      ? "Dean & Academic Administrator"
+      : role === "HOD"
+      ? "Professor & Head"
+      : "Assistant Professor");
 
   if (!fullName) {
-    return { success: false, error: "Faculty full name is required." };
+    return { success: false, error: "Full name is required." };
   }
   if (!email || !email.includes("@")) {
-    return { success: false, error: "A valid official faculty email address is required." };
+    return { success: false, error: "A valid official institutional email address is required." };
   }
   if (!employeeId) {
-    return { success: false, error: "Faculty / Employee ID is required." };
+    return { success: false, error: "Employee / Staff ID is required." };
   }
 
   let departmentId = input.departmentId;
@@ -1034,7 +1094,7 @@ export async function addFacultyAction(input: AddFacultyInput) {
   }
 
   const dept = db.departments.find((d) => d.id === departmentId);
-  if (!dept) {
+  if (!dept && role !== "ADMIN") {
     return { success: false, error: "Selected department was not found." };
   }
 
@@ -1071,26 +1131,29 @@ export async function addFacultyAction(input: AddFacultyInput) {
     id: newFacultyId,
     profile_id: newProfileId,
     college_id: collegeId,
-    department_id: departmentId,
+    department_id: departmentId || (db.departments[0]?.id || ""),
     designation,
     employee_id: employeeId,
     is_hod: role === "HOD",
+    is_dean: role === "ADMIN",
     created_at: now,
   };
 
   db.profiles.push(newProfile);
   db.faculty.push(newFaculty);
+  if (!db.passwords) db.passwords = {};
+  db.passwords[newProfileId] = "password123";
 
   logAuditEvent({
     collegeId,
     actorId: caller.profile.id,
     action: "USER_CREATED",
-    entityType: role === "HOD" ? "HOD" : "FACULTY",
+    entityType: role === "ADMIN" ? "ADMIN" : role === "HOD" ? "HOD" : "FACULTY",
     entityId: newFacultyId,
     metadata: {
       faculty_name: fullName,
       employee_id: employeeId,
-      department_name: dept.name,
+      department_name: dept?.name || "Office of the Dean & Academic Affairs",
       role,
       designation,
       enrolled_by: caller.profile.full_name,
@@ -1105,9 +1168,10 @@ export async function addFacultyAction(input: AddFacultyInput) {
   safeRevalidate("/hod/dashboard");
   safeRevalidate("/faculty/dashboard");
 
+  const roleTitle = role === "ADMIN" ? "Dean & Administrator" : role === "HOD" ? "Head of Department (HOD)" : "Faculty";
   return {
     success: true,
-    message: `${role === "HOD" ? "Head of Department (HOD)" : "Faculty"} ${fullName} (${employeeId}) registered successfully in ${dept.name}!`,
+    message: `${roleTitle} ${fullName} (${employeeId}) registered successfully!`,
     faculty: newFaculty,
   };
 }
@@ -1119,7 +1183,7 @@ export interface BulkFacultyItem {
   departmentId?: string;
   departmentCode?: string;
   designation?: string;
-  role?: "FACULTY" | "HOD";
+  role?: "FACULTY" | "HOD" | "DEAN" | "ADMIN";
   isActive?: boolean;
 }
 
@@ -1147,8 +1211,24 @@ export async function bulkAddFacultyAction(facultyList: BulkFacultyItem[]) {
     const fullName = item.fullName?.trim();
     const email = item.email?.trim().toLowerCase();
     const employeeId = item.employeeId?.trim().toUpperCase();
-    const role: "FACULTY" | "HOD" = caller.profile.role === "HOD" ? "FACULTY" : (item.role === "HOD" ? "HOD" : "FACULTY");
-    const designation = item.designation?.trim() || (role === "HOD" ? "Professor & Head" : "Assistant Professor");
+    const rawRole = (item.role as string || "FACULTY").toUpperCase();
+    const isDean = rawRole === "ADMIN" || rawRole === "DEAN";
+    const role: "FACULTY" | "HOD" | "ADMIN" =
+      caller.profile.role === "HOD"
+        ? "FACULTY"
+        : isDean
+        ? "ADMIN"
+        : rawRole === "HOD"
+        ? "HOD"
+        : "FACULTY";
+
+    const designation =
+      item.designation?.trim() ||
+      (role === "ADMIN"
+        ? "Dean & Academic Administrator"
+        : role === "HOD"
+        ? "Professor & Head"
+        : "Assistant Professor");
 
     if (!fullName || !email || !employeeId) {
       skipped.push(`${employeeId || fullName || "Record"}: Missing required name, email, or employee ID`);
@@ -1214,11 +1294,14 @@ export async function bulkAddFacultyAction(facultyList: BulkFacultyItem[]) {
       designation,
       employee_id: employeeId,
       is_hod: role === "HOD",
+      is_dean: role === "ADMIN",
       created_at: now,
     };
 
     db.profiles.push(newProfile);
     db.faculty.push(newFaculty);
+    if (!db.passwords) db.passwords = {};
+    db.passwords[newProfileId] = "password123";
     addedCount++;
     addedNames.push(`${fullName} (${employeeId})`);
   }

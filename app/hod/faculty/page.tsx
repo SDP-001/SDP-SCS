@@ -105,14 +105,14 @@ export default function HODFacultyPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex flex-wrap items-center gap-2">
-            <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-              Department Faculty Management
-            </h2>
-            <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 border border-indigo-200 shrink-0 whitespace-nowrap">
+          <div className="mb-1.5 flex items-center gap-2">
+            <span className="inline-flex text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800 border border-indigo-200 tracking-wider shrink-0">
               HOD Portal
             </span>
           </div>
+          <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+            Department Faculty Management
+          </h2>
           <p className="text-xs text-slate-500 mt-0.5">
             Manage authorized faculty evaluators, review workload, and batch enroll via Excel spreadsheet.
           </p>
@@ -517,11 +517,8 @@ export default function HODFacultyPage() {
                   <FileSpreadsheet className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-lg font-bold text-white flex flex-wrap items-center gap-2">
-                    <span>Excel Spreadsheet Faculty Enrollment Engine</span>
-                    <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0">
-                      Live
-                    </span>
+                  <h3 className="text-base sm:text-lg font-bold text-white">
+                    Excel Spreadsheet Faculty Enrollment Engine
                   </h3>
                   <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
                     Bulk import and manage faculty members via spreadsheet (.xlsx, .xls, .csv). If the uploaded sheet contains no data, standard template records will automatically be populated:{" "}
@@ -554,39 +551,6 @@ export default function HODFacultyPage() {
                 />
               </div>
             </div>
-
-            {/* Feature Highlights Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 border-t border-slate-800/80">
-              <div className="p-3.5 rounded-xl bg-slate-800/50 border border-slate-700/60">
-                <div className="flex items-center gap-2 text-xs font-bold text-indigo-300">
-                  <CheckCircle2 className="h-4 w-4 text-indigo-400 shrink-0" />
-                  <span>Department Scoping</span>
-                </div>
-                <p className="text-[11px] text-slate-400 mt-1 leading-normal">
-                  All imported faculty members are automatically scoped to {department?.name || "Department"} review queues.
-                </p>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-slate-800/50 border border-slate-700/60">
-                <div className="flex items-center gap-2 text-xs font-bold text-emerald-300">
-                  <Sparkles className="h-4 w-4 text-emerald-400 shrink-0" />
-                  <span>Empty Sheet Auto-Fill</span>
-                </div>
-                <p className="text-[11px] text-slate-400 mt-1 leading-normal">
-                  Blank files or sample uploads auto-populate valid starter records: status OK, ready to submit!
-                </p>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-slate-800/50 border border-slate-700/60">
-                <div className="flex items-center gap-2 text-xs font-bold text-sky-300">
-                  <ShieldCheck className="h-4 w-4 text-sky-400 shrink-0" />
-                  <span>Duplicate Safeguards</span>
-                </div>
-                <p className="text-[11px] text-slate-400 mt-1 leading-normal">
-                  Live verification ensures Employee IDs and email addresses remain unique across the portal.
-                </p>
-              </div>
-            </div>
           </div>
 
           {/* Quick Guidance & Directory Shortcut */}
@@ -597,7 +561,7 @@ export default function HODFacultyPage() {
               </div>
               <div>
                 <p className="text-xs font-bold text-slate-800">
-                  Current Faculty Evaluators in Live Directory
+                  Current Faculty Evaluators in Directory
                 </p>
                 <p className="text-[11px] text-slate-500 mt-0.5">
                   Currently managing <strong>{faculty.length}</strong> active &amp; registered faculty members.

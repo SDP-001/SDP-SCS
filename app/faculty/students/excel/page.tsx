@@ -38,11 +38,13 @@ export default async function FacultyStudentsExcelPage() {
               <span>Back to Department Students</span>
             </Link>
           </div>
-          <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-            <span>Student Excel Sheet Enrollment</span>
-            <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
+          <div className="mb-1.5 flex items-center gap-2">
+            <span className="inline-flex text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 tracking-wider">
               {deptCode} Roster
             </span>
+          </div>
+          <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+            Student Excel Sheet Enrollment
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
             Bulk upload and verify student rosters for {deptName} via spreadsheet (.xlsx, .csv).
@@ -76,9 +78,6 @@ export default async function FacultyStudentsExcelPage() {
             <div>
               <h3 className="text-base font-bold text-white flex items-center gap-2">
                 <span>Excel Spreadsheet Batch Enrollment Engine</span>
-                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                  Live
-                </span>
               </h3>
               <p className="text-xs text-slate-300 mt-1 max-w-xl leading-relaxed">
                 Upload class rosters or department cohorts in bulk. If your uploaded spreadsheet contains no records or empty columns, the system automatically populates verified template records: <em>it&apos;s OK to submit!</em>
@@ -105,39 +104,6 @@ export default async function FacultyStudentsExcelPage() {
             />
           </div>
         </div>
-
-        {/* Feature Highlights Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 border-t border-slate-800/80">
-          <div className="p-3.5 rounded-xl bg-slate-800/50 border border-slate-700/60">
-            <div className="flex items-center gap-2 text-xs font-bold text-emerald-300">
-              <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-              <span>Auto Department Resolution</span>
-            </div>
-            <p className="text-[11px] text-slate-400 mt-1">
-              Fuzzy matcher automatically resolves NEC department aliases (CSE, IT, ECE, MECH, MBA, etc.).
-            </p>
-          </div>
-
-          <div className="p-3.5 rounded-xl bg-slate-800/50 border border-slate-700/60">
-            <div className="flex items-center gap-2 text-xs font-bold text-indigo-300">
-              <Sparkles className="h-4 w-4 text-indigo-400" />
-              <span>Empty Sheet Handling</span>
-            </div>
-            <p className="text-[11px] text-slate-400 mt-1">
-              If the spreadsheet has no data, valid starter template rows are provided: status OK, ready to submit!
-            </p>
-          </div>
-
-          <div className="p-3.5 rounded-xl bg-slate-800/50 border border-slate-700/60">
-            <div className="flex items-center gap-2 text-xs font-bold text-sky-300">
-              <ShieldCheck className="h-4 w-4 text-sky-400" />
-              <span>Zero Duplicate Registrations</span>
-            </div>
-            <p className="text-[11px] text-slate-400 mt-1">
-              Pre-flight validation prevents duplicate Anna University / NEC Register Numbers.
-            </p>
-          </div>
-        </div>
       </div>
 
       {/* Current Department Statistics */}
@@ -151,7 +117,7 @@ export default async function FacultyStudentsExcelPage() {
               Current Registered Students in {deptName}
             </p>
             <p className="text-[11px] text-slate-500">
-              Total active student profiles in live database.
+              Total active student profiles in department database.
             </p>
           </div>
         </div>

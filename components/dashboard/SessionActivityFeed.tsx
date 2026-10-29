@@ -43,7 +43,7 @@ export function SessionActivityFeed({
   const [roleFilter, setRoleFilter] = useState<string>("ALL");
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Auto-refresh the live feed every 12 seconds to ensure real-time synchronization
+  // Auto-refresh the activity ledger every 12 seconds to ensure real-time synchronization
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
@@ -103,7 +103,7 @@ export function SessionActivityFeed({
   const getDefaultTitle = () => {
     switch (callerRole) {
       case "FACULTY":
-        return "Student Live Session & Password Activity";
+        return "Student Session & Password Activity";
       case "HOD":
         return "Department Session & Password Tracker (Students & Faculty Activity)";
       case "ADMIN":
@@ -114,9 +114,9 @@ export function SessionActivityFeed({
   const getDefaultSubtitle = () => {
     switch (callerRole) {
       case "FACULTY":
-        return "Live chronological log of enrolled students logging in, logging out, and resetting passwords with exact date and time.";
+        return "Chronological log of enrolled students logging in, logging out, and resetting passwords with exact date and time.";
       case "HOD":
-        return "Departmental live monitoring of Student and Faculty member sessions and password resets with credentials, time, and date.";
+        return "Departmental monitoring of Student and Faculty member sessions and password resets with credentials, time, and date.";
       case "ADMIN":
         return "Comprehensive institutional oversight of all Department Heads (HODs), Faculty members, and Students.";
     }
@@ -203,10 +203,6 @@ export function SessionActivityFeed({
               <h3 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
                 {title || getDefaultTitle()}
               </h3>
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
-                <span>Live Feed</span>
-              </span>
             </div>
             <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
               {subtitle || getDefaultSubtitle()}

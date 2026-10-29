@@ -49,9 +49,9 @@ const ROLES: RoleOption[] = [
     label: "Student",
     badge: "UG & PG",
     idLabel: "Register No. / Email",
-    placeholder: "e.g. 710022CS0101",
+    placeholder: "e.g. 732226CS001",
     icon: GraduationCap,
-    sampleId: "710022CS0101",
+    sampleId: "",
   },
   {
     key: "FACULTY",
@@ -98,7 +98,7 @@ function LoginFormContent() {
   const [error, setError] = useState<string | null>(null);
   const [showRegisterPrompt, setShowRegisterPrompt] = useState(false);
 
-  // Live Auto-Detection of User Account
+  // Real-Time Auto-Detection of User Account
   const [detectedUser, setDetectedUser] = useState<IdentifiedUser | null>(null);
   const [isDetecting, setIsDetecting] = useState(false);
 
@@ -157,7 +157,7 @@ function LoginFormContent() {
       .catch((err) => console.error("Failed to load departments:", err));
   }, [searchParams]);
 
-  // Live identity detection on typing identifier in Login mode
+  // Identity detection on typing identifier in Login mode
   useEffect(() => {
     if (authMode !== "LOGIN") return;
     if (!identifier || identifier.trim().length < 2) {
@@ -227,17 +227,13 @@ function LoginFormContent() {
       setError(`Please enter your ${activeConfig.idLabel.toLowerCase()}.`);
       return;
     }
-    if (!password) {
-      setError("Please enter your account password.");
-      return;
-    }
 
     setLoading(true);
     setError(null);
     setShowRegisterPrompt(false);
 
     try {
-      const res = await loginAction({ identifier: identifier.trim(), password });
+      const res = await loginAction({ identifier: identifier.trim(), password: password || "" });
       if (!res.success) {
         setError(res.error || "Authentication failed. Please verify your credentials.");
         if ((res as any).notFound) {
@@ -457,7 +453,7 @@ function LoginFormContent() {
         {/* ======================================================== */}
         {authMode === "LOGIN" && (
           <>
-            {/* Live Detected User Card */}
+            {/* Detected User Card */}
             {detectedUser ? (
               <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-between gap-3 animate-in fade-in">
                 <div className="flex items-center gap-2.5 min-w-0">
@@ -553,10 +549,12 @@ function LoginFormContent() {
                 </div>
               </div>
 
-              {/* Password Input */}
+              {/* Password Input (Optional if signing in with verified ID) */}
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="block text-xs font-semibold text-slate-700">Password</label>
+                  <label className="block text-xs font-semibold text-slate-700">
+                    Password <span className="text-slate-400 font-normal">(Optional with ID)</span>
+                  </label>
                   <Link
                     href="/forgot-password"
                     className="text-[11px] font-medium text-blue-600 hover:text-blue-700 hover:underline"
@@ -567,10 +565,9 @@ function LoginFormContent() {
                 <div className="relative">
                   <Input
                     type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
+                    placeholder="Enter password (or leave blank to sign in with ID)"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    required
                     className="h-11 pl-9 pr-10 text-xs bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-100 rounded-xl shadow-2xs"
                   />
                   <Lock className="h-4 w-4 text-slate-400 absolute left-3 top-3.5 pointer-events-none" />
@@ -584,7 +581,7 @@ function LoginFormContent() {
                   </button>
                 </div>
                 <p className="text-[10px] text-slate-400 mt-1">
-                  Default initial password: <span className="font-mono font-medium text-slate-600">password123</span>
+                  Enter your assigned password, or leave blank to open with ID.
                 </p>
               </div>
 
@@ -597,15 +594,14 @@ function LoginFormContent() {
                 {loading ? (
                   <>
                     <span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    <span>Verifying Credentials...</span>
+                    <span>Verifying & Opening...</span>
                   </>
                 ) : (
                   <>
                     <span>
-                      Sign In as{" "}
                       {detectedUser?.fullName
-                        ? `${activeConfig.label} (${detectedUser.fullName.split(" ")[0]})`
-                        : activeConfig.label}
+                        ? `Sign In as ${detectedUser.fullName.split(" ")[0]} (${detectedUser.identifier || detectedUser.role})`
+                        : "Sign In"}
                     </span>
                     <ArrowRight className="h-4 w-4" />
                   </>
@@ -613,13 +609,13 @@ function LoginFormContent() {
               </Button>
             </form>
 
-            {/* Quick Demo Credentials */}
+            {/* Quick Demo Credentials (Faculty, HOD & Admin only; Student demo removed) */}
             <div className="pt-3 border-t border-slate-100">
               <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5 text-center">
                 Demo Quick Logins (Click to fill)
               </p>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 text-[11px]">
-                {ROLES.map((role) => (
+              <div className="grid grid-cols-3 gap-1.5 text-[11px]">
+                {ROLES.filter((role) => role.key !== "STUDENT").map((role) => (
                   <button
                     key={`sample-${role.key}`}
                     type="button"
@@ -710,7 +706,7 @@ function LoginFormContent() {
                   type="text"
                   placeholder={
                     regRole === "STUDENT"
-                      ? "e.g. 710022CS0150"
+                      ? "e.g. 732226CS001"
                       : regRole === "FACULTY"
                       ? "e.g. FAC-CSE-150"
                       : regRole === "HOD"

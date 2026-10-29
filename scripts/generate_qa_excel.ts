@@ -136,7 +136,7 @@ const defectData = [
     "Authentication / Password Recovery",
     "Password Reset Email Service Runs in In-Memory Mock Without UI OTP Fallback",
     "lib/email/service.ts & actions/auth.ts (sendPasswordResetRequestEmail)",
-    "When a user triggers 'Forgot Password', the 6-digit OTP code is generated and saved into `db.emailLogs` and `db.passwordResets`. Because no live SMTP server is configured out of the box, the user cannot see the OTP in their actual email inbox or on the screen unless inspecting server logs, making testing reset flows unintuitive for external evaluators.",
+    "When a user triggers 'Forgot Password', the 6-digit OTP code is generated and saved into `db.emailLogs` and `db.passwordResets`. Because no external SMTP server is configured out of the box, the user cannot see the OTP in their actual email inbox or on the screen unless inspecting server logs, making testing reset flows unintuitive for external evaluators.",
     "1. Go to /forgot-password or click 'Forgot Password?' on login.\n2. Enter register number '710022CS0101'.\n3. Click 'Send Reset Code'.\n4. Modal asks for 6-digit OTP.",
     "In development/demo mode, a toast or banner should show 'Demo Mode: Your OTP is 123456'.",
     "Code is sent to mock server memory; evaluator has to check console logs or database store.",

@@ -69,7 +69,7 @@ export async function generateSignedUrl(
       .createSignedUrl(storagePath, expiresInSeconds);
 
     if (error || !data?.signedUrl) {
-      // Return a secure proxy URL if Supabase bucket is not live
+      // Return a secure proxy URL if Supabase bucket is offline or not active
       return `/api/files/download?path=${encodeURIComponent(storagePath)}&expires=${Date.now() + expiresInSeconds * 1000}`;
     }
 

@@ -82,19 +82,27 @@ function buildAuthenticatedUser(profile: Profile, db: ReturnType<typeof getDB>):
 }
 
 export async function setSessionUser(profileId: string): Promise<void> {
-  const cookieStore = await cookies();
-  cookieStore.set(SESSION_COOKIE_NAME, profileId, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    maxAge: 60 * 60 * 24 * 7, // 7 days
-  });
+  try {
+    const cookieStore = await cookies();
+    cookieStore.set(SESSION_COOKIE_NAME, profileId, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    });
+  } catch {
+    // Graceful fallback when called outside request scope (e.g. testing or CLI scripts)
+  }
 }
 
 export async function clearSessionUser(): Promise<void> {
-  const cookieStore = await cookies();
-  cookieStore.delete(SESSION_COOKIE_NAME);
+  try {
+    const cookieStore = await cookies();
+    cookieStore.delete(SESSION_COOKIE_NAME);
+  } catch {
+    // Ignore outside request scope
+  }
   try {
     const supabase = await createServerSupabaseClient();
     await supabase.auth.signOut();

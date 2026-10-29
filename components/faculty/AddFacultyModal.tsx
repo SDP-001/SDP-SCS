@@ -47,7 +47,8 @@ interface AddFacultyModalProps {
   buttonLabel?: string;
   buttonVariant?: "default" | "outline" | "banner";
   allowHODRole?: boolean;
-  enforcedRole?: "FACULTY" | "HOD";
+  allowDeanRole?: boolean;
+  enforcedRole?: "FACULTY" | "HOD" | "DEAN";
   defaultTab?: "MANUAL" | "EXCEL";
   className?: string;
 }
@@ -55,9 +56,10 @@ interface AddFacultyModalProps {
 export function AddFacultyModal({
   defaultDepartmentId,
   defaultDepartmentName,
-  buttonLabel = "Add Faculty / HOD",
+  buttonLabel = "Add Faculty, HOD & Dean",
   buttonVariant = "default",
   allowHODRole = true,
+  allowDeanRole = true,
   enforcedRole,
   defaultTab = "MANUAL",
   className = "",
@@ -80,8 +82,16 @@ export function AddFacultyModal({
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [employeeId, setEmployeeId] = useState("");
-  const [designation, setDesignation] = useState("Assistant Professor");
-  const [role, setRole] = useState<"FACULTY" | "HOD">(enforcedRole || "FACULTY");
+  const [role, setRole] = useState<"FACULTY" | "HOD" | "DEAN">(
+    enforcedRole || (allowDeanRole ? "DEAN" : allowHODRole ? "HOD" : "FACULTY")
+  );
+  const [designation, setDesignation] = useState(
+    role === "DEAN"
+      ? "Dean & Academic Administrator"
+      : role === "HOD"
+      ? "Professor & Head"
+      : "Assistant Professor"
+  );
   const [departmentId, setDepartmentId] = useState<string>(defaultDepartmentId || "");
 
   // Excel Sheet State
@@ -118,8 +128,15 @@ export function AddFacultyModal({
     setFullName("");
     setEmail("");
     setEmployeeId("");
-    setDesignation(enforcedRole === "HOD" ? "Professor & Head" : "Assistant Professor");
-    setRole(enforcedRole || "FACULTY");
+    const initialRole = enforcedRole || (allowDeanRole ? "DEAN" : allowHODRole ? "HOD" : "FACULTY");
+    setRole(initialRole);
+    setDesignation(
+      initialRole === "DEAN"
+        ? "Dean & Academic Administrator"
+        : initialRole === "HOD"
+        ? "Professor & Head"
+        : "Assistant Professor"
+    );
     if (defaultDepartmentId) setDepartmentId(defaultDepartmentId);
     setError(null);
     setSuccessMessage(null);
@@ -146,7 +163,7 @@ export function AddFacultyModal({
     setSuccessMessage(null);
 
     if (!fullName.trim()) {
-      setError("Please enter the faculty member's full name.");
+      setError("Please enter the user's full name.");
       return;
     }
     if (!email.trim() || !email.includes("@")) {
@@ -157,29 +174,31 @@ export function AddFacultyModal({
       setError("Please specify the unique Employee / Staff ID.");
       return;
     }
-    if (!departmentId) {
+    const targetDeptId = departmentId || (departments[0]?.id || "");
+    if (!targetDeptId && role !== "DEAN") {
       setError("Please select an academic department.");
       return;
     }
 
     setIsSubmitting(true);
     try {
+      const selectedRole = enforcedRole || role;
       const res = await addFacultyAction({
         fullName,
         email,
         employeeId,
-        departmentId,
+        departmentId: targetDeptId,
         designation,
-        role: enforcedRole || (allowHODRole ? role : "FACULTY"),
+        role: selectedRole === "DEAN" ? "ADMIN" : selectedRole,
       });
 
       if (!res.success) {
-        setError(res.error || "Failed to add faculty member.");
+        setError(res.error || "Failed to add academic member.");
         setIsSubmitting(false);
         return;
       }
 
-      setSuccessMessage(res.message || "Faculty registered successfully!");
+      setSuccessMessage(res.message || "Registered successfully!");
       router.refresh();
 
       setTimeout(() => {
@@ -396,13 +415,19 @@ export function AddFacultyModal({
                 </div>
                 <div className="min-w-0 flex-1">
                   <h3 className="text-sm sm:text-base font-bold text-white flex flex-wrap items-center gap-1.5 sm:gap-2">
-                    <span>{allowHODRole ? "Add Faculty & Head of Department" : "Add Department Faculty"}</span>
+                    <span>
+                      {allowDeanRole
+                        ? "Add Faculty, Head of Department & Dean"
+                        : allowHODRole
+                        ? "Add Faculty & Head of Department"
+                        : "Add Department Faculty"}
+                    </span>
                     <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-indigo-500/30 text-indigo-200 border border-indigo-400/30 shrink-0 whitespace-nowrap">
-                      {allowHODRole ? "Dean / HOD" : "HOD Portal"}
+                      {allowDeanRole ? "Dean / HOD / Faculty" : allowHODRole ? "Dean / HOD" : "HOD Portal"}
                     </span>
                   </h3>
                   <p className="text-xs text-slate-300 mt-0.5 truncate">
-                    {defaultDepartmentName ? `Department: ${defaultDepartmentName}` : "Add authorized academic evaluators & leadership."}
+                    {defaultDepartmentName ? `Department: ${defaultDepartmentName}` : "Add authorized academic evaluators, HODs, & institutional leadership."}
                   </p>
                 </div>
               </div>
@@ -489,6 +514,109 @@ export function AddFacultyModal({
               {/* TAB 1: MANUAL FORM */}
               {activeTab === "MANUAL" && (
                 <form onSubmit={handleManualSubmit} className="space-y-4">
+                  {/* UPPER SECTION: Role Selection & Academic Hierarchy */}
+                  <div className="space-y-2 p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                    <label className="text-xs font-bold text-slate-800 flex items-center justify-between">
+                      <span className="flex items-center gap-1.5">
+                        <ShieldCheck className="h-4 w-4 text-indigo-600" />
+                        <span>Portal System Role & Access Level</span>
+                      </span>
+                      <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide">
+                        Upper Hierarchy Selection
+                      </span>
+                    </label>
+
+                    {allowHODRole && !enforcedRole ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-0.5">
+                        {/* 1. Dean in UPPER position */}
+                        {allowDeanRole && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setRole("DEAN");
+                              setDesignation("Dean & Academic Administrator");
+                              if (!employeeId.trim()) setEmployeeId("DEAN-ADM-001");
+                            }}
+                            className={`p-2.5 rounded-xl border text-left transition-all ${
+                              role === "DEAN"
+                                ? "bg-amber-50 border-amber-500 ring-2 ring-amber-500/30 text-amber-950 font-bold shadow-2xs"
+                                : "bg-white border-slate-200 hover:border-slate-300 text-slate-700"
+                            }`}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs font-black text-amber-900">Dean & Admin</span>
+                              <span className="text-[9px] uppercase px-1.5 py-0.5 rounded-full bg-amber-200 text-amber-900 font-black">
+                                Top Level
+                              </span>
+                            </div>
+                            <p className="text-[10px] text-slate-500 mt-1 leading-tight">
+                              Campus-wide institutional governance
+                            </p>
+                          </button>
+                        )}
+
+                        {/* 2. HOD in UPPER position */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setRole("HOD");
+                            setDesignation("Professor & Head");
+                            if (employeeId.startsWith("DEAN")) setEmployeeId("");
+                          }}
+                          className={`p-2.5 rounded-xl border text-left transition-all ${
+                            role === "HOD"
+                              ? "bg-indigo-50 border-indigo-600 ring-2 ring-indigo-500/30 text-indigo-950 font-bold shadow-2xs"
+                              : "bg-white border-slate-200 hover:border-slate-300 text-slate-700"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-black text-indigo-900">Head of Dept (HOD)</span>
+                            <span className="text-[9px] uppercase px-1.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800 font-black">
+                              Dept Lead
+                            </span>
+                          </div>
+                          <p className="text-[10px] text-slate-500 mt-1 leading-tight">
+                            Department oversight & reviewer queue
+                          </p>
+                        </button>
+
+                        {/* 3. Faculty Member */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setRole("FACULTY");
+                            setDesignation("Assistant Professor");
+                            if (employeeId.startsWith("DEAN")) setEmployeeId("");
+                          }}
+                          className={`p-2.5 rounded-xl border text-left transition-all ${
+                            role === "FACULTY"
+                              ? "bg-sky-50 border-sky-600 ring-2 ring-sky-500/30 text-sky-950 font-bold shadow-2xs"
+                              : "bg-white border-slate-200 hover:border-slate-300 text-slate-700"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-black text-sky-900">Faculty Evaluator</span>
+                            <span className="text-[9px] uppercase px-1.5 py-0.5 rounded-full bg-sky-100 text-sky-800 font-black">
+                              Reviewer
+                            </span>
+                          </div>
+                          <p className="text-[10px] text-slate-500 mt-1 leading-tight">
+                            Direct student certificate evaluation
+                          </p>
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="h-9 px-3 rounded-md border border-slate-200 bg-white flex items-center text-xs font-bold text-slate-700">
+                        {enforcedRole === "DEAN"
+                          ? "Dean & Academic Administrator"
+                          : enforcedRole === "HOD"
+                          ? "Head of Department (HOD)"
+                          : "Faculty Evaluator"}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* FORM FIELDS: Aligned responsive layout */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Full Name */}
                     <div className="space-y-1.5">
@@ -498,7 +626,13 @@ export function AddFacultyModal({
                       </label>
                       <Input
                         type="text"
-                        placeholder="e.g. Dr. S. Ramesh Kumar"
+                        placeholder={
+                          role === "DEAN"
+                            ? "e.g. Dr. Arthur Vance"
+                            : role === "HOD"
+                            ? "e.g. Dr. S. Ramesh Kumar (HOD)"
+                            : "e.g. Dr. S. Ramesh Kumar"
+                        }
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
                         className="text-xs h-9 bg-white"
@@ -514,7 +648,13 @@ export function AddFacultyModal({
                       </label>
                       <Input
                         type="text"
-                        placeholder="e.g. FAC-CSE-202"
+                        placeholder={
+                          role === "DEAN"
+                            ? "e.g. DEAN-ADM-001"
+                            : role === "HOD"
+                            ? "e.g. FAC-CSE-001"
+                            : "e.g. FAC-CSE-202"
+                        }
                         value={employeeId}
                         onChange={(e) => setEmployeeId(e.target.value.toUpperCase())}
                         className="text-xs h-9 bg-white font-mono uppercase"
@@ -530,7 +670,13 @@ export function AddFacultyModal({
                       </label>
                       <Input
                         type="email"
-                        placeholder="e.g. ramesh.cse@nec.edu.in"
+                        placeholder={
+                          role === "DEAN"
+                            ? "e.g. dean.academics@nec.edu.in"
+                            : role === "HOD"
+                            ? "e.g. hod.cse@nec.edu.in"
+                            : "e.g. ramesh.cse@nec.edu.in"
+                        }
                         value={email}
                         onChange={(e) => setEmail(e.target.value.toLowerCase())}
                         className="text-xs h-9 bg-white"
@@ -546,7 +692,7 @@ export function AddFacultyModal({
                       </label>
                       <Input
                         type="text"
-                        placeholder="e.g. Assistant Professor / Associate Professor"
+                        placeholder="e.g. Dean & Academic Administrator / Professor & Head"
                         value={designation}
                         onChange={(e) => setDesignation(e.target.value)}
                         className="text-xs h-9 bg-white"
@@ -555,53 +701,28 @@ export function AddFacultyModal({
                     </div>
 
                     {/* Academic Department */}
-                    <div className="space-y-1.5">
+                    <div className="space-y-1.5 sm:col-span-2">
                       <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
                         <Building2 className="h-3.5 w-3.5 text-slate-400" />
-                        <span>Department</span>
+                        <span>
+                          {role === "DEAN" ? "Primary Affiliated Department / Office" : "Academic Department"}
+                        </span>
                       </label>
                       <select
                         value={departmentId}
                         onChange={(e) => setDepartmentId(e.target.value)}
                         disabled={!!defaultDepartmentId && !allowHODRole}
-                        className="w-full text-xs h-9 rounded-md border border-slate-300 bg-white px-3 text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
+                        className="w-full text-xs h-9 rounded-md border border-slate-300 bg-white px-3 text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 font-medium"
                       >
+                        {role === "DEAN" && (
+                          <option value="">Office of the Dean & Academic Affairs (Campus-Wide)</option>
+                        )}
                         {departments.map((dept) => (
                           <option key={dept.id} value={dept.id}>
                             {dept.name} ({dept.code}) - {dept.type || "UG"}
                           </option>
                         ))}
                       </select>
-                    </div>
-
-                    {/* Role Selection (Dean can choose HOD or Faculty; HOD is locked to Faculty) */}
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                        <ShieldCheck className="h-3.5 w-3.5 text-slate-400" />
-                        <span>Portal System Role</span>
-                      </label>
-                      {allowHODRole && !enforcedRole ? (
-                        <select
-                          value={role}
-                          onChange={(e) => {
-                            const newRole = e.target.value as "FACULTY" | "HOD";
-                            setRole(newRole);
-                            if (newRole === "HOD") {
-                              setDesignation("Professor & Head");
-                            } else {
-                              setDesignation("Assistant Professor");
-                            }
-                          }}
-                          className="w-full text-xs h-9 rounded-md border border-slate-300 bg-white px-3 text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 font-bold"
-                        >
-                          <option value="FACULTY">Faculty Evaluator (Review Queue Access)</option>
-                          <option value="HOD">Head of Department (HOD - Department Lead)</option>
-                        </select>
-                      ) : (
-                        <div className="h-9 px-3 rounded-md border border-slate-200 bg-slate-50 flex items-center text-xs font-bold text-slate-700">
-                          {enforcedRole === "HOD" ? "Head of Department (HOD)" : "Faculty Evaluator"}
-                        </div>
-                      )}
                     </div>
                   </div>
 
@@ -628,7 +749,13 @@ export function AddFacultyModal({
                       ) : (
                         <>
                           <UserPlus className="h-3.5 w-3.5 mr-1.5" />
-                          <span>Register Faculty / HOD</span>
+                          <span>
+                            {role === "DEAN"
+                              ? "Register Dean / Admin"
+                              : role === "HOD"
+                              ? "Register Head of Dept"
+                              : "Register Faculty Member"}
+                          </span>
                         </>
                       )}
                     </Button>

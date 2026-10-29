@@ -242,7 +242,7 @@ To prevent academic malpractice (e.g. students re-uploading a peer's certificate
 - `addStudentAction(input)`: Enrolls an individual student with real-time validation and audit logging.
 - `bulkEnrollStudentsAction(students)`: Batch registers verified students parsed from an Excel/CSV sheet.
 - `getExistingStudentsAction()`: Retrieves current student roster for client-side duplicate checking.
-- `verifyStudentLookupAction(query)`: Searches live DB by register number or email, returning verified records or auto-correction suggestions.
+- `verifyStudentLookupAction(query)`: Searches student DB by register number or email, returning verified records or auto-correction suggestions.
 - `createDepartmentAction(name, code, type)`: Creates a UG or PG department.
 - `toggleDepartmentStatusAction(departmentId)`: Activates or disables a branch.
 - `updateCollegeSettingsAction(settings)`: Configures max points, lock timeout, and file sizes.

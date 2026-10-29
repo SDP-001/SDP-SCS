@@ -1,9 +1,61 @@
-Register Number,Full Name,Department,Degree Level,Academic Year,Email
-NEC22CS101,Kavya Sundaram,Computer Science and Engineering,UG,3,kavya.s@student.nandha.edu
-NEC22CS102,Sanjay M,CSE,UG,3,sanjay.m@student.nandha.edu
-NEC23IT045,Praveen Kumar R,Information Technology,UG,2,praveen.k@student.nandha.edu
-NEC23EC078,Ananya Devi S,ECE,UG,2,ananya.d@student.nandha.edu
-NEC24ME012,Dinesh Karthik K,Mechanical Engineering,UG,1,dinesh.k@student.nandha.edu
-NEC25MC008,Vigneshwaran P,Master of Computer Applications,PG,1,vignesh.p@student.nandha.edu
-NEC25MB015,Divya Bharathi R,Master of Business Administration,PG,1,divya.b@student.nandha.edu
-NEC24CS501,Harish Raghavan T,M.E. Computer Science and Engineering,PG,2,harish.r@student.nandha.edu
+Register Number,Full Name,Department,Degree Level,Academic Year,Email,Password
+732226AG001,Abisri N D,Agricultural Engineering,UG,1,732226ag001@nandhaengg.org,Nec8825678060
+732226AG002,Arthi A,Agricultural Engineering,UG,1,732226ag002@nandhaengg.org,Nec6383271860
+732226AG003,Aswin Siva S,Agricultural Engineering,UG,1,732226ag003@nandhaengg.org,Nec8903219109
+732226AG004,Danish M,Agricultural Engineering,UG,1,732226ag004@nandhaengg.org,Nec8220524558
+732226AG005,Devadharshini G B,Agricultural Engineering,UG,1,732226ag005@nandhaengg.org,Nec7339609230
+732226AG006,Dharanitharan S,Agricultural Engineering,UG,1,732226ag006@nandhaengg.org,Nec8072892426
+732226AG007,Dharsan M,Agricultural Engineering,UG,1,732226ag007@nandhaengg.org,Nec9944775798
+732226AG008,Dhenikaa   S,Agricultural Engineering,UG,1,732226ag008@nandhaengg.org,Nec9345261661
+732226AG009,Divagar E,Agricultural Engineering,UG,1,732226ag009@nandhaengg.org,Nec9087015756
+732226AG010,Divya M,Agricultural Engineering,UG,1,732226ag010@nandhaengg.org,Nec7358802624
+732226AG011,Divya P,Agricultural Engineering,UG,1,732226ag011@nandhaengg.org,NecNotGiven
+732226AG012,Elakiya E,Agricultural Engineering,UG,1,732226ag012@nandhaengg.org,Nec9344062669
+732226AG013,Elakkiya  S,Agricultural Engineering,UG,1,732226ag013@nandhaengg.org,Nec9042557966
+732226AG015,Jenishka S,Agricultural Engineering,UG,1,732226ag015@nandhaengg.org,Nec8270191728
+732226AG016,Kalairanjani K N,Agricultural Engineering,UG,1,732226ag016@nandhaengg.org,Nec8015002617
+732226AG017,Karthik  V,Agricultural Engineering,UG,1,732226ag017@nandhaengg.org,Nec7305823858
+732226AG018,Karthikeyan.B,Agricultural Engineering,UG,1,732226ag018@nandhaengg.org,Nec9342274213
+732226AG019,Kavi Preethi  M,Agricultural Engineering,UG,1,732226ag019@nandhaengg.org,Nec9524627998
+732226AG020,Kavin.M,Agricultural Engineering,UG,1,732226ag020@nandhaengg.org,Nec9342521018
+732226AG021,Kiruthika.R,Agricultural Engineering,UG,1,732226ag021@nandhaengg.org,Nec8072556456
+732226AG022,Lokeshwaran. S,Agricultural Engineering,UG,1,732226ag022@nandhaengg.org,Nec9787642477
+732226AG023,Madhuvarna.B,Agricultural Engineering,UG,1,732226ag023@nandhaengg.org,Nec9751403164
+732226AG024,Manobala  A,Agricultural Engineering,UG,1,732226ag024@nandhaengg.org,Nec6383160416
+732226AG025,Mohanraj.S,Agricultural Engineering,UG,1,732226ag025@nandhaengg.org,Nec9342137624
+732226AG026,Mubeena  N,Agricultural Engineering,UG,1,732226ag026@nandhaengg.org,Nec6380015553
+732226AG027,Nithish .A,Agricultural Engineering,UG,1,732226ag027@nandhaengg.org,Nec8428571827
+732226AG028,Nivetha.C,Agricultural Engineering,UG,1,732226ag028@nandhaengg.org,Nec9361077854
+732226AG029,Ragul .M,Agricultural Engineering,UG,1,732226ag029@nandhaengg.org,Nec7358417877
+732226AG030,Rakshaya. Y,Agricultural Engineering,UG,1,732226ag030@nandhaengg.org,Nec9342450464
+732226AG031,Ravivarman.S,Agricultural Engineering,UG,1,732226ag031@nandhaengg.org,Nec9385668499
+732226AG032,Rithika G,Agricultural Engineering,UG,1,732226ag032@nandhaengg.org,Nec9360852727
+732226AG033,Rithika.K,Agricultural Engineering,UG,1,732226ag033@nandhaengg.org,Nec7812878194
+732226AG034,Rithika.R,Agricultural Engineering,UG,1,732226ag034@nandhaengg.org,Nec6385156245
+732226AG035,Sainavi V P,Agricultural Engineering,UG,1,732226ag035@nandhaengg.org,Nec8667620164
+732226AG036,Santhiya S,Agricultural Engineering,UG,1,732226ag036@nandhaengg.org,Nec8668106040
+732226AG037,Sharanya.G,Agricultural Engineering,UG,1,732226ag037@nandhaengg.org,Nec9363778101
+732226AG038,Sharvambiga  V,Agricultural Engineering,UG,1,732226ag038@nandhaengg.org,Nec9842806225
+732226AG040,Susheenthiran. B,Agricultural Engineering,UG,1,732226ag040@nandhaengg.org,Nec7904779327
+732226AG041,Tharani  P,Agricultural Engineering,UG,1,732226ag041@nandhaengg.org,Nec9384139930
+732226AG043,Vijayasri  M S,Agricultural Engineering,UG,1,732226ag043@nandhaengg.org,Nec7845843113
+732226AG044,Vinyasri L,Agricultural Engineering,UG,1,732226ag044@nandhaengg.org,Nec9360742862
+732226AG045,Visagaran V,Agricultural Engineering,UG,1,732226ag045@nandhaengg.org,Nec8248668535
+732226AGO14,Elamathi K J,Agricultural Engineering,UG,1,732226ago14@nandhaengg.org,Nec7806848586
+73222AG039,Subhashree  K,Agricultural Engineering,UG,1,73222ag039@nandhaengg.org,Nec9566765956
+73222AG042,Varnika M J,Agricultural Engineering,UG,1,73222ag042@nandhaengg.org,Nec8838585971
+732226AI001,Abdul Rahman,Artificial Intelligence and Data Science,UG,1,732226ai001@nandhaengg.org,Nec8072614228
+732226AI002,Abhishek P,Artificial Intelligence and Data Science,UG,1,732226ai002@nandhaengg.org,Nec8606189894
+732226AI003,Adhithyan E K,Artificial Intelligence and Data Science,UG,1,732226ai003@nandhaengg.org,Nec8590777498
+732226AI004,Akshaya P V,Artificial Intelligence and Data Science,UG,1,732226ai004@nandhaengg.org,Nec9043171851
+732226AI005,Akshaya S,Artificial Intelligence and Data Science,UG,1,732226ai005@nandhaengg.org,Nec7338860515
+732226AI006,Anand M,Artificial Intelligence and Data Science,UG,1,732226ai006@nandhaengg.org,Nec8072343165
+732226AI007,Anuvarshini K S,Artificial Intelligence and Data Science,UG,1,732226ai007@nandhaengg.org,Nec7200302229
+732226AI008,Arokiya Mary P,Artificial Intelligence and Data Science,UG,1,732226ai008@nandhaengg.org,Nec7358576542
+732226AI009,Balachandran B,Artificial Intelligence and Data Science,UG,1,732226ai009@nandhaengg.org,Nec7358387754
+732226AI010,Bharaneedharan S,Artificial Intelligence and Data Science,UG,1,732226ai010@nandhaengg.org,Nec8344667755
+732226AI011,Darshan S,Artificial Intelligence and Data Science,UG,1,732226ai011@nandhaengg.org,Nec9940939500
+732226AI012,Deena S,Artificial Intelligence and Data Science,UG,1,732226ai012@nandhaengg.org,Nec9344863626
+732226AI013,Deepalakshmi V,Artificial Intelligence and Data Science,UG,1,732226ai013@nandhaengg.org,Nec7305006870
+732226AI014,Devipriya V,Artificial Intelligence and Data Science,UG,1,732226ai014@nandhaengg.org,Nec7904343675
+732226AI015,Dhanush R,Artificial Intelligence and Data Science,UG,1,732226ai015@nandhaengg.org,Nec7695974119

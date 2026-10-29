@@ -17,12 +17,13 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   icons: {
     icon: [
-      { url: "/nec-logo.png", type: "image/png" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
       { url: "/favicon.ico" },
     ],
-    shortcut: "/nec-logo.png",
+    shortcut: "/icon-192.png",
     apple: [
-      { url: "/nec-logo.png", type: "image/png" },
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
     ],
   },
   appleWebApp: {
@@ -40,6 +41,8 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
+import { PwaInstallPrompt } from "@/components/mobile/PwaInstallPrompt";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -55,26 +58,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen bg-slate-50 text-slate-900 font-sans antialiased selection:bg-blue-100 selection:text-blue-900 clean-grid-bg">
         {children}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                  for (var r of registrations) {
-                    r.unregister();
-                  }
-                });
-              }
-              if ('caches' in window) {
-                caches.keys().then(function(names) {
-                  for (var name of names) {
-                    caches.delete(name);
-                  }
-                });
-              }
-            `,
-          }}
-        />
+        <PwaInstallPrompt />
       </body>
     </html>
   );

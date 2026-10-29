@@ -184,12 +184,12 @@ export default async function HODDashboardPage() {
         </div>
       </div>
 
-      {/* Department Student & Faculty Live Session Activity Feed */}
+      {/* Department Student & Faculty Session Activity Feed */}
       <SessionActivityFeed
         initialActivities={sessionActivities}
         callerRole="HOD"
         title="Department Session & Password Tracker (Students & Faculty Activity)"
-        subtitle="Live monitoring of all enrolled students and faculty members in your department logging in, logging out, and resetting passwords with date, time, and credentials."
+        subtitle="Chronological monitoring of all enrolled students and faculty members in your department logging in, logging out, and resetting passwords with date, time, and credentials."
       />
     </div>
   );

@@ -41,18 +41,30 @@ export function CertificatePopViewModal({
   submittedAt,
   files,
 }: CertificatePopViewProps) {
-  const [selectedFileId, setSelectedFileId] = useState<string>(files[0]?.id || "");
+  // Sort files: Primary file first, then highest version to lowest version
+  const sortedFiles = [...files].sort((a, b) => {
+    if (a.file_type === "PRIMARY" && b.file_type !== "PRIMARY") return -1;
+    if (b.file_type === "PRIMARY" && a.file_type !== "PRIMARY") return 1;
+    return b.version - a.version;
+  });
+
+  const [selectedFileId, setSelectedFileId] = useState<string>(sortedFiles[0]?.id || "");
   const [zoomLevel, setZoomLevel] = useState(1);
   const [rotation, setRotation] = useState(0);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [useIframeFallback, setUseIframeFallback] = useState(false);
 
   useEffect(() => {
-    if (files.length > 0 && (!selectedFileId || !files.some((f) => f.id === selectedFileId))) {
-      setSelectedFileId(files[0].id);
+    if (sortedFiles.length > 0 && (!selectedFileId || !sortedFiles.some((f) => f.id === selectedFileId))) {
+      setSelectedFileId(sortedFiles[0].id);
     }
-  }, [files, selectedFileId]);
+  }, [sortedFiles, selectedFileId]);
 
-  const selectedFile = files.find((f) => f.id === selectedFileId) || files[0];
+  useEffect(() => {
+    setUseIframeFallback(false);
+  }, [selectedFileId]);
+
+  const selectedFile = sortedFiles.find((f) => f.id === selectedFileId) || sortedFiles[0];
 
   const handleZoomIn = () => setZoomLevel((prev) => Math.min(prev + 0.25, 3));
   const handleZoomOut = () => setZoomLevel((prev) => Math.max(prev - 0.25, 0.5));
@@ -149,7 +161,7 @@ export function CertificatePopViewModal({
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-5xl max-h-[92vh] flex flex-col bg-slate-900 border border-slate-700/80 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden text-white"
+        className="relative w-full max-w-5xl h-[95dvh] sm:h-[90vh] flex flex-col bg-slate-900 border border-slate-700/80 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden text-white"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Header Bar */}
@@ -265,27 +277,31 @@ export function CertificatePopViewModal({
         </div>
 
         {/* Versions Strip if multiple files */}
-        {files.length > 1 && (
-          <div className="px-6 py-2 bg-slate-900 border-b border-slate-800 flex items-center gap-2 text-xs">
-            <span className="text-slate-400 font-semibold">Attached Versions:</span>
-            {files.map((f) => (
+        {sortedFiles.length > 1 && (
+          <div className="px-4 sm:px-6 py-2 bg-slate-900 border-b border-slate-800 flex items-center gap-2 text-xs overflow-x-auto">
+            <span className="text-slate-400 font-semibold shrink-0">Attached Versions:</span>
+            {sortedFiles.map((f) => (
               <button
                 key={f.id}
                 onClick={() => setSelectedFileId(f.id)}
-                className={`px-2.5 py-0.5 rounded-lg text-xs font-bold transition-colors ${
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-colors shrink-0 ${
                   selectedFileId === f.id
-                    ? "bg-primary-600 text-white"
+                    ? "bg-primary-600 text-white shadow-xs"
                     : "bg-slate-800 text-slate-300 hover:bg-slate-700"
                 }`}
               >
-                v{f.version} {f.file_type === "SUPPORTING" && "(Supp)"}
+                v{f.version} {f.file_type === "PRIMARY" ? "(Latest)" : "(Supp)"}
               </button>
             ))}
           </div>
         )}
 
         {/* Certificate Pop View Canvas */}
-        <div className="flex-1 overflow-auto p-4 sm:p-8 flex items-center justify-center relative bg-slate-950/60 min-h-[360px] sm:min-h-[460px]">
+        <div
+          className={`flex-1 min-h-0 ${
+            zoomLevel > 1 ? "overflow-auto" : "overflow-hidden"
+          } p-2 sm:p-4 flex items-center justify-center relative bg-slate-950/60`}
+        >
           {/* Subtle Ambient Backlight */}
           <div className="absolute w-[450px] h-[300px] bg-primary-500/10 rounded-full blur-[100px] pointer-events-none" />
 
@@ -296,21 +312,21 @@ export function CertificatePopViewModal({
                 transformOrigin: "center center",
                 transition: "transform 0.15s ease-out",
               }}
-              className="w-full max-w-4xl flex items-center justify-center"
+              className="w-full h-full flex items-center justify-center max-w-full max-h-full"
             >
-              {selectedFile.mime_type?.includes("pdf") ||
-              selectedFile.original_filename?.toLowerCase().endsWith(".pdf") ? (
+              {useIframeFallback ? (
                 <iframe
                   src={downloadUrl}
                   title={title}
-                  className="w-full h-[65vh] min-h-[460px] rounded-xl shadow-2xl border border-slate-700 bg-white"
+                  className="w-full h-full max-h-full rounded-xl shadow-2xl border border-slate-700 bg-white"
                 />
               ) : (
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img
                   src={downloadUrl}
                   alt={title}
-                  className="max-h-[65vh] max-w-full w-auto object-contain rounded-xl shadow-2xl border border-slate-700 bg-white"
+                  onError={() => setUseIframeFallback(true)}
+                  className="max-h-full max-w-full w-auto h-auto object-contain rounded-xl shadow-2xl border border-slate-700 bg-white select-none pointer-events-auto"
                 />
               )}
             </div>

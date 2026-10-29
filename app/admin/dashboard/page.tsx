@@ -26,6 +26,8 @@ import {
   CheckCircle2,
   Sparkles,
   FolderTree,
+  Clock,
+  UserCheck,
 } from "lucide-react";
 
 export default async function AdminDashboardPage() {
@@ -80,9 +82,15 @@ export default async function AdminDashboardPage() {
     },
   ];
 
-  // Department distribution data for bar chart
-  const deptData: DepartmentMetric[] = db.departments
+  // Department distribution data for bar chart - ordered UG first, then PG
+  const deptData: DepartmentMetric[] = [...db.departments]
     .filter((d) => d.college_id === collegeId)
+    .sort((a, b) => {
+      const typeA = (a.type || "UG") === "PG" ? 1 : 0;
+      const typeB = (b.type || "UG") === "PG" ? 1 : 0;
+      if (typeA !== typeB) return typeA - typeB;
+      return a.code.localeCompare(b.code);
+    })
     .map((d) => {
       const studentIds = new Set(
         db.students.filter((s) => s.department_id === d.id).map((s) => s.id)
@@ -117,9 +125,14 @@ export default async function AdminDashboardPage() {
     ([name, value]) => ({ name, value })
   );
 
-  // Recent system audit events
-  const recentAudit = db.auditLogs
-    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+  // Recent system audit events - strictly ordered newest first
+  const recentAudit = [...db.auditLogs]
+    .filter((l) => !collegeId || l.college_id === collegeId)
+    .sort((a, b) => {
+      const timeDiff = new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      if (timeDiff !== 0) return timeDiff;
+      return (b.id || "").localeCompare(a.id || "");
+    })
     .slice(0, 5);
 
   return (
@@ -360,11 +373,12 @@ export default async function AdminDashboardPage() {
             </Link>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             {recentAudit.map((log) => {
               const actor = db.profiles.find((p) => p.id === log.actor_id);
               const actionColors: Record<string, string> = {
-                LOGIN: "bg-blue-50 text-blue-700 border-blue-200",
+                LOGIN: "bg-emerald-50 text-emerald-700 border-emerald-200",
+                LOGOUT: "bg-slate-100 text-slate-700 border-slate-300",
                 CERTIFICATE_APPROVED: "bg-emerald-50 text-emerald-700 border-emerald-200",
                 POINTS_AWARDED: "bg-amber-50 text-amber-700 border-amber-200",
                 CERTIFICATE_SUBMITTED: "bg-indigo-50 text-indigo-700 border-indigo-200",
@@ -375,24 +389,31 @@ export default async function AdminDashboardPage() {
               return (
                 <div
                   key={log.id}
-                  className="flex items-center justify-between p-3 rounded-xl bg-slate-50/70 border border-slate-100 text-xs hover:bg-slate-50 transition-all"
+                  className="p-3 rounded-xl bg-slate-50/80 border border-slate-200/80 text-xs hover:bg-slate-100/60 transition-all space-y-1.5"
                 >
-                  <div className="flex items-center gap-3">
-                    <span className={`font-mono font-bold text-[10px] px-2 py-0.5 rounded-md border ${badgeStyle}`}>
+                  {/* Top Line: Date & Time FIRST on the left, Action badge on the right */}
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[11px] font-semibold text-slate-600 font-mono flex items-center gap-1.5">
+                      <Clock className="h-3 w-3 text-blue-600 shrink-0" />
+                      <span>{formatDateTime(log.created_at)}</span>
+                    </span>
+                    <span className={`font-mono font-bold text-[10px] px-2 py-0.5 rounded-md border shrink-0 ${badgeStyle}`}>
                       {log.action}
                     </span>
-                    <div>
-                      <span className="text-slate-900 font-semibold">
+                  </div>
+
+                  {/* Bottom Line: Actor Name on the left, Entity on the right */}
+                  <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-200/60">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <UserCheck className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                      <span className="text-slate-900 font-bold truncate">
                         {actor?.full_name || "System"}
                       </span>
-                      <p className="text-[11px] text-slate-500 font-mono">
-                        Entity: <span className="text-blue-600">{log.entity_type}</span>
-                      </p>
                     </div>
+                    <span className="text-[11px] text-slate-500 font-mono shrink-0">
+                      Entity: <span className="text-blue-600 font-medium">{log.entity_type}</span>
+                    </span>
                   </div>
-                  <span className="text-[10px] text-slate-400 font-mono whitespace-nowrap">
-                    {formatDateTime(log.created_at)}
-                  </span>
                 </div>
               );
             })}

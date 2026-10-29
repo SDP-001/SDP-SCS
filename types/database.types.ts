@@ -107,6 +107,7 @@ export interface Faculty {
   designation: string;
   employee_id: string;
   is_hod: boolean;
+  is_dean?: boolean;
   created_at: string;
   profile?: Profile;
   department?: Department;

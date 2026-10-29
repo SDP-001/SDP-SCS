@@ -47,7 +47,7 @@ export default async function AdminAuditLogsPage() {
         initialActivities={sessionActivities}
         callerRole="ADMIN"
         title="Apex Institutional Authentication & Password Monitor (HOD, Faculty & Students)"
-        subtitle="Chronological live log of all Department Heads, Faculty members, and Students logging in, logging out, and resetting passwords with exact date and time."
+        subtitle="Chronological record of all Department Heads, Faculty members, and Students logging in, logging out, and resetting passwords with exact date and time."
       />
 
       {/* General System Audit Log Table */}

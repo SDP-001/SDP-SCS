@@ -39,11 +39,13 @@ export default async function HODFacultyExcelPage() {
               <span>Back to Department Faculty</span>
             </Link>
           </div>
-          <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-            <span>Faculty Excel Sheet Enrollment</span>
-            <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 border border-indigo-200">
+          <div className="mb-1.5 flex items-center gap-2">
+            <span className="inline-flex text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800 border border-indigo-200 tracking-wider">
               {deptCode} Faculty
             </span>
+          </div>
+          <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+            Faculty Excel Sheet Enrollment
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
             Bulk upload and verify department faculty evaluators for {deptName} via spreadsheet (.xlsx, .csv).
@@ -103,39 +105,6 @@ export default async function HODFacultyExcelPage() {
             />
           </div>
         </div>
-
-        {/* Feature Highlights Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 border-t border-slate-800/80">
-          <div className="p-3.5 rounded-xl bg-slate-800/50 border border-slate-700/60">
-            <div className="flex items-center gap-2 text-xs font-bold text-indigo-300">
-              <CheckCircle2 className="h-4 w-4 text-indigo-400" />
-              <span>Department Scoping</span>
-            </div>
-            <p className="text-[11px] text-slate-400 mt-1">
-              All added faculty members are automatically scoped to {deptName} review queues.
-            </p>
-          </div>
-
-          <div className="p-3.5 rounded-xl bg-slate-800/50 border border-slate-700/60">
-            <div className="flex items-center gap-2 text-xs font-bold text-emerald-300">
-              <Sparkles className="h-4 w-4 text-emerald-400" />
-              <span>Empty Sheet Handling</span>
-            </div>
-            <p className="text-[11px] text-slate-400 mt-1">
-              If the spreadsheet has no data, valid starter template rows are provided: status OK, ready to submit!
-            </p>
-          </div>
-
-          <div className="p-3.5 rounded-xl bg-slate-800/50 border border-slate-700/60">
-            <div className="flex items-center gap-2 text-xs font-bold text-sky-300">
-              <ShieldCheck className="h-4 w-4 text-sky-400" />
-              <span>Duplicate Safeguards</span>
-            </div>
-            <p className="text-[11px] text-slate-400 mt-1">
-              Automatic validation ensures employee IDs and emails are unique across the institution.
-            </p>
-          </div>
-        </div>
       </div>
 
       {/* Current Department Faculty Count */}
@@ -149,7 +118,7 @@ export default async function HODFacultyExcelPage() {
               Current Faculty Evaluators in {deptName}
             </p>
             <p className="text-[11px] text-slate-500">
-              Total active faculty evaluators in live department roster.
+              Total active faculty evaluators in department roster.
             </p>
           </div>
         </div>

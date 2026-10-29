@@ -109,6 +109,11 @@ export function resolveDepartment(
     { pattern: /\b(mca|master\s+of\s+comp)\b/i, code: "MCA" },
     { pattern: /\b(mba|master\s+of\s+business|management)\b/i, code: "MBA" },
     { pattern: /\b(aids|ai[\s-]?ds|ai|artificial\s+intel)\b/i, code: "AIDS" },
+    { pattern: /\b(agri|agriculture|agricultural)\b/i, code: "AGRI" },
+    { pattern: /\b(bme|biomedical|bio[\s-]?med)\b/i, code: "BME" },
+    { pattern: /\b(chem|chemical)\b/i, code: "CHEMICAL" },
+    { pattern: /\b(cse[\s-]?(cs|cyber)|cyber[\s-]?sec(urity)?)\b/i, code: "CSE(CS)" },
+    { pattern: /\b(cse[\s-]?(iot|internet)|iot|internet\s+of\s+things)\b/i, code: "CSE(IoT)" },
     { pattern: /\b(eee|electrical|triple\s+e)\b/i, code: "EEE" },
     { pattern: /\b(civil|civ)\b/i, code: "CIVIL" },
     { pattern: /\b(cse|computer\s+sci|software|cs)\b/i, code: "CSE" },
@@ -138,7 +143,7 @@ export function resolveDepartment(
 }
 
 /**
- * Verifies and normalizes an individual student record against institutional rules and live database.
+ * Verifies and normalizes an individual student record against institutional rules and database records.
  */
 export function verifyAndNormalizeStudent(
   row: RawStudentRow,

@@ -48,10 +48,6 @@ export function ActivityFeed({
             Activity Ledger
           </h3>
         </div>
-        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-[10px] font-medium text-blue-700">
-          <span className="h-1.5 w-1.5 rounded-full bg-blue-600 shrink-0" />
-          <span>Live Stream</span>
-        </span>
       </div>
 
       {activities.length === 0 ? (

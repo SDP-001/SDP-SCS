@@ -94,16 +94,34 @@ export default function AdminUsersPage() {
     }
   };
 
-  const filteredFaculty = data.faculty.filter((f) => {
-    const deptType = f.department?.type || "UG";
-    if (degreeFilter !== "ALL" && deptType !== degreeFilter) return false;
-    return (
-      f.profile?.full_name?.toLowerCase().includes(search.toLowerCase()) ||
-      f.employee_id?.toLowerCase().includes(search.toLowerCase()) ||
-      f.department?.name?.toLowerCase().includes(search.toLowerCase()) ||
-      f.department?.code?.toLowerCase().includes(search.toLowerCase())
-    );
-  });
+  const filteredFaculty = data.faculty
+    .filter((f) => {
+      const deptType = f.department?.type || "UG";
+      if (degreeFilter !== "ALL" && deptType !== degreeFilter && !f.is_dean) return false;
+      const q = search.toLowerCase();
+      return (
+        f.profile?.full_name?.toLowerCase().includes(q) ||
+        f.employee_id?.toLowerCase().includes(q) ||
+        f.department?.name?.toLowerCase().includes(q) ||
+        f.department?.code?.toLowerCase().includes(q) ||
+        (f.is_dean && ("dean" + "admin" + "leadership").includes(q)) ||
+        (f.is_hod && ("hod" + "head").includes(q))
+      );
+    })
+    .sort((a, b) => {
+      // 1. Dean in UPPER position
+      const aDean = a.is_dean || a.profile?.role === "ADMIN" ? 1 : 0;
+      const bDean = b.is_dean || b.profile?.role === "ADMIN" ? 1 : 0;
+      if (aDean !== bDean) return bDean - aDean;
+
+      // 2. HOD in UPPER position
+      const aHod = a.is_hod || a.profile?.role === "HOD" ? 1 : 0;
+      const bHod = b.is_hod || b.profile?.role === "HOD" ? 1 : 0;
+      if (aHod !== bHod) return bHod - aHod;
+
+      // 3. Faculty by Name
+      return (a.profile?.full_name || "").localeCompare(b.profile?.full_name || "");
+    });
 
   const filteredStudents = data.students.filter((s) => {
     const deptType = s.department?.type || "UG";
@@ -118,20 +136,34 @@ export default function AdminUsersPage() {
 
   return (
     <div className="space-y-6 pb-28 md:pb-8">
-      {/* Header with Title & Enroll Student Trigger */}
+      {/* Header with Title & Action Triggers - Aligned for Mobile & Desktop */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
+          <div className="mb-1.5">
+            <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300">
+              <ShieldCheck className="h-3 w-3 text-amber-700" />
+              <span>Dean & Admin Portal</span>
+            </span>
+          </div>
           <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
             User & Faculty Management
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
-            Manage enrolled student credentials, authorized faculty evaluators, and security status.
+            Manage enrolled students, academic evaluators, HODs, and institutional dean leadership.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <AddFacultyModal buttonLabel="Add Faculty / HOD (Manual / Excel)" allowHODRole={true} />
-          <AddStudentModal buttonLabel="Enroll Student (Manual / Excel)" />
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full sm:w-auto">
+          <AddFacultyModal
+            buttonLabel="+ Add Faculty, HOD & Dean (Manual / Excel)"
+            allowHODRole={true}
+            allowDeanRole={true}
+            className="w-full sm:w-auto justify-center"
+          />
+          <AddStudentModal
+            buttonLabel="+ Enroll Student (Manual / Excel)"
+            className="w-full sm:w-auto justify-center"
+          />
         </div>
       </div>
 
@@ -145,9 +177,6 @@ export default function AdminUsersPage() {
             <div>
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
                 <span>Student Database Verification Engine</span>
-                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                  Live DB
-                </span>
               </h3>
               <p className="text-[11px] text-slate-300 mt-0.5">
                 Verify student credentials, inspect accurate records from database, and auto-correct typos.
@@ -277,7 +306,7 @@ export default function AdminUsersPage() {
                 }`}
             >
               <Users className="h-3.5 w-3.5" />
-              <span>Faculty ({data.faculty.length})</span>
+              <span>Faculty & Leadership ({data.faculty.length})</span>
             </button>
             <button
               onClick={() => setActiveTab("STUDENTS")}
@@ -346,75 +375,99 @@ export default function AdminUsersPage() {
           ))}
         </div>
       ) : activeTab === "FACULTY" ? (
-        /* Faculty Table */
-        <div className="overflow-hidden border border-slate-200 rounded-xl bg-white shadow-2xs">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 uppercase tracking-wider text-[10px]">
-                <tr>
-                  <th className="py-3.5 px-4">Faculty Member</th>
-                  <th className="py-3.5 px-4">Employee ID</th>
-                  <th className="py-3.5 px-4">Department & Role</th>
-                  <th className="py-3.5 px-4">Review History</th>
-                  <th className="py-3.5 px-4">Account Status</th>
-                  <th className="py-3.5 px-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 font-medium">
-                {filteredFaculty.map((f) => (
-                  <tr key={f.id} className="hover:bg-slate-50/60">
-                    <td className="py-3.5 px-4">
-                      <p className="font-bold text-slate-900">{f.profile?.full_name}</p>
-                      <p className="text-[11px] text-slate-400">{f.profile?.email}</p>
-                    </td>
+        <div className="space-y-3">
+          {/* Mobile Card Layout (Screens < 768px - Aligned & Not Cut Off) */}
+          <div className="block md:hidden space-y-3">
+            {filteredFaculty.map((f) => {
+              const isDean = f.is_dean || f.profile?.role === "ADMIN";
+              const isHod = f.is_hod || f.profile?.role === "HOD";
 
-                    <td className="py-3.5 px-4 font-mono font-semibold text-slate-800">
-                      {f.employee_id}
-                    </td>
+              return (
+                <div
+                  key={f.id}
+                  className={`p-4 rounded-xl border bg-white shadow-2xs space-y-3 transition-all ${
+                    isDean
+                      ? "border-amber-300 ring-2 ring-amber-400/20 bg-gradient-to-br from-amber-50/60 via-white to-amber-50/20"
+                      : isHod
+                      ? "border-indigo-200 ring-1 ring-indigo-200/50 bg-gradient-to-br from-indigo-50/40 via-white to-white"
+                      : "border-slate-200"
+                  }`}
+                >
+                  {/* Top Row: Full Name, Role Badge & Status */}
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="font-bold text-slate-900 text-sm">
+                          {f.profile?.full_name}
+                        </span>
+                        {isDean ? (
+                          <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 shrink-0 flex items-center gap-1">
+                            <span>🏛️ Dean & Admin</span>
+                          </span>
+                        ) : isHod ? (
+                          <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-900 border border-indigo-200 shrink-0 flex items-center gap-1">
+                            <span>🎓 Head of Dept</span>
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 shrink-0">
+                            Faculty Evaluator
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-slate-500 font-mono mt-0.5 truncate">
+                        {f.employee_id} • {f.profile?.email}
+                      </p>
+                    </div>
 
-                    <td className="py-3.5 px-4">
+                    {/* Status Badge */}
+                    {f.profile?.is_active ? (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
+                        <CheckCircle2 className="h-3 w-3" /> Active
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200 shrink-0">
+                        <XCircle className="h-3 w-3" /> Disabled
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Middle Row: Department, Degree & Designation */}
+                  <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs gap-2">
+                    <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5">
-                        <p className="font-bold text-slate-800">{f.department?.name}</p>
+                        <p className="font-bold text-slate-800 truncate">{f.department?.name}</p>
                         <span
-                          className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded border shrink-0 ${f.department?.type === "PG"
+                          className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded border shrink-0 ${
+                            f.department?.type === "PG"
                               ? "bg-purple-50 text-purple-700 border-purple-200"
                               : "bg-sky-50 text-sky-700 border-sky-200"
-                            }`}
+                          }`}
                         >
                           {f.department?.type || "UG"}
                         </span>
                       </div>
-                      <p className="text-[11px] text-slate-500">
-                        {f.designation} {f.is_hod && "• Head of Dept"}
-                      </p>
-                    </td>
+                      <p className="text-[11px] text-slate-500 mt-0.5">{f.designation}</p>
+                    </div>
 
-                    <td className="py-3.5 px-4">
-                      <div className="space-y-0.5">
-                        <span className="font-semibold text-slate-700">
-                          {f.reviewCount} total reviews
-                        </span>
-                        {f.activeLockCount > 0 && (
-                          <p className="text-[10px] text-amber-700 font-bold flex items-center gap-1">
-                            <Lock className="h-3 w-3" /> {f.activeLockCount} active lock
-                          </p>
-                        )}
-                      </div>
-                    </td>
-
-                    <td className="py-3.5 px-4">
-                      {f.profile?.is_active ? (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                          <CheckCircle2 className="h-3 w-3" /> Active
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
-                          <XCircle className="h-3 w-3" /> Disabled
-                        </span>
+                    <div className="text-right shrink-0">
+                      <span className="font-semibold text-slate-700 block text-xs">
+                        {f.reviewCount} reviews
+                      </span>
+                      {f.activeLockCount > 0 && (
+                        <p className="text-[10px] text-amber-700 font-bold flex items-center justify-end gap-1">
+                          <Lock className="h-2.5 w-2.5" /> {f.activeLockCount} active
+                        </p>
                       )}
-                    </td>
+                    </div>
+                  </div>
 
-                    <td className="py-3.5 px-4 text-right">
+                  {/* Bottom Row: Actions */}
+                  <div className="pt-2 border-t border-slate-100 flex items-center justify-end">
+                    {isDean ? (
+                      <span className="text-[11px] font-bold text-amber-800 bg-amber-100/70 px-2.5 py-1 rounded-lg border border-amber-300/60">
+                        Protected Governance Account
+                      </span>
+                    ) : (
                       <Button
                         size="sm"
                         variant={f.profile?.is_active ? "outline" : "default"}
@@ -422,22 +475,149 @@ export default function AdminUsersPage() {
                           handleToggle(f.profile?.id, f.profile?.full_name || "Faculty", true)
                         }
                         disabled={togglingId === f.profile?.id}
-                        className={`text-xs h-8 ${f.profile?.is_active
+                        className={`text-xs h-8 px-3 ${
+                          f.profile?.is_active
                             ? "text-rose-600 hover:bg-rose-50 border-rose-200"
                             : "bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
-                          }`}
+                        }`}
                       >
                         {togglingId === f.profile?.id
                           ? "Processing..."
                           : f.profile?.is_active
-                            ? "Disable"
-                            : "Activate"}
+                          ? "Disable Account"
+                          : "Activate Account"}
                       </Button>
-                    </td>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Desktop Table View (Screens >= 768px) */}
+          <div className="hidden md:block overflow-hidden border border-slate-200 rounded-xl bg-white shadow-2xs">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 uppercase tracking-wider text-[10px]">
+                  <tr>
+                    <th className="py-3.5 px-4">Faculty Member / Role</th>
+                    <th className="py-3.5 px-4">Employee ID</th>
+                    <th className="py-3.5 px-4">Department & Level</th>
+                    <th className="py-3.5 px-4">Review History</th>
+                    <th className="py-3.5 px-4">Account Status</th>
+                    <th className="py-3.5 px-4 text-right">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-100 font-medium">
+                  {filteredFaculty.map((f) => {
+                    const isDean = f.is_dean || f.profile?.role === "ADMIN";
+                    const isHod = f.is_hod || f.profile?.role === "HOD";
+
+                    return (
+                      <tr
+                        key={f.id}
+                        className={`hover:bg-slate-50/60 transition-colors ${
+                          isDean ? "bg-amber-50/30 font-semibold" : isHod ? "bg-indigo-50/20" : ""
+                        }`}
+                      >
+                        <td className="py-3.5 px-4">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <p className="font-bold text-slate-900">{f.profile?.full_name}</p>
+                            {isDean ? (
+                              <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300">
+                                Dean & Admin
+                              </span>
+                            ) : isHod ? (
+                              <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded-full bg-indigo-100 text-indigo-900 border border-indigo-200">
+                                Head of Dept
+                              </span>
+                            ) : (
+                              <span className="text-[9px] font-bold uppercase px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+                                Faculty
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-[11px] text-slate-400">{f.profile?.email}</p>
+                        </td>
+
+                        <td className="py-3.5 px-4 font-mono font-semibold text-slate-800">
+                          {f.employee_id}
+                        </td>
+
+                        <td className="py-3.5 px-4">
+                          <div className="flex items-center gap-1.5">
+                            <p className="font-bold text-slate-800">{f.department?.name}</p>
+                            <span
+                              className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded border shrink-0 ${
+                                f.department?.type === "PG"
+                                  ? "bg-purple-50 text-purple-700 border-purple-200"
+                                  : "bg-sky-50 text-sky-700 border-sky-200"
+                              }`}
+                            >
+                              {f.department?.type || "UG"}
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-slate-500">{f.designation}</p>
+                        </td>
+
+                        <td className="py-3.5 px-4">
+                          <div className="space-y-0.5">
+                            <span className="font-semibold text-slate-700">
+                              {f.reviewCount} total reviews
+                            </span>
+                            {f.activeLockCount > 0 && (
+                              <p className="text-[10px] text-amber-700 font-bold flex items-center gap-1">
+                                <Lock className="h-3 w-3" /> {f.activeLockCount} active lock
+                              </p>
+                            )}
+                          </div>
+                        </td>
+
+                        <td className="py-3.5 px-4">
+                          {f.profile?.is_active ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                              <CheckCircle2 className="h-3 w-3" /> Active
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                              <XCircle className="h-3 w-3" /> Disabled
+                            </span>
+                          )}
+                        </td>
+
+                        <td className="py-3.5 px-4 text-right">
+                          {isDean ? (
+                            <span className="text-[10px] font-bold text-amber-800 bg-amber-100/70 px-2 py-1 rounded border border-amber-300/60">
+                              Dean Account
+                            </span>
+                          ) : (
+                            <Button
+                              size="sm"
+                              variant={f.profile?.is_active ? "outline" : "default"}
+                              onClick={() =>
+                                handleToggle(f.profile?.id, f.profile?.full_name || "Faculty", true)
+                              }
+                              disabled={togglingId === f.profile?.id}
+                              className={`text-xs h-8 ${
+                                f.profile?.is_active
+                                  ? "text-rose-600 hover:bg-rose-50 border-rose-200"
+                                  : "bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+                              }`}
+                            >
+                              {togglingId === f.profile?.id
+                                ? "Processing..."
+                                : f.profile?.is_active
+                                ? "Disable"
+                                : "Activate"}
+                            </Button>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       ) : (

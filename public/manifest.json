@@ -1,57 +1,71 @@
 {
-  "name": "NEC Portal — Nandha Engineering College",
-  "short_name": "NEC Cred",
-  "id": "nec-portal-app",
-  "description": "Nandha Engineering College Autonomous Verified Student Achievements & Co-Curricular Management Mobile App",
-  "start_url": "/",
+  "name": "NEC Portal - Nandha Engineering College",
+  "short_name": "NEC Portal",
+  "id": "/nec-portal",
+  "description": "Nandha Engineering College Autonomous Verified Student Achievements & Co-Curricular Management Application",
+  "start_url": "/login",
+  "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone", "window-controls-overlay", "minimal-ui"],
   "background_color": "#0f172a",
   "theme_color": "#0f172a",
-  "orientation": "portrait-primary",
-  "scope": "/",
+  "orientation": "any",
   "categories": ["education", "productivity"],
+  "prefer_related_applications": false,
   "icons": [
     {
-      "src": "/nec-logo.png",
+      "src": "/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/nec-logo.png",
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "shortcuts": [
     {
-      "name": "Student Dashboard",
+      "name": "Student Portal",
       "short_name": "Student",
-      "description": "View student achievements and passport",
+      "description": "Access Student Dashboard and Achievements",
       "url": "/student/dashboard",
-      "icons": [{ "src": "/nec-logo.png", "sizes": "192x192" }]
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Faculty Reviews",
       "short_name": "Faculty",
-      "description": "Review and award student certificates",
+      "description": "Review and verify student certificates",
       "url": "/faculty/reviews",
-      "icons": [{ "src": "/nec-logo.png", "sizes": "192x192" }]
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "HOD Portal",
       "short_name": "HOD",
-      "description": "Department analytics and faculty management",
+      "description": "Department analytics & student registry",
       "url": "/hod/dashboard",
-      "icons": [{ "src": "/nec-logo.png", "sizes": "192x192" }]
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "Dean & Admin",
+      "name": "Dean & Admin Portal",
       "short_name": "Admin",
-      "description": "Institutional administrative control center",
+      "description": "Institutional administration and settings",
       "url": "/admin/dashboard",
-      "icons": [{ "src": "/nec-logo.png", "sizes": "192x192" }]
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }

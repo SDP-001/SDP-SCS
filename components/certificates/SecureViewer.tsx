@@ -32,18 +32,30 @@ interface SecureViewerProps {
 }
 
 export function SecureViewer({ files, title, isDuplicateFlagged }: SecureViewerProps) {
+  // Sort files: Primary file first, then highest version to lowest version
+  const sortedFiles = [...files].sort((a, b) => {
+    if (a.file_type === "PRIMARY" && b.file_type !== "PRIMARY") return -1;
+    if (b.file_type === "PRIMARY" && a.file_type !== "PRIMARY") return 1;
+    return b.version - a.version;
+  });
+
   const [selectedFileId, setSelectedFileId] = useState<string>(
-    files[0]?.id || ""
+    sortedFiles[0]?.id || ""
   );
   const [copiedHash, setCopiedHash] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [useIframeFallback, setUseIframeFallback] = useState(false);
 
   // Full View & Zoom States
   const [isFullView, setIsFullView] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [rotation, setRotation] = useState(0);
 
-  const selectedFile = files.find((f) => f.id === selectedFileId) || files[0];
+  useEffect(() => {
+    setUseIframeFallback(false);
+  }, [selectedFileId]);
+
+  const selectedFile = sortedFiles.find((f) => f.id === selectedFileId) || sortedFiles[0];
 
   const handleZoomIn = () => setZoomLevel((prev) => Math.min(prev + 0.25, 3));
   const handleZoomOut = () => setZoomLevel((prev) => Math.max(prev - 0.25, 0.5));
@@ -183,20 +195,20 @@ export function SecureViewer({ files, title, isDuplicateFlagged }: SecureViewerP
           </div>
 
           <div className="flex items-center gap-2">
-            {files.length > 1 && (
-              <div className="flex items-center gap-1 bg-slate-800 p-1 rounded-xl border border-slate-700">
-                <span className="text-xs text-slate-400 px-2 font-medium">Versions:</span>
-                {files.map((f) => (
+            {sortedFiles.length > 1 && (
+              <div className="flex items-center gap-1 bg-slate-800 p-1 rounded-xl border border-slate-700 overflow-x-auto">
+                <span className="text-xs text-slate-400 px-2 font-medium shrink-0">Versions:</span>
+                {sortedFiles.map((f) => (
                   <button
                     key={f.id}
                     onClick={() => setSelectedFileId(f.id)}
-                    className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-colors ${
+                    className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-colors shrink-0 ${
                       selectedFileId === f.id
-                        ? "bg-primary-600 text-white"
+                        ? "bg-primary-600 text-white shadow-xs"
                         : "text-slate-300 hover:bg-slate-700"
                     }`}
                   >
-                    v{f.version} {f.file_type === "SUPPORTING" && "(Supp)"}
+                    v{f.version} {f.file_type === "PRIMARY" ? "(Latest)" : "(Supp)"}
                   </button>
                 ))}
               </div>
@@ -251,20 +263,19 @@ export function SecureViewer({ files, title, isDuplicateFlagged }: SecureViewerP
             title="Click to open Full View modal"
           >
             {/* Certificate Preview Element */}
-            {isPdf ? (
+            {useIframeFallback ? (
               <iframe
                 src={downloadUrl}
                 title={title}
-                className="w-full h-[460px] rounded-xl border border-slate-300 shadow-sm bg-white pointer-events-none"
+                className="w-full h-[260px] sm:h-[420px] rounded-xl border border-slate-300 shadow-sm bg-white pointer-events-none"
               />
             ) : (
+              /* eslint-disable-next-line @next/next/no-img-element */
               <img
                 src={downloadUrl}
                 alt={title}
-                className="max-h-[460px] w-auto object-contain mx-auto transition-transform duration-200 group-hover:scale-[1.01]"
-                onError={(e) => {
-                  (e.target as HTMLElement).style.display = "none";
-                }}
+                onError={() => setUseIframeFallback(true)}
+                className="max-h-[260px] sm:max-h-[420px] max-w-full w-auto h-auto object-contain mx-auto transition-transform duration-200 group-hover:scale-[1.01]"
               />
             )}
 
@@ -434,7 +445,11 @@ export function SecureViewer({ files, title, isDuplicateFlagged }: SecureViewerP
           </div>
 
           {/* Main Full View Canvas Area */}
-          <div className="flex-1 overflow-auto p-2 sm:p-8 flex items-center justify-center relative select-none">
+          <div
+            className={`flex-1 min-h-0 ${
+              zoomLevel > 1 ? "overflow-auto" : "overflow-hidden"
+            } p-2 sm:p-4 flex items-center justify-center relative select-none`}
+          >
             {/* Ambient Background Glow Effect */}
             <div className="absolute w-[500px] h-[350px] bg-primary-500/15 rounded-full blur-[120px] pointer-events-none" />
             <div className="absolute w-[350px] h-[250px] bg-indigo-500/15 rounded-full blur-[100px] pointer-events-none" />
@@ -445,20 +460,21 @@ export function SecureViewer({ files, title, isDuplicateFlagged }: SecureViewerP
                 transformOrigin: "center center",
                 transition: "transform 0.15s ease-out",
               }}
-              className="w-full max-w-4xl max-h-[82vh] flex items-center justify-center relative z-10 px-2 sm:px-4"
+              className="w-full h-full flex items-center justify-center relative z-10"
             >
-              {isPdf ? (
+              {useIframeFallback ? (
                 <iframe
                   src={downloadUrl}
                   title={title}
-                  className="w-full h-[78vh] rounded-2xl shadow-2xl border border-slate-700 bg-white"
+                  className="w-full h-full max-h-full rounded-2xl shadow-2xl border border-slate-700 bg-white"
                 />
               ) : (
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img
                   src={downloadUrl}
                   alt={title}
-                  className="w-full h-auto max-h-[80vh] object-contain rounded-2xl shadow-2xl border border-slate-700/80 bg-white ring-1 ring-white/20 transition-shadow duration-300 hover:shadow-primary-500/10"
+                  onError={() => setUseIframeFallback(true)}
+                  className="max-h-full max-w-full w-auto h-auto object-contain rounded-2xl shadow-2xl border border-slate-700/80 bg-white ring-1 ring-white/20 select-none"
                 />
               )}
             </div>
