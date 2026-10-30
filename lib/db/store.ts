@@ -37,9 +37,23 @@ export interface DBState {
   emailLogs?: Array<{ id: string; to: string; subject: string; body: string; sentAt: string }>;
 }
 
+export interface DBIndexCache {
+  profileById: Map<string, Profile>;
+  profileByEmail: Map<string, Profile>;
+  profileByUsername: Map<string, Profile>;
+  studentByRegNo: Map<string, Student>;
+  studentByProfileId: Map<string, Student>;
+  facultyByEmpId: Map<string, Faculty>;
+  facultyByProfileId: Map<string, Faculty>;
+  departmentById: Map<string, Department>;
+  builtForState: DBState | null;
+}
+
 declare global {
   // eslint-disable-next-line no-var
   var __CAMPUSCRED_DB: DBState | undefined;
+  // eslint-disable-next-line no-var
+  var __CAMPUSCRED_INDICES: DBIndexCache | undefined;
 }
 
 function initializeState(): DBState {
@@ -24019,4 +24033,62 @@ export function getDB(): DBState {
 
 export function resetDB(): void {
   globalThis.__CAMPUSCRED_DB = initializeState();
+  globalThis.__CAMPUSCRED_INDICES = undefined;
+}
+
+export function getDBIndices(): DBIndexCache {
+  const db = getDB();
+  if (globalThis.__CAMPUSCRED_INDICES && globalThis.__CAMPUSCRED_INDICES.builtForState === db) {
+    return globalThis.__CAMPUSCRED_INDICES;
+  }
+
+  const profileById = new Map<string, Profile>();
+  const profileByEmail = new Map<string, Profile>();
+  const profileByUsername = new Map<string, Profile>();
+  const studentByRegNo = new Map<string, Student>();
+  const studentByProfileId = new Map<string, Student>();
+  const facultyByEmpId = new Map<string, Faculty>();
+  const facultyByProfileId = new Map<string, Faculty>();
+  const departmentById = new Map<string, Department>();
+
+  for (const d of db.departments) {
+    departmentById.set(d.id, d);
+  }
+
+  for (const p of db.profiles) {
+    profileById.set(p.id, p);
+    const emailNorm = p.email.toLowerCase().trim();
+    profileByEmail.set(emailNorm, p);
+    const username = emailNorm.split('@')[0];
+    profileByUsername.set(username, p);
+  }
+
+  for (const s of db.students) {
+    studentByRegNo.set(s.register_number.toLowerCase().trim(), s);
+    studentByProfileId.set(s.profile_id, s);
+  }
+
+  for (const f of db.faculty) {
+    facultyByEmpId.set(f.employee_id.toLowerCase().trim(), f);
+    facultyByProfileId.set(f.profile_id, f);
+  }
+
+  const cache: DBIndexCache = {
+    profileById,
+    profileByEmail,
+    profileByUsername,
+    studentByRegNo,
+    studentByProfileId,
+    facultyByEmpId,
+    facultyByProfileId,
+    departmentById,
+    builtForState: db,
+  };
+
+  globalThis.__CAMPUSCRED_INDICES = cache;
+  return cache;
+}
+
+export function invalidateDBIndices(): void {
+  globalThis.__CAMPUSCRED_INDICES = undefined;
 }

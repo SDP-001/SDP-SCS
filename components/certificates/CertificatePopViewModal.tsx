@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { CertificateFile } from "@/types/database.types";
 import { formatFileSize, formatDateTime } from "@/lib/utils/formatters";
 import {
@@ -53,6 +54,11 @@ export function CertificatePopViewModal({
   const [rotation, setRotation] = useState(0);
   const [isDownloading, setIsDownloading] = useState(false);
   const [useIframeFallback, setUseIframeFallback] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (sortedFiles.length > 0 && (!selectedFileId || !sortedFiles.some((f) => f.id === selectedFileId))) {
@@ -95,19 +101,22 @@ export function CertificatePopViewModal({
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
       window.addEventListener("keydown", handleKeyDown);
     } else {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
       setZoomLevel(1);
       setRotation(0);
     }
     return () => {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen, handleKeyDown]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
   const downloadUrl = selectedFile
     ? `/api/files/download?path=${encodeURIComponent(
@@ -152,16 +161,16 @@ export function CertificatePopViewModal({
     }
   };
 
-  return (
+  const modalContent = (
     <div
       role="dialog"
       aria-modal="true"
       aria-labelledby="popview-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-slate-950/85 backdrop-blur-md animate-in fade-in duration-200"
+      className="fixed inset-0 z-[99999] flex items-center justify-center p-2 sm:p-4 md:p-6 bg-slate-950/95 sm:bg-slate-950/90 backdrop-blur-md animate-in fade-in duration-200 isolate"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-5xl h-[95dvh] sm:h-[90vh] flex flex-col bg-slate-900 border border-slate-700/80 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden text-white"
+        className="relative z-[100000] w-full max-w-5xl h-[95dvh] sm:h-[90vh] flex flex-col bg-slate-900 border border-slate-700/80 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden text-white"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Header Bar */}
@@ -379,4 +388,6 @@ export function CertificatePopViewModal({
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }

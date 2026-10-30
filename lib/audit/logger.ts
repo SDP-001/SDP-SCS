@@ -27,6 +27,9 @@ export async function logAuditEvent(params: LogAuditParams): Promise<AuditLog> {
   };
 
   db.auditLogs.unshift(newLog);
+  if (db.auditLogs.length > 1000) {
+    db.auditLogs.length = 1000;
+  }
   return newLog;
 }
 

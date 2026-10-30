@@ -1,7 +1,7 @@
 "use server";
 
 import { requireRole } from "@/lib/auth/session";
-import { getDB } from "@/lib/db/store";
+import { getDB, invalidateDBIndices } from "@/lib/db/store";
 import { logAuditEvent } from "@/lib/audit/logger";
 import { CollegeSettingsData, collegeSettingsSchema } from "@/lib/validators/user";
 import { Department, DepartmentType, Category, Profile, Student, Faculty } from "@/types/database.types";
@@ -288,6 +288,7 @@ export async function toggleUserStatusAction(profileId: string) {
   safeRevalidate("/faculty/reviews");
   safeRevalidate("/hod/students");
   safeRevalidate("/hod/faculty");
+  invalidateDBIndices();
   return { success: true, isActive: targetProfile.is_active };
 }
 

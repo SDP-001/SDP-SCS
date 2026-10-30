@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { getDB } from "@/lib/db/store";
+import { getDB, getDBIndices } from "@/lib/db/store";
 import { Profile, Student, Faculty, Department, UserRole } from "@/types/database.types";
 
 export interface AuthenticatedUser {
@@ -26,10 +26,11 @@ export async function getCurrentUser(): Promise<AuthenticatedUser | null> {
     return null;
   }
 
-  // 1. Direct cookie session (instant sub-millisecond local in-memory lookup)
+  // 1. Direct cookie session (instant sub-millisecond local in-memory lookup via O(1) Map)
   if (sessionUserId) {
-    const profile = db.profiles.find((p) => p.id === sessionUserId && p.is_active);
-    if (profile) {
+    const indices = getDBIndices();
+    const profile = indices.profileById.get(sessionUserId);
+    if (profile && profile.is_active) {
       return buildAuthenticatedUser(profile, db);
     }
   }
@@ -39,10 +40,12 @@ export async function getCurrentUser(): Promise<AuthenticatedUser | null> {
 }
 
 function buildAuthenticatedUser(profile: Profile, db: ReturnType<typeof getDB>): AuthenticatedUser {
+  const indices = getDBIndices();
+
   if (profile.role === "STUDENT") {
-    const student = db.students.find((s) => s.profile_id === profile.id);
+    const student = indices.studentByProfileId.get(profile.id);
     if (student) {
-      const department = db.departments.find((d) => d.id === student.department_id);
+      const department = indices.departmentById.get(student.department_id);
       return {
         profile,
         student: { ...student, department },
@@ -51,9 +54,9 @@ function buildAuthenticatedUser(profile: Profile, db: ReturnType<typeof getDB>):
   }
 
   if (profile.role === "FACULTY" || profile.role === "HOD") {
-    const faculty = db.faculty.find((f) => f.profile_id === profile.id);
+    const faculty = indices.facultyByProfileId.get(profile.id);
     if (faculty) {
-      const department = db.departments.find((d) => d.id === faculty.department_id);
+      const department = indices.departmentById.get(faculty.department_id);
       return {
         profile,
         faculty: { ...faculty, department },
@@ -72,7 +75,7 @@ export async function setSessionUser(profileId: string): Promise<void> {
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       path: "/",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 365, // 365 days persistent session across app closes
     });
   } catch {
     // Graceful fallback when called outside request scope (e.g. testing or CLI scripts)

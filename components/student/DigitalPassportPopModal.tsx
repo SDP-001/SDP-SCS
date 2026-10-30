@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useState } from "react";
+import { createPortal } from "react-dom";
 import { CampusCredLogo } from "@/components/layout/CampusCredLogo";
 import { formatDate } from "@/lib/utils/formatters";
 import {
@@ -50,6 +51,12 @@ export function DigitalPassportPopModal({
   records = [],
   collegeName = "Nandha Engineering College (Autonomous)",
 }: DigitalPassportPopModalProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (!isOpen) return;
@@ -63,32 +70,35 @@ export function DigitalPassportPopModal({
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
       window.addEventListener("keydown", handleKeyDown);
     } else {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen, handleKeyDown]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
   const handlePrint = () => {
     window.print();
   };
 
-  return (
+  const modalContent = (
     <div
       role="dialog"
       aria-modal="true"
       aria-labelledby="passport-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-slate-950/85 backdrop-blur-md animate-in fade-in duration-200"
+      className="fixed inset-0 z-[99999] flex items-center justify-center p-2 sm:p-4 md:p-6 bg-slate-950/95 sm:bg-slate-950/90 backdrop-blur-md animate-in fade-in duration-200 isolate"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-4xl max-h-[92vh] flex flex-col bg-slate-900 border border-slate-700/80 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden text-white"
+        className="relative z-[100000] w-full max-w-4xl max-h-[92vh] flex flex-col bg-slate-900 border border-slate-700/80 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden text-white"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Top Action Toolbar */}
@@ -138,8 +148,8 @@ export function DigitalPassportPopModal({
         </div>
 
         {/* Modal Scrollable Canvas Body */}
-        <div className="flex-1 overflow-auto p-4 sm:p-6 md:p-8 bg-slate-100 text-slate-900">
-          <div className="print-passport bg-white border border-slate-300 rounded-2xl p-6 sm:p-10 shadow-sm space-y-6 max-w-3xl mx-auto">
+        <div className="flex-1 overflow-auto p-3 sm:p-6 md:p-8 bg-slate-100 opacity-100 text-slate-900">
+          <div className="print-passport bg-white opacity-100 border border-slate-300 rounded-2xl p-5 sm:p-10 shadow-lg space-y-6 max-w-3xl mx-auto relative z-10">
             {/* Document Header */}
             <div className="flex flex-col sm:flex-row items-start justify-between border-b-2 border-slate-900 pb-5 gap-4">
               <div className="space-y-1">
@@ -286,4 +296,6 @@ export function DigitalPassportPopModal({
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }

@@ -3,7 +3,7 @@
   "short_name": "NEC Portal",
   "id": "/nec-portal",
   "description": "Nandha Engineering College Autonomous Verified Student Achievements & Co-Curricular Management Application",
-  "start_url": "/login",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "display_override": ["standalone", "window-controls-overlay", "minimal-ui"],

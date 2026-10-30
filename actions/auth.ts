@@ -1,7 +1,7 @@
 "use server";
 
 import { loginSchema, LoginFormData } from "@/lib/validators/user";
-import { getDB } from "@/lib/db/store";
+import { getDB, getDBIndices, invalidateDBIndices } from "@/lib/db/store";
 import { setSessionUser, clearSessionUser, getCurrentUser } from "@/lib/auth/session";
 import { logAuditEvent } from "@/lib/audit/logger";
 import {
@@ -23,47 +23,30 @@ export async function loginAction(data: LoginFormData) {
 
   const { identifier, password } = validation.data;
   const db = getDB();
+  const indices = getDBIndices();
 
-  // Find profile by email (supports @nandhaengg.org, @nandha.edu, @nec.edu.in, @abctech.edu), username prefix, student register number, or faculty employee ID
+  // Find profile by email, username prefix, student register number, or faculty employee ID (O(1) Map lookups)
   const normalizedId = identifier.toLowerCase().trim();
-  const getUsername = (email: string) => email.split("@")[0].toLowerCase();
-  const inputUser = getUsername(normalizedId);
+  const inputUser = normalizedId.split("@")[0];
 
-  let matchedProfile = db.profiles.find((p) => {
-    if (!p.is_active) return false;
-    const profileEmail = p.email.toLowerCase();
-    const profileUser = getUsername(profileEmail);
-    return (
-      profileEmail === normalizedId ||
-      profileUser === normalizedId ||
-      (profileUser === inputUser &&
-        (normalizedId.includes("@nandha") ||
-          normalizedId.includes("@nec.") ||
-          normalizedId.includes("@abctech.")))
-    );
-  });
-
+  let matchedProfile = indices.profileByEmail.get(normalizedId);
   if (!matchedProfile) {
-    // Check student register number
-    const student = db.students.find(
-      (s) => s.register_number.toLowerCase() === normalizedId
-    );
+    matchedProfile = indices.profileByUsername.get(inputUser);
+  }
+  if (!matchedProfile) {
+    const student = indices.studentByRegNo.get(normalizedId);
     if (student) {
-      matchedProfile = db.profiles.find((p) => p.id === student.profile_id && p.is_active);
+      matchedProfile = indices.profileById.get(student.profile_id);
     }
   }
-
   if (!matchedProfile) {
-    // Check faculty employee ID
-    const faculty = db.faculty.find(
-      (f) => f.employee_id.toLowerCase() === normalizedId
-    );
+    const faculty = indices.facultyByEmpId.get(normalizedId);
     if (faculty) {
-      matchedProfile = db.profiles.find((p) => p.id === faculty.profile_id && p.is_active);
+      matchedProfile = indices.profileById.get(faculty.profile_id);
     }
   }
 
-  if (!matchedProfile) {
+  if (!matchedProfile || !matchedProfile.is_active) {
     return {
       success: false,
       notFound: true,
@@ -75,8 +58,8 @@ export async function loginAction(data: LoginFormData) {
   if (!db.passwords) db.passwords = {};
   const storedPassword = db.passwords[matchedProfile.id] || "password123";
 
-  // Check matching student for dynamic alias validation
-  const student = db.students.find((s) => s.profile_id === matchedProfile.id);
+  // Check matching student for dynamic alias validation (O(1))
+  const student = indices.studentByProfileId.get(matchedProfile.id);
   const cleanMobile = matchedProfile.phone_number?.replace(/\D/g, "") || "";
   const regNo = student?.register_number.toUpperCase() || "";
 
@@ -142,75 +125,49 @@ export async function identifyUserAction(identifier: string): Promise<Identified
     return { found: false };
   }
 
-  const db = getDB();
+  const indices = getDBIndices();
   const normalizedId = identifier.toLowerCase().trim();
-  const getUsername = (email: string) => email.split("@")[0].toLowerCase();
-  const inputUser = getUsername(normalizedId);
+  const inputUser = normalizedId.split("@")[0];
 
-  let matchedProfile = db.profiles.find((p) => {
-    if (!p.is_active) return false;
-    const profileEmail = p.email.toLowerCase();
-    const profileUser = getUsername(profileEmail);
-    return (
-      profileEmail === normalizedId ||
-      profileUser === normalizedId ||
-      (profileUser === inputUser &&
-        (normalizedId.includes("@nandha") ||
-          normalizedId.includes("@nec.") ||
-          normalizedId.includes("@abctech.")))
-    );
-  });
+  let matchedProfile = indices.profileByEmail.get(normalizedId);
+  if (!matchedProfile) {
+    matchedProfile = indices.profileByUsername.get(inputUser);
+  }
+  if (!matchedProfile) {
+    const student = indices.studentByRegNo.get(normalizedId);
+    if (student) {
+      matchedProfile = indices.profileById.get(student.profile_id);
+    }
+  }
+  if (!matchedProfile) {
+    const faculty = indices.facultyByEmpId.get(normalizedId);
+    if (faculty) {
+      matchedProfile = indices.profileById.get(faculty.profile_id);
+    }
+  }
+
+  if (!matchedProfile || !matchedProfile.is_active) {
+    return { found: false };
+  }
 
   let deptName = "";
   let studentReg = "";
   let facultyEmpId = "";
 
-  if (!matchedProfile) {
-    // Check student register number
-    const student = db.students.find(
-      (s) => s.register_number.toLowerCase() === normalizedId
-    );
-    if (student) {
-      matchedProfile = db.profiles.find((p) => p.id === student.profile_id && p.is_active);
-      if (matchedProfile) {
-        studentReg = student.register_number;
-        const dept = db.departments.find((d) => d.id === student.department_id);
-        deptName = dept ? dept.name : "";
-      }
-    }
-  } else if (matchedProfile.role === "STUDENT") {
-    const student = db.students.find((s) => s.profile_id === matchedProfile!.id);
+  if (matchedProfile.role === "STUDENT") {
+    const student = indices.studentByProfileId.get(matchedProfile.id);
     if (student) {
       studentReg = student.register_number;
-      const dept = db.departments.find((d) => d.id === student.department_id);
+      const dept = indices.departmentById.get(student.department_id);
       deptName = dept ? dept.name : "";
-    }
-  }
-
-  if (!matchedProfile) {
-    // Check faculty employee ID
-    const faculty = db.faculty.find(
-      (f) => f.employee_id.toLowerCase() === normalizedId
-    );
-    if (faculty) {
-      matchedProfile = db.profiles.find((p) => p.id === faculty.profile_id && p.is_active);
-      if (matchedProfile) {
-        facultyEmpId = faculty.employee_id;
-        const dept = db.departments.find((d) => d.id === faculty.department_id);
-        deptName = dept ? dept.name : "";
-      }
     }
   } else if (matchedProfile.role === "FACULTY" || matchedProfile.role === "HOD") {
-    const faculty = db.faculty.find((f) => f.profile_id === matchedProfile!.id);
+    const faculty = indices.facultyByProfileId.get(matchedProfile.id);
     if (faculty) {
       facultyEmpId = faculty.employee_id;
-      const dept = db.departments.find((d) => d.id === faculty.department_id);
+      const dept = indices.departmentById.get(faculty.department_id);
       deptName = dept ? dept.name : "";
     }
-  }
-
-  if (!matchedProfile) {
-    return { found: false };
   }
 
   return {
@@ -551,6 +508,7 @@ export async function registerNewAccountAction(params: RegisterAccountParams): P
   });
 
   // Automatically sign in the user
+  invalidateDBIndices();
   await setSessionUser(newProfileId);
 
   // Record initial LOGIN session log

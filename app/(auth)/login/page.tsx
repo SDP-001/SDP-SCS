@@ -10,6 +10,7 @@ import {
   identifyUserAction,
   registerNewAccountAction,
   getDepartmentsForRegistrationAction,
+  getSessionAction,
   IdentifiedUser,
 } from "@/actions/auth";
 import {
@@ -97,6 +98,38 @@ function LoginFormContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showRegisterPrompt, setShowRegisterPrompt] = useState(false);
+  const [isCheckingSession, setIsCheckingSession] = useState(true);
+  const identityCacheRef = React.useRef<Map<string, IdentifiedUser>>(new Map());
+
+  // Check if session already exists; if so, immediately replace URL to dashboard
+  useEffect(() => {
+    let active = true;
+    getSessionAction()
+      .then((res) => {
+        if (!active) return;
+        if (res?.user) {
+          const role = res.user.profile.role;
+          const target =
+            role === "STUDENT"
+              ? "/student/dashboard"
+              : role === "FACULTY"
+              ? "/faculty/dashboard"
+              : role === "HOD"
+              ? "/hod/dashboard"
+              : "/admin/dashboard";
+          router.replace(target);
+          return;
+        }
+        setIsCheckingSession(false);
+      })
+      .catch(() => {
+        if (active) setIsCheckingSession(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [router]);
 
   // Real-Time Auto-Detection of User Account
   const [detectedUser, setDetectedUser] = useState<IdentifiedUser | null>(null);
@@ -163,19 +196,33 @@ function LoginFormContent() {
     router.prefetch("/admin/dashboard");
   }, [searchParams, router]);
 
-  // Identity detection on typing identifier in Login mode
+  // Identity detection on typing identifier in Login mode (debounced & cached to protect server from overload)
   useEffect(() => {
     if (authMode !== "LOGIN") return;
-    if (!identifier || identifier.trim().length < 2) {
+    const trimmed = identifier.trim();
+    if (!trimmed || (trimmed.length < 5 && !trimmed.includes("@"))) {
       setDetectedUser(null);
+      return;
+    }
+
+    // Fast O(1) in-memory client cache hit
+    if (identityCacheRef.current.has(trimmed.toLowerCase())) {
+      const cached = identityCacheRef.current.get(trimmed.toLowerCase())!;
+      setDetectedUser(cached);
+      if (cached.role) {
+        setSelectedRole(cached.role);
+        setError(null);
+        setShowRegisterPrompt(false);
+      }
       return;
     }
 
     const timer = setTimeout(async () => {
       setIsDetecting(true);
       try {
-        const res = await identifyUserAction(identifier.trim());
+        const res = await identifyUserAction(trimmed);
         if (res.found && res.role) {
+          identityCacheRef.current.set(trimmed.toLowerCase(), res);
           setDetectedUser(res);
           setSelectedRole(res.role);
           setError(null);
@@ -192,12 +239,12 @@ function LoginFormContent() {
         } else {
           setDetectedUser(null);
         }
-      } catch (err) {
+      } catch {
         setDetectedUser(null);
       } finally {
         setIsDetecting(false);
       }
-    }, 250);
+    }, 450);
 
     return () => clearTimeout(timer);
   }, [identifier, authMode, router]);
@@ -269,7 +316,7 @@ function LoginFormContent() {
           ? "/admin/dashboard"
           : "/login";
 
-      router.push(targetUrl);
+      router.replace(targetUrl);
       router.refresh();
     } catch (err: any) {
       setError(err?.message || "An unexpected error occurred during login.");
@@ -349,6 +396,15 @@ function LoginFormContent() {
       setRegLoading(false);
     }
   };
+
+  if (isCheckingSession) {
+    return (
+      <div className="w-full max-w-md mx-auto my-auto flex flex-col items-center justify-center p-8 bg-white rounded-3xl border border-slate-200 shadow-sm text-center">
+        <div className="h-9 w-9 border-3 border-blue-600 border-t-transparent rounded-full animate-spin mb-3.5" />
+        <p className="text-xs font-semibold text-slate-600">Verifying secure portal session...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-md mx-auto my-auto">
