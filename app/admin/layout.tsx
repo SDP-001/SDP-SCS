@@ -4,6 +4,7 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Navbar } from "@/components/layout/Navbar";
 import { MobileNav } from "@/components/layout/MobileNav";
+import { BackNavigationGuard } from "@/components/navigation/BackNavigationGuard";
 import { getDB } from "@/lib/db/store";
 
 export default async function AdminLayout({
@@ -23,6 +24,7 @@ export default async function AdminLayout({
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-900 flex clean-mesh-bg">
+      <BackNavigationGuard />
       <Sidebar
         role={user.profile.role}
         userName={user.profile.full_name}

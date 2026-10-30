@@ -1,12 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import { createPortal } from "react-dom";
 import { CampusCredLogo } from "./CampusCredLogo";
 import { UserRole } from "@/types/database.types";
 import { Bell, Sparkles, LogOut, ArrowLeft } from "lucide-react";
 import { DigitalPassportTrigger } from "@/components/student/DigitalPassportTrigger";
+import { logoutAction } from "@/actions/auth";
 import { cn } from "@/lib/utils/cn";
 
 interface NavbarProps {
@@ -27,6 +29,14 @@ export function Navbar({
   unreadCount = 0,
 }: NavbarProps) {
   const router = useRouter();
+  const pathname = usePathname();
+  const [mounted, setMounted] = useState(false);
+  const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const homeUrl =
     role === "STUDENT"
@@ -36,6 +46,8 @@ export function Navbar({
       : role === "HOD"
       ? "/hod/dashboard"
       : "/admin/dashboard";
+
+  const isDashboard = pathname === homeUrl;
 
   const notifUrl =
     role === "STUDENT"
@@ -53,19 +65,40 @@ export function Navbar({
       ? "/hod/settings"
       : "/admin/settings";
 
+  const handleBack = () => {
+    if (isDashboard) return;
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push(homeUrl);
+    }
+  };
+
+  const handleConfirmSignOut = async () => {
+    try {
+      setIsSigningOut(true);
+      await logoutAction();
+      window.location.href = "/login";
+    } catch {
+      window.location.href = "/login";
+    }
+  };
+
   return (
     <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-slate-200/80 bg-white/95 px-4 md:px-8 backdrop-blur-md shadow-xs">
       {/* Left: Back Button, Mobile Logo & Title */}
       <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1 mr-2">
-        <button
-          type="button"
-          onClick={() => router.back()}
-          className="inline-flex items-center justify-center h-9 w-9 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 transition-all shadow-2xs hover:scale-105 active:scale-95 shrink-0 cursor-pointer"
-          title="Go Back in App"
-          aria-label="Go Back"
-        >
-          <ArrowLeft className="h-4 w-4" />
-        </button>
+        {!isDashboard && (
+          <button
+            type="button"
+            onClick={handleBack}
+            className="inline-flex items-center justify-center h-9 w-9 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 transition-all shadow-2xs hover:scale-105 active:scale-95 shrink-0 cursor-pointer"
+            title="Go Back"
+            aria-label="Go Back"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </button>
+        )}
 
         <div className="md:hidden shrink-0">
           <Link href={homeUrl} prefetch={true}>
@@ -141,16 +174,66 @@ export function Navbar({
           </div>
         </Link>
 
-        {/* Sign Out button for both mobile and web */}
-        <Link
-          href="/logout"
+        {/* Manual Sign Out button for both mobile and web */}
+        <button
+          type="button"
+          onClick={() => setShowSignOutConfirm(true)}
           title="Sign Out of Account"
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-medium text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition-all shadow-2xs"
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition-all shadow-2xs cursor-pointer active:scale-95"
         >
           <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           <span className="hidden sm:inline">Sign Out</span>
-        </Link>
+        </button>
       </div>
+
+      {/* Manual Sign Out Confirmation Modal */}
+      {mounted &&
+        showSignOutConfirm &&
+        createPortal(
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="signout-dialog-title"
+            className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-xs animate-in fade-in duration-150"
+            onClick={() => !isSigningOut && setShowSignOutConfirm(false)}
+          >
+            <div
+              className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-slate-200 space-y-4 animate-in zoom-in-95 duration-150 text-slate-900"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="h-12 w-12 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center mx-auto">
+                <LogOut className="h-6 w-6" />
+              </div>
+              <div className="text-center space-y-1">
+                <h3 id="signout-dialog-title" className="text-base font-bold text-slate-900">
+                  Sign Out of Account?
+                </h3>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Are you sure you want to end your active session on this device?
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-2.5 pt-2">
+                <button
+                  type="button"
+                  disabled={isSigningOut}
+                  onClick={() => setShowSignOutConfirm(false)}
+                  className="w-full py-2.5 px-3 rounded-xl border border-slate-300 text-slate-700 text-xs font-bold hover:bg-slate-100 transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  disabled={isSigningOut}
+                  onClick={handleConfirmSignOut}
+                  className="w-full py-2.5 px-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-sm transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+                >
+                  {isSigningOut ? "Signing Out..." : "Yes, Sign Out"}
+                </button>
+              </div>
+            </div>
+          </div>,
+          document.body
+        )}
     </header>
   );
 }

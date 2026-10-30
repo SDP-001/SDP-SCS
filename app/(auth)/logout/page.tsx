@@ -45,10 +45,10 @@ function LogoutContent() {
       await logoutAction();
       setLoggedOut(true);
       setTimeout(() => {
-        router.push("/login");
-      }, 1000);
+        window.location.href = "/login";
+      }, 500);
     } catch (err) {
-      router.push("/login");
+      window.location.href = "/login";
     } finally {
       setSigningOut(false);
     }
